@@ -138,11 +138,14 @@ class Graph extends Search {
 	 * @param aType
 	 */
 	public function deleteConnection($aID1, $aID2, $aType) {
-		$node1 = $this->_client->getNode($aID1);
-        $node1rels = $node1->getRelationships(array('FRIEND_OF'));
-        
+		$queryString = "START n=node($aID1) ".
+                       "MATCH n-[:$aType]-x".
+                       "RETURN x";
+                    $query = new Everyman\Neo4j\Cypher\Query($this->_client, $queryString);
+                    $result = $query->getResultSet();
+  
         print '<pre>';
-        print_r($node1rels);
+        print_r($result);
         print '</pre>';
 	}
 
