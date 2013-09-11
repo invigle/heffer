@@ -1,8 +1,13 @@
 <?php
-require("phar:///invigle/heffer/includes/neo4jphp.phar");
+require_once("includes/Graph.php");
 
-// Connecting to a different port or host
-$client = new Everyman\Neo4j\Client('localhost', 8001);
+$nodeParams['firstname'] = "Dilbert";
+$nodeParams['lastname'] = "Jones";
+$nodeParams['email'] = "dilbert@jonesco.com";
+$nodeParams['password'] = "hello123";
 
-print_r($client->getServerInfo());
+$graph = new Graph();
+$test = $graph->addNode($nodeParams);
+
+print $test;
 ?>
