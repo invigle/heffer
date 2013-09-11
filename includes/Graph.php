@@ -71,13 +71,6 @@ class Graph extends Search {
         }
         
         $index->add($node, $params['indexBy'], $node->getProperty($params['indexBy']));
-        $rtn = $index->queryOne("$params[indexBy]:$params[username]");
-        
-        echo $rtn["id:protected"];
-        
-        print '<br />RETURN:<hr><pre>';
-        print_r($rtn);
-        print '</pre>';
 	}
     
    	/**
@@ -91,9 +84,11 @@ class Graph extends Search {
         $client = new Client(new Transport($this->_neo4jHref, $this->_neo4jPort));
         
         $index = new NodeIndex($this->_client, $params['indexBy']);
-        $arr = $index->queryOne("$params[indexBy]:$params[username]")->getProperty('id');
+        $node = $index->queryOne("$params[indexBy]:$params[username]");
         
-        print "Node ID: $arr";
+        print '<pre>';
+        print_r($node);
+        print '</pre>';
                 
         unset($params['indexBy']);
         unset($params['username']);
