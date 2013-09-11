@@ -110,7 +110,7 @@ class Graph extends Search {
 	 * @param $aID
 	 */
 	public function deleteNodeByID($aID) {
-        $node->$_client->getNode($aID);        
+        $node->$this->_client->getNode($aID);        
         $node->delete();
 	}
 
@@ -121,8 +121,8 @@ class Graph extends Search {
 	 * @param aType
 	 */
 	public function addConnection($aID1, $aID2, $aType) {
-        $node1->$_client->getNode($aID1);
-        $node2->$_client->getNode($aID2);
+        $node1->$this->_client->getNode($aID1);
+        $node2->$this->_client->getNode($aID2);
         $node1->relateTo($node2, "$aType")->save();
 	}
 
