@@ -12,7 +12,7 @@ $pageTitle = 'testing';
         $html = "<!DOCTYPE HTML>
                     <html>";
         $html .= "<head>
-                    <title>{$pageTitle}</title>
+                    <title>$pageTitle</title>
                 </head>";
         echo $html;
 ?>
