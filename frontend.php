@@ -6,9 +6,6 @@
  */
 
 
-echo <!DOCTYPE HTML>
-                <html>
-                <head>
-                    <title>{$pageTitle}</title>
-                </head>;
+echo <!DOCTYPE HTML>;
+
 ?>
