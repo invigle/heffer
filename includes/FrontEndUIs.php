@@ -21,6 +21,18 @@ class FrontEndUIs {
 		// Not yet implemented
 	}
 
+    /**
+     * This function renders the header
+	 * @access public
+	 */
+	public function renderHeader($pageTitle) {
+		echo <!DOCTYPE HTML>
+                <html>
+                <head>
+                    <title>{$pageTitle}</title>
+                </head>;
+	}
+
 	/**
 	 * @access public
 	 * @param aGID
