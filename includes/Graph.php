@@ -72,7 +72,7 @@ class Graph extends Search {
         
         $index->add($node, $params['indexBy'], $node->getProperty($params['indexBy']));
         
-        die("Index: $index");
+        echo $index->queryOne('username:dilbert*')->getProperty('firstname') . "\n";
 	}
     
    	/**
