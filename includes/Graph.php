@@ -26,6 +26,7 @@ class Graph extends Search {
 	public $_edgeType;
 	public $_resultLimit;
 	public $_skip;
+    public $_status; //inactive/active as we do not delete users from Neo4j
     
     /** @var string neo4j href */
     private $_neo4jHref;
@@ -79,11 +80,12 @@ class Graph extends Search {
 	}
 
 	/**
+     * Function to delete node from Neo4j from a node ID
 	 * @access public
 	 * @param aID
 	 */
 	public function deleteNode($aID) {
-		// Manos Panaousis
+ 
 	}
 
 	/**
