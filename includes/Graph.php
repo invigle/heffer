@@ -72,8 +72,11 @@ class Graph extends Search {
         
         $index->add($node, $params['indexBy'], $node->getProperty($params['indexBy']));
         $rtn = $index->queryOne("$params[indexBy]:$params[username]");
-        print 'RETURN:<hr><pre>';
-        print_r(get_object_vars($rtn));
+        
+        echo $rtn["id:protected"];
+        
+        print '<br />RETURN:<hr><pre>';
+        print_r($rtn);
         print '</pre>';
 	}
     
