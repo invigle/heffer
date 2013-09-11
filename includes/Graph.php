@@ -134,7 +134,12 @@ class Graph extends Search {
 	 * @param aType
 	 */
 	public function deleteConnection($aID1, $aID2, $aType) {
-		
+		$node1 = $this->_client->getNode($aID1);
+        $node1rels = $node1->getRelationships();
+        
+        print '<pre>';
+        print_r($node1rels);
+        print '</pre>';
 	}
 
 	/**
