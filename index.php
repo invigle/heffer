@@ -2,12 +2,11 @@
 require_once("includes/Graph.php");
 
 $nodeParams['firstname'] = "Dilbert";
-$nodeParams['lastname'] = "Jones";
-$nodeParams['email'] = "dilbert@jonesco.com";
-$nodeParams['password'] = "hello123";
+$nodeParams['lastname'] = "Smith";
+$nodeParams['email'] = "dilbert@smith.com";
+$nodeParams['password'] = "helloABC123";
+$nodeParams['username'] = "dilbert101";
 
-$graph = new Graph();
+$graph = new editProperties();
 $test = $graph->addNode($nodeParams);
-
-print $test;
 ?>

@@ -59,8 +59,23 @@ class Graph extends Search {
         foreach($params as $key => $value){
             $node->setProperty($key, $value)->save();
         }
+	}
+    
+   	/**
+     * Function to edit a property in Neo4j from a universal array of $params using specified 'username'.
+	 * @access public
+     * @param array key/value of $params['username'] of the user to be updated.
+	 * @param array of key/value pairs to update properties.
+	 */
+	public function editProperties(array $params) {
         
-        return $node;
+        $client = new Client(new Transport($this->_neo4jHref, $this->_neo4jPort));
+        $node = $client->findOne('username', $params['username']);
+        unset($params['username']);
+        
+        foreach($params as $key => $value){
+            $node->setProperty($key, $value)->save();
+        }
 	}
 
 	/**
