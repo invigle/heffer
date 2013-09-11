@@ -31,9 +31,9 @@ class FrontEndUIs {
 	public function renderHeader($pageTitle) {
 		$html = "<!DOCTYPE HTML>
                     <html>";
-        $html .= '<head>
+        $html .= "<head>
                     <title>{$pageTitle}</title>
-                </head>';
+                </head>";
         return $html;
 	}
 
