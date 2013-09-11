@@ -14,5 +14,5 @@ $pageTitle = 'testing';
         $html .= '<head>
                     <title>{$pageTitle}</title>
                 </head>';
-        return $html;
+        echo $html;
 ?>
