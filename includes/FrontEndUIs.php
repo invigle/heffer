@@ -13,6 +13,14 @@ class FrontEndUIs {
 		// Not yet implemented
 	}
 
+    /**
+     * This function renders the top nav bar
+	 * @access public
+	 */
+	public function renderTopNav() {
+		// Not yet implemented
+	}
+
 	/**
 	 * @access public
 	 * @param aGID
