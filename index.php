@@ -10,5 +10,5 @@ $nodeParams['password'] = "helloABC123";
 
 
 $graph = new Graph();
-$test = $graph->editProperties($nodeParams);
+$test = $graph->addNode($nodeParams);
 ?>
