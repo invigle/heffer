@@ -5,8 +5,15 @@
  * @copyright 2013
  */
 
-include("includes/xhp/php-lib/init.php");
+require_once("includes/xhp/php-lib/init.php");
 
-echo <div> test </div>;
+		$html = "<!DOCTYPE HTML>";
+        $html += <html>
+                <head>
+                    <title>belh</title>
+                </head>
+                <div>test</div>;
+                
+        echo $html;
 
 ?>

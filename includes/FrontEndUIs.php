@@ -26,11 +26,12 @@ class FrontEndUIs {
 	 * @access public
 	 */
 	public function renderHeader($pageTitle) {
-		echo <!DOCTYPE HTML>
-                <html>
+		$html = "<!DOCTYPE HTML>";
+        $html += <html>
                 <head>
                     <title>{$pageTitle}</title>
                 </head>;
+        return $html;
 	}
 
 	/**
