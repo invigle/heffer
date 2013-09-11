@@ -7,6 +7,6 @@
 
 include("includes/xhp/php-lib/init.php");
 
-echo <!DOCTYPE HTML>;
+echo <div> test </div>;
 
 ?>
