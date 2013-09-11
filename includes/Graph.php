@@ -72,7 +72,8 @@ class Graph extends Search {
         
         $index->add($node, $params['indexBy'], $node->getProperty($params['indexBy']));
         
-        echo $index->query('username:dilbert*')->getProperty('firstname') . "\n";
+        $arr = $index->query('username:dilbert*');
+        var_dump($arr);
 	}
     
    	/**
