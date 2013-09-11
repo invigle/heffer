@@ -31,6 +31,7 @@ class Graph extends Search {
 	public $_resultLimit;
 	public $_skip;
     public $_status; //inactive/active as we do not delete users from Neo4j
+    public $_indexBy;
     
     /** @var string neo4j href */
     private $_neo4jHref;
@@ -60,6 +61,8 @@ class Graph extends Search {
         
         $client = new Client(new Transport($this->_neo4jHref, $this->_neo4jPort));
         $node = new Node($client);
+                
+        new NodeIndex($client, $params['indexBy']);
         
         foreach($params as $key => $value){
             $node->setProperty($key, $value)->save();
@@ -75,7 +78,7 @@ class Graph extends Search {
 	public function editProperties(array $params) {
         
         $client = new Client(new Transport($this->_neo4jHref, $this->_neo4jPort));
-        $node = $actorIndex->queryOne("username:dilbert101")->getNode();        
+        $node = $client->queryOne("username:dilbert101")->getNode();        
         unset($params['username']);
         
         foreach($params as $key => $value){
