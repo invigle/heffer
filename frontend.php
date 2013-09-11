@@ -12,6 +12,6 @@ require_once("bootstrap.php");
 
 $frontEnd = new FrontEndUIs();
 
-echo $frontEnd->renderHeader('testheader');
+echo $frontEnd->renderHeader('test2');
 
 ?>
