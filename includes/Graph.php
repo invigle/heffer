@@ -68,7 +68,7 @@ class Graph extends Search {
 	 * @param aID
 	 */
 	public function deleteNode($aID) {
-		// Manos
+		// Manos Panaousis
 	}
 
 	/**
