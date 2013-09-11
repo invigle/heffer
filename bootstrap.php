@@ -9,7 +9,9 @@ spl_autoload_register(function ($sClass) {
 	if (file_exists($sClassPath)) {
 		require($sClassPath);
 	}
-    echo "<pre>{var_dump($sClassPath)}</pre>";
+    echo "<pre>";
+    var_dump($sClassPath);
+    echo "</pre>";
 });
 
 ?>
