@@ -87,8 +87,8 @@ class Graph extends Search {
             print_r($node);
             print '</pre><hr>';
                 
-        unset($params['indexBy']);
-        unset($params['username']);
+        //unset($params['indexBy']);
+        //unset($params['username']);
         
         foreach($params as $key => $value){
             $node->setProperty($key, $value)->save();
