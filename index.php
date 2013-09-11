@@ -2,7 +2,7 @@
 require_once("includes/Graph.php");
 
 $nodeParams['indexBy'] = "username";
-$nodeParams['username'] = "dilbegdrt10dghgfg1";
+$nodeParams['username'] = "dilbertgdrt10dghgfg1";
 $nodeParams['firstname'] = "Dilbedfsdrt";
 $nodeParams['lastname'] = "Smfgdfgith";
 $nodeParams['email'] = "dilbert@smitdfgh.com";
