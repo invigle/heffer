@@ -2,11 +2,11 @@
 require_once("includes/Graph.php");
 
 $nodeParams['indexBy'] = "username";
-$nodeParams['username'] = "dilbert101";
-$nodeParams['firstname'] = "Dilbert";
-$nodeParams['lastname'] = "Smith";
-$nodeParams['email'] = "dilbert@smith.com";
-$nodeParams['password'] = "helloABC123";
+$nodeParams['username'] = "dilbegdrt10dghgfg1";
+$nodeParams['firstname'] = "Dilbedfsdrt";
+$nodeParams['lastname'] = "Smfgdfgith";
+$nodeParams['email'] = "dilbert@smitdfgh.com";
+$nodeParams['password'] = "helloABC1gdfgd23";
 
 
 $graph = new Graph();
