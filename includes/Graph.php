@@ -82,33 +82,36 @@ class Graph extends Search {
 	public function editProperties(array $params) {
         $index = new NodeIndex($this->_client, $params['indexBy']);
         $node = $index->queryOne("$params[indexBy]:$params[username]");
-            
-            print 'PRE:<pre>';
-            print_r($node);
-            print '</pre><hr>';
                 
-        //unset($params['indexBy']);
-        //unset($params['username']);
+        unset($params['indexBy']);
+        unset($params['username']);
         
         foreach($params as $key => $value){
             $node->setProperty($key, $value)->save();
         }
         
-        $index2 = new NodeIndex($this->_client, $params['indexBy']);
-        $node2 = $index2->queryOne("$params[indexBy]:$params[username]");
-            print 'POST:<pre>';
-            print_r($node2);
-            print '</pre>';
-        
 	}
 
 	/**
-     * Function to delete node from Neo4j from a node ID
+     * Function to delete node from Neo4j using an array containing 'indexBy' and 'indexValue'
 	 * @access public
-	 * @param aID
+	 * @param array
 	 */
-	public function deleteNode($aID) {
- 
+	public function deleteNode(array $params) {
+        $index = new NodeIndex($this->_client, $params['indexBy']);
+        $node = $index->queryOne("$params[indexBy]:$params[indexValue]");
+        
+        $node->delete();
+	}
+    
+    /**
+     * Function to delete node from Neo4j using the nodeID.
+	 * @access public
+	 * @param $aID
+	 */
+	public function deleteNodeByID($aID) {
+        $node->$this->_client->getNode($aID);        
+        $node->delete();
 	}
 
 	/**
@@ -118,7 +121,9 @@ class Graph extends Search {
 	 * @param aType
 	 */
 	public function addConnection($aID1, $aID2, $aType) {
-		// Not yet implemented
+        $node1->$this->_client->getNode($aID1);
+        $node2->$this->_client->getNode($aID2);
+        $node1->relateTo($node2, "$aType")->save();
 	}
 
 	/**
@@ -128,7 +133,7 @@ class Graph extends Search {
 	 * @param aType
 	 */
 	public function deleteConnection($aID1, $aID2, $aType) {
-		// Not yet implemented
+		
 	}
 
 	/**
@@ -139,14 +144,6 @@ class Graph extends Search {
 	 * @param aLimit
 	 */
 	public function listNodes($aID, $aType, $aSkip, $aLimit) {
-		// Not yet implemented
-	}
-
-	/**
-	 * @access public
-	 * @param aID
-	 */
-	public function getIndex($aID) {
 		// Not yet implemented
 	}
 }

@@ -1,15 +1,10 @@
 <?php
 require_once("includes/Graph.php");
 
-$nodeParams['indexBy'] = "username";
-$nodeParams['username'] = "seamore101";
-
-$nodeParams['firstname'] = "Seamore";
-$nodeParams['lastname'] = "Butts";
-$nodeParams['email'] = "seamore@butts2002.com";
-$nodeParams['password'] = "l337P455";
-
+$id1 = "6";
+$id2 = "19";
+$type = "FRIEND_OF";
 
 $graph = new Graph();
-$test = $graph->editProperties($nodeParams);
+$test = $graph->addConnection($id1, $id2, $type);
 ?>
