@@ -16,22 +16,22 @@ use Everyman\Neo4j\Client,
  * @author Grant
  */
 class Graph extends Search {
-	public $_friends;
-	public $_frendsOfFriends;
-	public $_event;
-	public $_group;
-	public $_page;
-	public $_user;
-	public $_location;
-	public $_rangeLoc;
-	public $_isPhoto;
-	public $_university;
-	public $_sourceID;
-	public $_edgeType;
-	public $_resultLimit;
-	public $_skip;
-    public $_status; //inactive/active as we do not delete users from Neo4j
-    public $_indexBy;
+	private $_friends;
+	private $_frendsOfFriends;
+	private $_event;
+	private $_group;
+	private $_page;
+	private $_user;
+	private $_location;
+	private $_rangeLoc;
+	private $_isPhoto;
+	private $_university;
+	private $_sourceID;
+	private $_edgeType;
+	private $_resultLimit;
+	private $_skip;
+    private $_status; //inactive/active as we do not delete users from Neo4j
+    private $_indexBy;
     
     /** @var string neo4j href */
     private $_neo4jHref;
@@ -73,9 +73,6 @@ class Graph extends Search {
         $index->add($node, $params['indexBy'], $node->getProperty($params['indexBy']));
         
         $arr = $index->query('username:dilbert*');
-        print '<pre>';
-        print_r($arr);
-        print '</pre>';
 	}
     
    	/**
@@ -88,8 +85,11 @@ class Graph extends Search {
         
         $client = new Client(new Transport($this->_neo4jHref, $this->_neo4jPort));
         
-        //$node = $client->queryOne("username:dilbert101")->getNode();
+        $index = new NodeIndex($this->_client, $params['indexBy']);
+        $arr = $index->queryOne("$params[indexBy]:$params[username]")->getProperty('id');
         
+        print "Node ID: $arr";
+                
         unset($params['indexBy']);
         unset($params['username']);
         

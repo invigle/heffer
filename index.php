@@ -6,9 +6,9 @@ $nodeParams['username'] = "dilbertgdrt10dghgfg1";
 $nodeParams['firstname'] = "Dilbedfsdrt";
 $nodeParams['lastname'] = "Smfgdfgith";
 $nodeParams['email'] = "dilbert@smitdfgh.com";
-$nodeParams['password'] = "helloABC1gdfgd23";
+$nodeParams['password'] = "pa55w0rd";
 
 
 $graph = new Graph();
-$test = $graph->addNode($nodeParams);
+$test = $graph->editProperties($nodeParams);
 ?>
