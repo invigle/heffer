@@ -7,11 +7,12 @@
 
 require_once("includes/xhp/php-lib/init.php");
 
+$pageTitle = 'testing';
+
         $html = "<!DOCTYPE HTML>
                     <html>";
-        $html .= <head>
-                    <title>testing</title>
-                </head>;
-        echo $html;
-
+        $html .= '<head>
+                    <title>{$pageTitle}</title>
+                </head>';
+        return $html;
 ?>
