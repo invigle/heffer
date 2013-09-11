@@ -71,13 +71,7 @@ class Graph extends Search {
 	public function editProperties(array $params) {
         
         $client = new Client(new Transport($this->_neo4jHref, $this->_neo4jPort));
-        $node = $client->find('username', $params['username']);
-        
-        print '<pre>';
-        print_r($node);
-        print '</pre>';
-        die();
-        
+        $node = $actorIndex->queryOne("username:$params[usename]")->getNode();        
         unset($params['username']);
         
         foreach($params as $key => $value){
