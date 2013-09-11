@@ -9,7 +9,7 @@ require_once("includes/xhp/php-lib/init.php");
 
         $html = "<!DOCTYPE HTML>
                     <html>";
-        $html += <head>
+        $html =+ <head>
                     <title>testing</title>
                 </head>;
         echo $html;
