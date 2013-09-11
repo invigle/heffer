@@ -4,10 +4,10 @@
  * @author Grant Millar
  * @copyright 2013
  */
- require_once("bootstrap.php");
+ 
  use Invigle\FrontEndUIs;
 
-
+require_once("bootstrap.php");
 
 $frontEnd = new FrontEndUIs();
 
