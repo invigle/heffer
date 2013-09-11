@@ -1,5 +1,8 @@
 <?php
-require_once("includes/Graph.php");
+
+use Invigle\Graph;
+
+require_once("bootstrap.php");
 
 $id1 = "6";
 $id2 = "19";
