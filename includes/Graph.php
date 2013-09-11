@@ -37,11 +37,14 @@ class Graph extends Search {
     private $_neo4jHref;
     /** @var string neo4j port */
     private $_neo4jPort;
+    /** @var class neo4j connection */
+    private $_client;
     
     public function __construct()
     {
         $this->_neo4jHref = "boss.invigle.com";
         $this->_neo4jPort = "8001";
+        $this->_client = new Client(new Transport($this->_neo4jHref, $this->_neo4jPort));
     }
 
 	/**
@@ -59,10 +62,9 @@ class Graph extends Search {
 	 */
 	public function addNode(array $params) {
         
-        $client = new Client();
-        $index = new NodeIndex($client, $params['indexBy']);
+        $index = new NodeIndex($this->_client, $params['indexBy']);
         
-        $node = $client->makeNode()->save();
+        $node = $this->_client->makeNode()->save();
         
         foreach($params as $key => $value){
             $node->setProperty($key, $value)->save();
