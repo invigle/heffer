@@ -7,8 +7,8 @@
 
 require_once("includes/xhp/php-lib/init.php");
 
-		$html = "<!DOCTYPE HTML>";
-        $html += <html>
+		//$html = "<!DOCTYPE HTML>";
+        $html = <html>
                 <head>
                     <title>belh</title>
                 </head>
