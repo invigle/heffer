@@ -12,7 +12,7 @@ $pageTitle = 'testing';
         $html = "<!DOCTYPE HTML>
                     <html>";
         $html .= "<head>
-                    <title>{$_POST['name']}</title>
+                    <title>{$_GET['name']}</title>
                 </head>";
         echo $html;
 ?>
