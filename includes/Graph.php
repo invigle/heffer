@@ -94,10 +94,10 @@ class Graph extends Search {
             $node->setProperty($key, $value)->save();
         }
         
-        $index = new NodeIndex($this->_client, $params['indexBy']);
-        $node = $index->queryOne("$params[indexBy]:$params[username]");
+        $index2 = new NodeIndex($this->_client, $params['indexBy']);
+        $node2 = $index2->queryOne("$params[indexBy]:$params[username]");
             print 'POST:<pre>';
-            print_r($node);
+            print_r($node2);
             print '</pre>';
         
 	}
