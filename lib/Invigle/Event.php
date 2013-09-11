@@ -1,4 +1,7 @@
 <?php
+
+namespace Invigle;
+
 /**
 * @access private
 * 

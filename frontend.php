@@ -5,7 +5,8 @@
  * @copyright 2013
  */
  
- use Invigle\FrontEndUIs;
+use Invigle\FrontEndUIs,
+    Invigle\User;
 
 require_once("bootstrap.php");
 
