@@ -135,7 +135,7 @@ class Graph extends Search {
 	 */
 	public function deleteConnection($aID1, $aID2, $aType) {
 		$node1 = $this->_client->getNode($aID1);
-        $node1rels = $node1->getRelationships();
+        $node1rels = $arthur->getRelationships(array('FRIEND_OF'));
         
         print '<pre>';
         print_r($node1rels);
