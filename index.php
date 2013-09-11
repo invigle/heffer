@@ -6,7 +6,7 @@ $nodeParams['username'] = "seamore101";
 
 $nodeParams['firstname'] = "Seamore";
 $nodeParams['lastname'] = "Butts";
-$nodeParams['email'] = "seamore@butts.com";
+$nodeParams['email'] = "seamore@butts2002.com";
 $nodeParams['password'] = "l337P455";
 
 

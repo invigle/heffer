@@ -80,22 +80,26 @@ class Graph extends Search {
 	 * @param array of key/value pairs to update properties.
 	 */
 	public function editProperties(array $params) {
-        
-        $client = new Client(new Transport($this->_neo4jHref, $this->_neo4jPort));
-        
         $index = new NodeIndex($this->_client, $params['indexBy']);
         $node = $index->queryOne("$params[indexBy]:$params[username]");
-        
-        print '<pre>';
-        print_r($node);
-        print '</pre>';
+            
+            print 'PRE:<pre>';
+            print_r($node);
+            print '</pre><hr>';
                 
-        unset($params['indexBy']);
-        unset($params['username']);
+        //unset($params['indexBy']);
+        //unset($params['username']);
         
         foreach($params as $key => $value){
             $node->setProperty($key, $value)->save();
         }
+        
+        $index2 = new NodeIndex($this->_client, $params['indexBy']);
+        $node2 = $index2->queryOne("$params[indexBy]:$params[username]");
+            print 'POST:<pre>';
+            print_r($node2);
+            print '</pre>';
+        
 	}
 
 	/**
