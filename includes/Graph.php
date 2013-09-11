@@ -59,14 +59,18 @@ class Graph extends Search {
 	 */
 	public function addNode(array $params) {
         
-        $client = new Client(new Transport($this->_neo4jHref, $this->_neo4jPort));
-        $node = new Node($client);
-                
-        new NodeIndex($client, $params['indexBy']);
+        $client = new Client();
+        $index = new NodeIndex($client, $params['indexBy']);
+        
+        $node = $client->makeNode()->save();
         
         foreach($params as $key => $value){
             $node->setProperty($key, $value)->save();
         }
+        
+        $index->add($node, $params['indexBy'], $node->getProperty($params['indexBy']));
+        
+        die("Index: $index");
 	}
     
    	/**
@@ -78,7 +82,10 @@ class Graph extends Search {
 	public function editProperties(array $params) {
         
         $client = new Client(new Transport($this->_neo4jHref, $this->_neo4jPort));
-        $node = $client->queryOne("username:dilbert101")->getNode();        
+        
+        //$node = $client->queryOne("username:dilbert101")->getNode();
+        
+        unset($params['indexBy']);
         unset($params['username']);
         
         foreach($params as $key => $value){
