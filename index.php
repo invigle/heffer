@@ -6,5 +6,5 @@ $id2 = "19";
 $type = "FRIEND_OF";
 
 $graph = new Graph();
-$test = $graph->addConnection($id1, $id2, $type);
+$test = $graph->deleteConnection($id1, $id2, $type);
 ?>

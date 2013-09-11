@@ -114,7 +114,7 @@ class Graph extends Search {
 	 * @param $aID
 	 */
 	public function deleteNodeByID($aID) {
-        $node->$this->_client->getNode($aID);        
+        $node = $this->_client->getNode($aID);        
         $node->delete();
 	}
 
@@ -125,13 +125,10 @@ class Graph extends Search {
 	 * @param aType
 	 */
 	public function addConnection($aID1, $aID2, $aType) {
-        $node1->$this->_client->getNode(int($aID1));
-        //$node2->$this->_client->getNode($aID2);
-        //$node1->relateTo($node2, "$aType")->save();
+        $node1 = $this->_client->getNode($aID1);
+        $node2 = $this->_client->getNode($aID2);
         
-        print '<pre>';
-        print_r($node1);
-        print '</pre>';
+        $node1->relateTo($node2, "$aType")->save();
 	}
 
 	/**
@@ -141,7 +138,12 @@ class Graph extends Search {
 	 * @param aType
 	 */
 	public function deleteConnection($aID1, $aID2, $aType) {
-		
+		$node1 = $this->_client->getNode($aID1);
+        $node1rels = $node1->getRelationships(array('FRIEND_OF'));
+        
+        print '<pre>';
+        print_r($node1rels);
+        print '</pre>';
 	}
 
 	/**
