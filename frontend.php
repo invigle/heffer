@@ -4,15 +4,13 @@
  * @author Grant Millar
  * @copyright 2013
  */
+ 
+ use Invigle\FrontEndUIs;
 
-require_once("includes/xhp/php-lib/init.php");
+require_once("bootstrap.php");
 
-$pageTitle = 'testing';
+$frontEnd = new FrontEndUIs();
 
-        $html = "<!DOCTYPE HTML>
-                    <html>";
-        $html .= "<head>
-                    <title>{$_GET['name']}</title>
-                </head>";
-        echo $html;
+$frontEnd->renderHeader(testheader);
+
 ?>
