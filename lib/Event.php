@@ -1,7 +1,4 @@
 <?php
-
-namespace Invigle;
-
 /**
 * @access private
 * 
@@ -81,7 +78,17 @@ class Event {
 	public function getEventName(){
 		return $this->_name;
 	}
-
+    
+	/**
+	* This method sets the name of the event.
+	* @access public
+    * @param name (string)
+	* @return boolean
+	*/
+	public function setEventName($name){
+		$this->_name = $name;
+	}
+    
 	/**
 	* This method returns the date of the event.
 	* @access public
@@ -90,7 +97,17 @@ class Event {
 	public function getEventDate(){
 		return $this->_date;
 	}
-
+    
+    /**
+	* This method sets the date of the event.
+	* @access public
+    * @param date (date)
+	* @return boolean
+	*/
+	public function setEventDate($date){
+		$this->_date = $date;
+	}
+    
 	/**
 	* This method returns the category of the event.
 	* @access public
@@ -99,7 +116,17 @@ class Event {
 	public function getEventCategory(){
 		return $this->_category;
 	}
-
+    
+    /**
+	* This method sets the category of the event.
+	* @access public
+    * @param category (string))
+	* @return boolean
+	*/
+	public function setEventCategory($category){
+		$this->_category = $category;
+	}
+    
 	/**
 	* This method returns the description of the event.
 	* @access public
@@ -108,7 +135,17 @@ class Event {
 	public function getEventDescription(){
 		return $this->_description;
 	}
-
+    
+    /**
+	* This method sets the description of the event.
+	* @access public
+    * @param description (string)
+	* @return boolean
+	*/
+	public function setEventDescription($description){
+		$this->_description = $description;
+	}
+ 
 	/**
 	* This method returns the privacy of the event.
 	* @access public
@@ -117,7 +154,17 @@ class Event {
 	public function getEventPrivacy(){
 		return $this->_privacy;
 	}
-
+    
+    /**
+	* This method sets the privacy of the event.
+	* @access public
+    * @param privacy (boolean)
+	* @return boolean
+	*/
+	public function setEventPrivacy($privacy){
+		$this->_privacy = $privacy;
+	}
+    
 	/**
 	* This method returns the ID of the event.
 	* @access public
@@ -125,6 +172,16 @@ class Event {
 	*/
 	public function getEventId(){
 		return $this->_eID;
+	}
+    
+    /**
+	* This method sets the ID of the event.
+	* @access public
+    * @param id (integer)
+	* @return boolean
+	*/
+	public function setEventId($id){
+		$this->_eID = $id;
 	}
 
 	/**
@@ -135,7 +192,16 @@ class Event {
 	public function getEventInstitution(){
 		return $this->_institution;
 	}
-
+    /**
+	* This method sets the institution of the event.
+	* @access public
+    * @param $institution (string)
+	* @return boolean
+	*/
+	public function setEventInstitution($institution){
+		$this->_institution = $institution;
+	}
+    
 	/**
 	* This method returns the ID of the organiser of the event.
 	* @access public
@@ -144,6 +210,17 @@ class Event {
 	public function getEventOrganiserId(){
 		return $this->_uID;
 	}
+    
+    /**
+	* This method sets the ID of the organiser of the event.
+	* @access public
+    * @param id (integer)
+	* @return boolean
+	*/
+	public function setEventOrganiserId($id){
+		$this->_uID = $id;
+	}
+    
 
 	/**
 	* This method returns the ID of the group which organises the event.
@@ -234,7 +311,6 @@ class Event {
 	public function getEventTimestamp(){
 		return $this->_timestamp;
 	}
+    
 }
-
-
 ?>
