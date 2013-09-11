@@ -1,21 +1,21 @@
 <?php
 /**
  * @access public
- * @author Grant
+ * @author GGM //Grant-Gavin-Manos
  */
-class Comment {
-	public $_comment;
-	public $_date;
-	public $_cID;
-	public $_sID;
-	public $_pHID;
-	public $_eID;
-	public $_gID;
-	public $_uID;
-	public $_pID;
+ class Comment {
+	private $_comment;
+	private $_date;
+  private	$_cID;
+	private $_sID;
+  private $_pHID;
+	private $_eID;
+	private $_gID;
+	private $_uID;
+	private $_pID;
 
 	/**
-	 * @access public
+	 * @access private
 	 * @param aDataArray
 	 */
 	public function createComment($aDataArray) {
@@ -23,7 +23,7 @@ class Comment {
 	}
 
 	/**
-	 * @access public
+	 * @access private
 	 * @param aCID
 	 */
 	public function deleteComment($aCID) {
@@ -31,7 +31,7 @@ class Comment {
 	}
 
 	/**
-	 * @access public
+	 * @access private
 	 * @param aDataArray
 	 */
 	public function editComment($aDataArray) {
