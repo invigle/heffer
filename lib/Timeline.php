@@ -1,21 +1,24 @@
 <?php
+
+namespace Invigle;
+
 /**
  * @access public
  * @author Grant
  */
-class Newsfeeda {
+class Timeline {
 
 	/**
 	 * @access public
 	 */
-	public function createNewsfeed() {
+	public function createTimeline() {
 		// Not yet implemented
 	}
 
 	/**
 	 * @access public
 	 */
-	public function updateNewsfeed() {
+	public function updateTimeline() {
 		// Not yet implemented
 	}
 }

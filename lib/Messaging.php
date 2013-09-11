@@ -1,4 +1,7 @@
 <?php
+
+namespace Invigle;
+
 /**
  * The conversation node will be connected to the participants via the conversation edges.
  * The actual message node will have an edge from the conversation node to the message node daisy-chained in a chronological order.

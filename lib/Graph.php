@@ -1,5 +1,9 @@
 <?php
-require_once(realpath(dirname(__FILE__)) . '/Search.php');
+
+namespace Invigle;
+
+use Invigle\Search;
+
 require_once(realpath(dirname(__FILE__)) . '/neo4jphp.phar');
 
 use Everyman\Neo4j\Client,

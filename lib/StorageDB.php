@@ -1,5 +1,8 @@
 <?php
-require_once(realpath(dirname(__FILE__)) . '/Search.php');
+
+namespace Invigle;
+
+use Invigle\Search;
 
 /**
  * @access public
