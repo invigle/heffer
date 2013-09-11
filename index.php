@@ -7,6 +7,6 @@ $nodeParams['email'] = "dilbert@smith.com";
 $nodeParams['password'] = "helloABC123";
 $nodeParams['username'] = "dilbert101";
 
-$graph = new editProperties();
-$test = $graph->addNode($nodeParams);
+$graph = new Graph();
+$test = $graph->editProperties($nodeParams);
 ?>
