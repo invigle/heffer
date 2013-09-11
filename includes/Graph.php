@@ -73,7 +73,7 @@ class Graph extends Search {
         $index->add($node, $params['indexBy'], $node->getProperty($params['indexBy']));
         $rtn = $index->queryOne("$params[indexBy]:$params[username]");
         print '<pre>';
-        print_r($rtn);
+        print_r($rtn['id']);
         print '</pre>';
 	}
     
