@@ -192,7 +192,7 @@ class Event {
 	* @access public
 	* @return integer
 	*/
-	public function getNumberOfEventInvitees()){
+	public function getNumberOfEventInvitees(){
 		return $this->_invitedCount;
 	}
 
@@ -201,7 +201,7 @@ class Event {
 	* @access public
 	* @return string
 	*/
-	public function getEventType()){
+	public function getEventType(){
 		return $this->_eventType;
 	}
 
@@ -210,7 +210,7 @@ class Event {
 	* @access public
 	* @return integer
 	*/
-	public function getEventPage()){
+	public function getEventPage(){
 		return $this->_pID;
 	}
 
@@ -219,7 +219,7 @@ class Event {
 	* @access public
 	* @return integer
 	*/
-	public function getEventProfPicId()){
+	public function getEventProfPicId(){
 		return $this->_profilePicID;
 	}
 
@@ -228,7 +228,7 @@ class Event {
 	* @access public
 	* @return date
 	*/
-	public function getEventTimestamp()){
+	public function getEventTimestamp(){
 		return $this->_timestamp;
 	}
 }
