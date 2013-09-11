@@ -11,8 +11,8 @@ $pageTitle = 'testing';
 
         $html = "<!DOCTYPE HTML>
                     <html>";
-        $html .= '<head>
+        $html .= "<head>
                     <title>{$pageTitle}</title>
-                </head>';
+                </head>";
         echo $html;
 ?>
