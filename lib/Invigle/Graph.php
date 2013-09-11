@@ -4,7 +4,7 @@ namespace Invigle;
 
 use Invigle\Search;
 
-require_once(realpath(dirname(__FILE__)) . '../neo4jphp.phar');
+require_once(realpath(dirname(__FILE__)) . '/../neo4jphp.phar');
 
 use Everyman\Neo4j\Client,
     Everyman\Neo4j\Transport,
