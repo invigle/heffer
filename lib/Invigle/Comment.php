@@ -44,8 +44,8 @@ class Comment
 	{
 		// Not yet implemented
 	}
- 
-    /**
+
+	/**
 	 * This method returns a comment
 	 * @access public
 	 * @return string
@@ -54,8 +54,8 @@ class Comment
 	{
 		return $this->_comment;
 	}
-    
-    /**
+
+	/**
 	 * This method sets a comment.
 	 * @access public
 	 * @param $comment (string)
@@ -65,8 +65,8 @@ class Comment
 	{
 		$this->_comment = $comment;
 	}
-    
-     /**
+
+	/**
 	 * This method returns the date of the comment
 	 * @access public
 	 * @return timestamp
@@ -75,8 +75,8 @@ class Comment
 	{
 		return $this->_date;
 	}
-    
-    /**
+
+	/**
 	 * This method sets the date of a comment.
 	 * @access public
 	 * @param $date (timestamp)
@@ -86,8 +86,8 @@ class Comment
 	{
 		$this->_date = $date;
 	}
-    
-    /**
+
+	/**
 	 * This method returns the ID of the comment.
 	 * @access public
 	 * @return integer
@@ -108,28 +108,49 @@ class Comment
 		$this->_cID = $id;
 	}
 
-    /**
-	 * This method returns the ID of the user who posted the comment.
+	/**
+	 * This method returns the ID of the status the comment was posted on.
 	 * @access public
 	 * @return integer
 	 */
-	public function getCommentUserId()
+	public function getCommentStatusId()
 	{
-		return $this->_uID;
+		return $this->_sID;
 	}
 
 	/**
-	 * This method sets the ID of the user who posted the comment.
+	 * This method sets the ID of the status the comment was posted on.
 	 * @access public
 	 * @param id (integer)
 	 * @return boolean
 	 */
-	public function setCommentUserId($id)
+	public function setCommentStatusId($id)
 	{
-		$this->_uID = $id;
+		$this->_sID = $id;
 	}
-    
-    /**
+
+	/**
+	 * This method returns the ID of the photo the comment was posted on.
+	 * @access public
+	 * @return integer
+	 */
+	public function getCommentPhotoId()
+	{
+		return $this->_pHID;
+	}
+
+	/**
+	 * This method sets the ID of the photo the comment was posted on.
+	 * @access public
+	 * @param id (integer)
+	 * @return boolean
+	 */
+	public function setCommentPhotoId($id)
+	{
+		$this->_pHID = $id;
+	}
+
+	/**
 	 * This method returns the ID of the event the comment was posted on its timeline.
 	 * @access public
 	 * @return integer
@@ -149,13 +170,70 @@ class Comment
 	{
 		$this->_eID = $id;
 	}
-    
-    
-    
-    
-    
-    
-    
+
+	/**
+	 * This method returns the ID of the group the comment was posted on its timeline.
+	 * @access public
+	 * @return integer
+	 */
+	public function getCommentGroupId()
+	{
+		return $this->_gID;
+	}
+
+	/**
+	 * This method sets the ID of the group the comment was posted on its timeline.
+	 * @access public
+	 * @param id (integer)
+	 * @return boolean
+	 */
+	public function setCommentGroupId($id)
+	{
+		$this->_gID = $id;
+	}
+
+	/**
+	 * This method returns the ID of the user who posted the comment.
+	 * @access public
+	 * @return integer
+	 */
+	public function getCommentUserId()
+	{
+		return $this->_uID;
+	}
+
+	/**
+	 * This method sets the ID of the user who posted the comment.
+	 * @access public
+	 * @param id (integer)
+	 * @return boolean
+	 */
+	public function setCommentUserId($id)
+	{
+		$this->_uID = $id;
+	}
+
+	/**
+	 * This method returns the ID of the page who the comment was posted on its timeline.
+	 * @access public
+	 * @return integer
+	 */
+	public function getCommentPageId()
+	{
+		return $this->_pID;
+	}
+
+	/**
+	 * This method sets the ID of the page who the comment was posted on its timeline.
+	 * @access public
+	 * @param id (integer)
+	 * @return boolean
+	 */
+	public function setCommentPageId($id)
+	{
+		$this->_pID = $id;
+	}
+
 }
 
 ?>

@@ -43,12 +43,26 @@ class User {
      * @param username
      * @return boolean (true if Available, false if Taken)
      */
-    public function validateUsername($username)
+    public function validateUsername($username, Graph $graph)
     {
+<<<<<<< HEAD
+        //$graph = new Graph();
+        $check['indexBy'] = "username";
+        $check['indexValue'] = $username;
+        $api = $graph->findNodeId($check);
+=======
         $graph = new Graph();
         $check['query'] = "MATCH n:User WHERE n.username = \"$username\" RETURN count(*);";
         $api = $graph->neo4japi('cypher', 'JSONPOST', $check);
         
+<<<<<<< HEAD
+=======
+        print '<pre>';
+        print_r($api);
+        print '</pre>';
+>>>>>>> 762c7b4d2377345a06fe1316e7b10cf48d75cfd9
+        
+>>>>>>> d30a9b623711ac91046333d267802b13c7dd52b2
         if($api['data'][0][0] >= "1"){
             return false;
         }else{
@@ -64,9 +78,15 @@ class User {
     public function validateEmailAddress($email)
     {
         $graph = new Graph();
+<<<<<<< HEAD
+        $check['indexBy'] = "email";
+        $check['indexValue'] = $email;
+        $api = $graph->findNodeId($check);
+=======
         
         $check['query'] = "MATCH n:User WHERE n.email = \"$email\" RETURN count(*);";
         $api = $graph->neo4japi('cypher', 'JSONPOST', $check);
+>>>>>>> 762c7b4d2377345a06fe1316e7b10cf48d75cfd9
         
         if($api['data'][0][0] >= "1"){
             return false;
