@@ -1,9 +1,8 @@
 <?php
-namespace Invigle\Graph;
-include("bootstrap.php");
+namespace Invigle;
+require_once("bootstrap.php");
 
 $graph = new Graph();
-
 $arr = $graph->neo4japi("/node/6");
 
 print 'WORK:<hr><pre>';
