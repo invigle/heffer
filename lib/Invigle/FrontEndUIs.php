@@ -18,10 +18,11 @@ abstract class FrontEndUIs
 {
 
     protected $_pageTitle;
+    protected $UITools;
 
     public function __construct()
     {
-        
+        $this->UITools = new UITools();
     }
 
     /**
@@ -49,7 +50,6 @@ abstract class FrontEndUIs
      */
     public function renderTopNav()
     {
-        $UITools = new UITools();
         return '<div class="navbar navbar-inverse navbar-fixed-top">
                     <div class="container">
                         <div class="navbar-header">
@@ -58,7 +58,7 @@ abstract class FrontEndUIs
                                 <span class="icon-bar"></span>
                                 <span class="icon-bar"></span>
                             </button>
-                            '.$UITools->renderSmallLogo().'
+                            '.$this->UITools->renderSmallLogo().'
                         </div>
                         <div class="collapse navbar-collapse">
                             <ul class="nav navbar-nav">
