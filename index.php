@@ -1,7 +1,7 @@
 <?php
 
-function apiCall() {
-	$url = "http://boss.invigle.com:8001/db/data/node/6";
+function apiCall($input) {
+	$url = "http://boss.invigle.com:8001/db/data/$input[path]";
 
 	$ch = curl_init();
 	curl_setopt($ch, CURLOPT_URL, $url);
@@ -15,7 +15,10 @@ function apiCall() {
     return json_decode($data, true);
 }
 
-$arr = apiCall();
+
+$api['path'] = "nodes";
+
+$arr = apiCall($api);
 print 'WORK:<hr><pre>';
 print_r($arr);
 print '</pre>';
