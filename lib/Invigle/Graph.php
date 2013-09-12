@@ -86,22 +86,23 @@ class Graph {
        unset($params['indexBy'], $params['indexValue']);
        
        //Copy all existing params into a new array checking recursively for updates in the params argument.
+       $newParams = $params;
        foreach($api['data'][0][0]['data'] as $key => $value){
             if(isset($params[$key])){
-                $params[$key] = $value;
+                $newPparams[$key] = $value;
             }else{
-                $params[$key] = $value;
+                $newPparams[$key] = $value;
             }
        }
  
        //Update the nodes Properties
-       $nodePath = "node/$nodeId/properties";
-       $setApi = $this->neo4japi($nodePath, 'PUT', $params);
+       //$nodePath = "node/$nodeId/properties";
+       //$setApi = $this->neo4japi($nodePath, 'PUT', $params);
        
        print "NODE ID: $nodeId<hr>";
        print '<pre>';
        print_r($api);
-       print_r($params);
+       print_r($newParams);
        print '</pre>';
 	}
 
