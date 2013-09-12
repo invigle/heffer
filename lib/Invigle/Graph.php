@@ -57,6 +57,9 @@ class Graph {
         }elseif($type === "JSONPOST"){
             curl_setopt( $ch, CURLOPT_POSTFIELDS, json_encode($postfields));
             curl_setopt( $ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
+        }elseif($type === "PUT"){
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+            curl_setopt($ch, CURLOPT_POSTFIELDS,http_build_query($postfields));
         }
     	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     	$data = curl_exec($ch);
@@ -67,23 +70,29 @@ class Graph {
     }
     
    	/**
-     * Function to edit a property in Neo4j from a universal array of $params using specified 'username'.
+     * Function to edit a property in Neo4j from a universal array of $params using indexBy and indexValue to identify the nodes ID#.
 	 * @access public
-     * @param array key/value of $params['username'] of the user to be updated.
 	 * @param array of key/value pairs to update properties.
 	 */
-	public function editProperties(array $params) {
-	   
+	public function editProperties(array $params)
+    {   
        $path = "cypher";
        $postfields['query'] = "START n=node:$params[indexBy]($params[indexBy] = '$params[indexValue]') RETURN n;";
        $api = $this->neo4japi('cypher', 'JSONPOST', $postfields);
        $node = explode("/", $api['data']['0']['0']['self']);
        $nodeId = end($node);
        
-       print "<b>$nodeId</b>";
+       //Unset params that we do not want to be saved in the Properties of the node.
+       unset($params['indexBy'], $params['indexValue']);
        
+       //$jsonstring = json_encode($params);
+       $nodePath = "node/$nodeId/properties";
+       $setApi = $this->neo4japi($nodePath, 'PUT', $params);
+       
+       print "NODE ID: $nodeId<hr>";
+       print "NODE PATH: $nodePath<hr>";
        print '<pre>';
-       print_r($api);
+       print_r($setApi);
        print '</pre>';
 	}
 
