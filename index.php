@@ -1,13 +1,13 @@
 <?php
-
-use Invigle\Graph;
-
+namespace Invigle;
 require_once("bootstrap.php");
 
-$id1 = "6";
-$id2 = "19";
-$type = "FRIEND_OF";
-
 $graph = new Graph();
-$test = $graph->deleteConnection($id1, $id2, $type);
+$arr = $graph->neo4japi("node/6");
+
+print 'WORK:<hr><pre>';
+print_r($arr);
+print '</pre>';
+
+
 ?>
