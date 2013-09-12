@@ -145,8 +145,7 @@ class User {
         }
         
         //Create the new user account in neo4j
-        //$graph = new Graph();
-        //$api = $graph->neo4japi('node', 'JSONPOST', $aUserArray);
+        $graph = new Graph();    
         
         $queryString = "";
         foreach($aUserArray as $key => $value){
