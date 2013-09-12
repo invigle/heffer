@@ -180,10 +180,8 @@ class Graph {
 	public function listNodes($aID, $aType, $aSkip, $aLimit) {
 		$list['query'] = "START n=node($aID) MATCH n-[:$aType]-rtn RETURN rtn SKIP $aSkip LIMIT $aLimit;";
         $api = $this->neo4japi('cypher', 'JSONPOST', $list);
-        
-        print '<pre>';
-        print_r($api);
-        print '</pre>';
+  
+    return $api['data'];
 	}
 }
 
