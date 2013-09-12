@@ -6,7 +6,7 @@
  */
  
 use Invigle\FrontEndUIs\FrontPage,
-    Invigle\Language\EN_GB;
+    Invigle\Language\EN_GB,
     Invigle\User;
 
 require_once("bootstrap.php");
