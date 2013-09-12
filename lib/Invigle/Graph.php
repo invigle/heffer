@@ -158,8 +158,8 @@ class Graph {
         $params['to'] = "http://$this->_neo4jHref:$this->_neo4jPort/node/$aID2";
         $params['type'] = $aType;
         
-        $path = "node/$aID1/relationships";       
-        $api = $this->neo4japi($path, 'POST', $params);
+        $path = "node/$aID1/relationships {\"to\" : \"http://boss.invigle.com:8001/db/data/node/31\", \"type\" : \"LINKED_TO\"}";       
+        $api = $this->neo4japi($path, 'POST');
         
         print "Path: $path<br>";
         print '<pre>';
