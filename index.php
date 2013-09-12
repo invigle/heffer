@@ -11,10 +11,10 @@ $usr = array(
             'username'=>'jjameson',
             'sexualpref'=>'straight',
             'birthday'=>'1984-11-26',
-            'institution'=>'',
+            'institution'=>NULL,
             'relationshipstatus'=>'single',
             'gender'=>'female',
-            'profilepicid'=>'',
+            'profilepicid'=>NULL,
             'followercount'=>'0',
             'friendcount'=>'0'
             );
