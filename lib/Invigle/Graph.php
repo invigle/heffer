@@ -157,9 +157,12 @@ class Graph {
         
         $params['to'] = "http://$this->_neo4jHref:$this->_neo4jPort/node/$aID2";
         $params['type'] = $aType;
-        $path = "node/$aID1/relationships ".json_encode($params)."";
         
-        $api = $this->neo4japi($path, 'POST', $params);
+        $path = "node/$aID1/relationships";
+        $json = json_encode($params);
+        
+        
+        $api = $this->neo4japi($path, 'POST', $json);
         
         print '<pre>';
         print_r($api);
