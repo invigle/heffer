@@ -13,6 +13,8 @@ use Everyman\Neo4j\Client,
     Everyman\Neo4j\Index\NodeIndex,
     Everyman\Neo4j\Index\RelationshipIndex,
     Everyman\Neo4j\Index\NodeFulltextIndex,
+    Everyman\Neo4j\Index\Cypher,
+    Everyman\Neo4j\Index\Cypher\Query,
     Everyman\Neo4j\Batch;
 
 /**
