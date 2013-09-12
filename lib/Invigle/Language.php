@@ -9,7 +9,7 @@ namespace Invigle;
 abstract class Language
 {
 
-    public $frontPage;
+    public $frontPage = array();
 
 }
 
