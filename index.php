@@ -22,14 +22,9 @@ function apiCall($api, $type, $postfields = array()) {
 }
 
 
-$api['path'] = "node";
-$postdata['username'] = "glow";
-$postdata['firstname'] = "Gavin";
-$postdata['lastname'] = "Hanson";
-$postdata['email'] = "some@email.com";
-$postdata['password'] = "hello123";
+$api['path'] = "node/26/properties/";
 
-$arr = apiCall($api, 'JSONPOST', $postdata);
+$arr = apiCall($api, 'GET');
 print 'WORK:<hr><pre>';
 print_r($arr);
 print '</pre>';
