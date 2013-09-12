@@ -1,6 +1,7 @@
 <?php
 
 namespace Invigle;
+<<<<<<< HEAD
 namespace Event;
 
 use Invigle\Search;
@@ -16,6 +17,20 @@ use Everyman\Neo4j\Client,
     Everyman\Neo4j\Index\NodeFulltextIndex,
     Everyman\Neo4j\Batch;
 
+=======
+use Invigle\Search,
+    Invigle\Everyman\Neo4j\Client,
+    Invigle\Everyman\Neo4j\Transport,
+    Invigle\Everyman\Neo4j\Node,
+    Invigle\Everyman\Neo4j\Relationship,
+    Invigle\Everyman\Neo4j\Index\NodeIndex,
+    Invigle\Everyman\Neo4j\Index\RelationshipIndex,
+    Invigle\Everyman\Neo4j\Index\NodeFulltextIndex,
+    Invigle\Everyman\Neo4j\Batch;
+    
+require_once(realpath(dirname(__FILE__)) . '/../neo4jphp.phar');
+    
+>>>>>>> 28d74bc8b965db965c9fa0003695683214682fe4
 /**
  * @access public
  * @author Grant
@@ -135,11 +150,14 @@ class Graph extends Search {
 	 * @param aType
 	 */
 	public function deleteConnection($aID1, $aID2, $aType) {
-		$node1 = $this->_client->getNode($aID1);
-        $node1rels = $node1->getRelationships(array('FRIEND_OF'));
-        
+		$queryString = "START n=node($aID1) ".
+                       "MATCH n-[:$aType]-x".
+                       "RETURN x";
+                    $query = new Everyman\Neo4j\Cypher\Query($this->_client, $queryString);
+                    $result = $query->getResultSet();
+  
         print '<pre>';
-        print_r($node1rels);
+        print_r($result);
         print '</pre>';
 	}
 
