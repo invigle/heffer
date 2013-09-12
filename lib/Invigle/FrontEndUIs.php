@@ -30,6 +30,8 @@ abstract class FrontEndUIs
                         <meta name="description" content="">
                         <meta name="author" content="">
                         <title>'.$this->_pageTitle.'</title>
+                        <!-- Bootstrap core CSS -->
+                        <link href="/assets/bootstrap/css/bootstrap.css" rel="stylesheet">
                     </head>';
 	}
 
