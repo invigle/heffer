@@ -22,5 +22,6 @@ $usr = array(
 $user = new User();
 $arr = $user->addUser($usr);
 
+print $arr;
 
 ?>

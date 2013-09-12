@@ -134,8 +134,30 @@ class User {
             return 'email-taken';
         }
         
+        
+        //Create the new user account in neo4j
         $graph = new Graph();
-        $api = $graph->neo4japi('node', 'JSONPOST', $aUserArray);        
+        $api = $graph->neo4japi('node', 'JSONPOST', $aUserArray);
+        
+        //Create Indexes for the User Account.
+        $index['name'] = "firstname";
+        $graph->neo4japi('index/node/', 'JSONPOST', $index);
+        
+        $index['name'] = "lastname";
+        $graph->neo4japi('index/node/', 'JSONPOST', $index);
+        
+        $index['name'] = "email";
+        $graph->neo4japi('index/node/', 'JSONPOST', $index);
+        
+        $index['name'] = "username";
+        $graph->neo4japi('index/node/', 'JSONPOST', $index);
+        
+        
+        $test = $graph->neo4japi('index/node/', 'GET');
+        print '<pre>';
+        print_r($test);
+        print '</pre>';
+                
 	}
 
 	/**
