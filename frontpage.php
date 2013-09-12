@@ -6,10 +6,13 @@
  */
  
 use Invigle\FrontEndUIs\FrontPage,
+    Invigle\Language\EN_GB;
     Invigle\User;
 
 require_once("bootstrap.php");
 
-$frontPage = new FrontPage('Invigle - "Let\'s link up"');
+$language = new EN_GB();
+
+$frontPage = new FrontPage($language);
 
 ?>

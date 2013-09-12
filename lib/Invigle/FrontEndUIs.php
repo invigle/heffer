@@ -2,8 +2,6 @@
 
 namespace Invigle;
 
-require_once("bootstrap.php");
-
 /**
  * @access public
  * @author Grant
