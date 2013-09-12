@@ -11,6 +11,15 @@ class FrontEndUIs {
     private $_pageTitle;
 
 	/**
+     * Set page title
+	 * @access public
+	 * @param apageTitle
+	 */
+	public function setPageTitle($apageTitle) {
+		$this->_pageTitle = $apageTitle;
+	}
+
+	/**
 	 * @access public
 	 * @param aPID
 	 */
