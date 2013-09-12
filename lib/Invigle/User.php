@@ -102,10 +102,13 @@ class User {
         //Rules
         if(strlen($username < "4")){
             return false;
+            break;
         }elseif($username === "admin" || $username === "invigle" || $username === "staff"){
             return false;
+            break;
         }else{
             return true;
+            break;
         }
     }
 
