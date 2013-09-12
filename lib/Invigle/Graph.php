@@ -166,8 +166,18 @@ class Graph {
 	 * @param aType
 	 */
 	public function deleteConnection($aID1, $aID2, $aType) {
-        $arr['query'] = "START n1=node($aID1) MATCH n1-[:$aType]-all RETURN all;";
+        $arr['query'] = "START n1=node($aID1) MATCH n1-[fr:$aType]-all RETURN fr;";
         $api = $this->neo4japi('cypher', 'JSONPOST', $arr);
+        
+        /*
+        foreach($api['data'] as $row){
+            $exp = explode("/", $row[0]['self']);
+            $id = end($exp);
+            
+            if(end($exp) === "$aID2" && $row['']){
+                
+            }
+        }*/
         
         print '<pre>';
         print_r($api);
