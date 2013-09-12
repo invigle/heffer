@@ -49,6 +49,8 @@ class User {
         $check['query'] = "MATCH n:User WHERE n.username = \"$username\" RETURN count(*);";
         $api = $graph->neo4japi('cypher', 'JSONPOST', $check);
         
+        return $api;
+        
         if($api){
             return false;
         }else{
