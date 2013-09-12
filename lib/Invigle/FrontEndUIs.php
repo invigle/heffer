@@ -22,7 +22,7 @@ abstract class FrontEndUIs
                     <html>";
         $html .= "<head>
                     <title>{$this->_pageTitle}</title>
-                </head>test";
+                </head>";
         return $html;
 	}
 
