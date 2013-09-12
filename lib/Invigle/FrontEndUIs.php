@@ -50,7 +50,7 @@ abstract class FrontEndUIs
      */
     public function renderTopNav()
     {
-        echo '<pre>'.$this->UITools.'</pre>';
+        echo '<pre>'.var_dump($this->UITools).'</pre>';
         /*return '<div class="navbar navbar-inverse navbar-fixed-top">
                     <div class="container">
                         <div class="navbar-header">
