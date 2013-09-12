@@ -10,12 +10,10 @@ use Invigle\Language;
 
 class EN_GB extends Language
 {
-
-    public function construct__()
+    public function __construct()
     {
         $this->_frontPage = array(
             'pageTitle' => "Invigle - \"Let\'s Link Up!\""
-            
         );
     }
 }
