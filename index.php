@@ -20,12 +20,12 @@ $usr = array(
             );
 
 $user = new User();
-$test = $user->validateEmailAddress($_GET['email']);
+$test = $user->validateEmailFormatting($_GET['email']);
 
 if($test){
-    print 'Available';
+    print 'Accepted';
 }else{
-    print 'Taken';
+    print 'Declined';
 }
 
 //$arr = $user->addUser($usr);
