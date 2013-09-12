@@ -3,24 +3,24 @@
 namespace Invigle;
 
 /**
- * @access public
- * @author Grant
- */
+* @access public
+* @author Grant
+*/
 class Graph {
-	private $_friends;
-	private $_frendsOfFriends;
-	private $_event;
-	private $_group;
-	private $_page;
-	private $_user;
-	private $_location;
-	private $_rangeLoc;
-	private $_isPhoto;
-	private $_university;
-	private $_sourceID;
-	private $_edgeType;
-	private $_resultLimit;
-	private $_skip;
+private $_friends;
+private $_frendsOfFriends;
+private $_event;
+private $_group;
+private $_page;
+private $_user;
+private $_location;
+private $_rangeLoc;
+private $_isPhoto;
+private $_university;
+private $_sourceID;
+private $_edgeType;
+private $_resultLimit;
+private $_skip;
     private $_status; //inactive/active as we do not delete users from Neo4j
     private $_indexBy;
     
@@ -35,108 +35,100 @@ class Graph {
     {
         $this->_neo4jHref = "boss.invigle.com";
         $this->_neo4jPort = "8001";
-        $this->_client = new Client(new Transport($this->_neo4jHref, $this->_neo4jPort));
     }
-
-	/**
-     * Function to add node to Neo4j from a universal array of $params.
-	 * @access public
-	 * @param array
-	 */
-	public function addNode(array $params) {
-        
-        $index = new NodeIndex($this->_client, $params['indexBy']);
-        
-        $node = $this->_client->makeNode()->save();
-        
-        foreach($params as $key => $value){
-            $node->setProperty($key, $value)->save();
-        }
-        
-        $index->add($node, $params['indexBy'], $node->getProperty($params['indexBy']));
-	}
-    
-   	/**
-     * Function to edit a property in Neo4j from a universal array of $params using specified 'username'.
-	 * @access public
-     * @param array key/value of $params['username'] of the user to be updated.
-	 * @param array of key/value pairs to update properties.
-	 */
-	public function editProperties(array $params) {
-        $index = new NodeIndex($this->_client, $params['indexBy']);
-        $node = $index->queryOne("$params[indexBy]:$params[username]");
-                
-        unset($params['indexBy']);
-        unset($params['username']);
-        
-        foreach($params as $key => $value){
-            $node->setProperty($key, $value)->save();
-        }
-        
-	}
-
-	/**
-     * Function to delete node from Neo4j using an array containing 'indexBy' and 'indexValue'
-	 * @access public
-	 * @param array
-	 */
-	public function deleteNode(array $params) {
-        $index = new NodeIndex($this->_client, $params['indexBy']);
-        $node = $index->queryOne("$params[indexBy]:$params[indexValue]");
-        
-        $node->delete();
-	}
     
     /**
-     * Function to delete node from Neo4j using the nodeID.
-	 * @access public
-	 * @param $aID
-	 */
-	public function deleteNodeByID($aID) {
-        $node = $this->_client->getNode($aID);        
-        $node->delete();
-	}
+* Function to interface with the Neo4J RESTfull API.
+* @access public
+* Usage:
+* $path = Path within RESTful API, i.e. /nodes/26
+* $type = GET, POST, JSONPOST
+* $postfields = Required for POST or JSONPOST, NULL for GET.
+*/
+    public function neo4japi($path, $type='GET', $postfields=array())
+    {
+     $url = "http://$this->_neo4jHref:$this->_neo4jPort/db/data/$path";
+     $ch = curl_init();
+     curl_setopt($ch, CURLOPT_URL, $url);
+     curl_setopt($ch, CURLOPT_TIMEOUT, 100);
+        if($type === "POST"){
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $postfields);
+        }elseif($type === "JSONPOST"){
+            curl_setopt( $ch, CURLOPT_POSTFIELDS, json_encode($postfields));
+            curl_setopt( $ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
+        }
+     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+     $data = curl_exec($ch);
+     curl_close($ch);
+    
+        $json = json_decode($data, true);
+        return $json;
+    }
+    
+    /**
+* Function to edit a property in Neo4j from a universal array of $params using specified 'username'.
+* @access public
+* @param array key/value of $params['username'] of the user to be updated.
+* @param array of key/value pairs to update properties.
+*/
+public function editProperties(array $params) {
+$postfields['query'] = "START n=node(6) MATCH n-[:FRIEND_OF]-foo RETURN foo;";
 
-	/**
-	 * @access public
-	 * @param aID1
-	 * @param aID2
-	 * @param aType
-	 */
-	public function addConnection($aID1, $aID2, $aType) {
-        $node1 = $this->_client->getNode($aID1);
-        $node2 = $this->_client->getNode($aID2);
-        
-        $node1->relateTo($node2, "$aType")->save();
-	}
+       $api = $this->neo4japi('cypher', 'JSONPOST', $postfields);
+       
+       print '<pre>';
+       print_r($api);
+       print '</pre>';
+}
 
-	/**
-	 * @access public
-	 * @param aID1
-	 * @param aID2
-	 * @param aType
-	 */
-	public function deleteConnection($aID1, $aID2, $aType) {
-		$queryString = "START n=node($aID1) ".
-                       "MATCH n-[:$aType]-x".
-                       "RETURN x";
-                    $query = new Everyman\Neo4j\Cypher\Query($this->_client, $queryString);
-                    $result = $query->getResultSet();
-  
-        print '<pre>';
-        print_r($result);
-        print '</pre>';
-	}
+/**
+* Function to delete node from Neo4j using an array containing 'indexBy' and 'indexValue'
+* @access public
+* @param array
+*/
+public function deleteNode(array $params) {
 
-	/**
-	 * @access public
-	 * @param aID
-	 * @param aType
-	 * @param aSkip
-	 * @param aLimit
-	 */
-	public function listNodes($aID, $aType, $aSkip, $aLimit) {
-		// Not yet implemented
-	}
+}
+    
+    /**
+* Function to delete node from Neo4j using the nodeID.
+* @access public
+* @param $aID
+*/
+public function deleteNodeByID($aID) {
+
+}
+
+/**
+* @access public
+* @param aID1
+* @param aID2
+* @param aType
+*/
+public function addConnection($aID1, $aID2, $aType) {
+
+}
+
+/**
+* @access public
+* @param aID1
+* @param aID2
+* @param aType
+*/
+public function deleteConnection($aID1, $aID2, $aType) {
+
+}
+
+/**
+* @access public
+* @param aID
+* @param aType
+* @param aSkip
+* @param aLimit
+*/
+public function listNodes($aID, $aType, $aSkip, $aLimit) {
+// Not yet implemented
+}
 }
 ?>
