@@ -50,8 +50,7 @@ abstract class FrontEndUIs
      */
     public function renderTopNav()
     {
-        echo '<pre>'.var_dump($this->UITools).'</pre>';
-        /*return '<div class="navbar navbar-inverse navbar-fixed-top">
+        return '<div class="navbar navbar-inverse navbar-fixed-top">
                     <div class="container">
                         <div class="navbar-header">
                             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -69,7 +68,7 @@ abstract class FrontEndUIs
                             </ul>
                         </div>
                     </div>
-                </div>';*/
+                </div>';
     }
 
     /**
