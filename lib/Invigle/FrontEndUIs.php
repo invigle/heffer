@@ -61,8 +61,8 @@ abstract class FrontEndUIs
                             '.$this->UITools->renderSmallLogo().'
                         </div>
                         <div class="collapse navbar-collapse">
-                            <ul class="nav navbar-nav">
-                            </ul>
+                            <form class="form-inline" role="form">
+                            <input type="text" class="form-control" placeholder="Search for events, groups, pages and people">
                         </div>
                     </div>
                 </div>';
