@@ -20,7 +20,7 @@ $usr = array(
             );
 
 $user = new User();
-$test = $user->validateUsername($_GET['username']);
+$test = $user->validateEmailAddress($_GET['email']);
 
 if($test){
     print 'Available';
