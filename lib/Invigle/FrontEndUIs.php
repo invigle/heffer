@@ -4,6 +4,8 @@ namespace Invigle;
 
 use Invigle\FrontEndUIs\Header;
 
+require_once("bootstrap.php");
+
 /**
  * @access public
  * @author Grant
