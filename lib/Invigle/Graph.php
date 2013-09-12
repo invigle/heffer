@@ -48,6 +48,9 @@ class Graph {
     public function neo4japi($path, $type='GET', $postfields=array())
     {
     	$url = "http://$this->_neo4jHref:$this->_neo4jPort/db/data/$path";
+        
+        print $url;
+        
     	$ch = curl_init();
     	curl_setopt($ch, CURLOPT_URL, $url);
     	curl_setopt($ch, CURLOPT_TIMEOUT, 100);
