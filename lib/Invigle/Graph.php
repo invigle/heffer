@@ -1,10 +1,11 @@
 <?php
 
 namespace Invigle;
-
 use Invigle\Search;
 
 require_once(realpath(dirname(__FILE__)) . '/../neo4jphp.phar');
+
+namespace Everyman;
 
 use Everyman\Neo4j\Client,
     Everyman\Neo4j\Transport,
@@ -14,7 +15,7 @@ use Everyman\Neo4j\Client,
     Everyman\Neo4j\Index\RelationshipIndex,
     Everyman\Neo4j\Index\NodeFulltextIndex,
     Everyman\Neo4j\Batch;
-
+    
 /**
  * @access public
  * @author Grant
