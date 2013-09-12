@@ -52,11 +52,7 @@ class User {
         $check['indexValue'] = $username;
         $api = $graph->findNodeId($check);
         
-        if($api){
-            return false;
-        }else{
-            return true;
-        }
+        print_r($api);
     }
 
 	/**
