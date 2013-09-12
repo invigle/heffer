@@ -5,7 +5,7 @@
  * @copyright 2013
  */
  
- namespace Invigle;
+ namespace Invigle\FrontEndUIs;
  
  use Invigle\FrontEndUIs;
  

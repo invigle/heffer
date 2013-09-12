@@ -2,8 +2,6 @@
 
 namespace Invigle;
 
-use Invigle\FrontEndUIs\FrontPage;
-
 require_once("bootstrap.php");
 
 /**
