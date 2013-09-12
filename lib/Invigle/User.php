@@ -46,7 +46,7 @@ class User {
     public function validateUsername($username)
     {
         $graph = new Graph();
-        $check['query'] = "START n=node:username(username = \"$username\") RETURN count(*);";
+        $check['query'] = "MATCH n:User WHERE n.username = \"$username\" RETURN count(*);";
         $api = $graph->neo4japi('cypher', 'JSONPOST', $check);
         
         if($api){

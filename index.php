@@ -20,7 +20,7 @@ $usr = array(
             );
 
 $user = new User();
-$test = $user->addUser($usr);
+$test = $user->validateUsername('jjameson');
 
 print '<pre>';
 print_r($test);
