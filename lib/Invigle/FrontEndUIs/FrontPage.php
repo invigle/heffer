@@ -24,9 +24,12 @@ class FrontPage extends FrontEndUIs {
      
     public function __construct(Language $language)
     {
+        parent::__construct();
         $this->_pageTitle = $language->_frontPage['pageTitle'];
         echo $this->renderHeader();
         echo $this->renderTopNav();
     }
     
  }
+ 
+ ?>

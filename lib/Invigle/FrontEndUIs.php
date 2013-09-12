@@ -2,6 +2,8 @@
 
 namespace Invigle;
 
+use Invigle\UITools;
+
 /**
  * FrontEndUIs - Contains the functions needed to render different elements of a page
  * 
@@ -16,6 +18,12 @@ abstract class FrontEndUIs
 {
 
     protected $_pageTitle;
+    public $UITools;
+
+    public function __construct()
+    {
+        $this->UITools = new UITools;
+    }
 
     /**
      * This function renders the header
@@ -50,14 +58,11 @@ abstract class FrontEndUIs
                                 <span class="icon-bar"></span>
                                 <span class="icon-bar"></span>
                             </button>
-                            <a class="navbar-brand" href="#">Project name</a>
+                            '.$this->UITools->renderSmallLogo().'
                         </div>
                         <div class="collapse navbar-collapse">
-                            <ul class="nav navbar-nav">
-                                <li class="active"><a href="#">Home</a></li>
-                                <li><a href="#about">About</a></li>
-                                <li><a href="#contact">Contact</a></li>
-                            </ul>
+                            <form class="form-inline" role="form">
+                            <input type="text" class="form-control" placeholder="Search for events, groups, pages and people">
                         </div>
                     </div>
                 </div>';

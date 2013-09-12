@@ -142,31 +142,17 @@ class User {
             die('email taken');
         }
         
-        die('Passed all tests');
-        
         //Create the new user account in neo4j
-        $graph = new Graph();
-        $api = $graph->neo4japi('node', 'JSONPOST', $aUserArray);
+        //$graph = new Graph();
+        //$api = $graph->neo4japi('node', 'JSONPOST', $aUserArray);
         
-        //Create Indexes for the User Account.
-        $index['name'] = "firstname";
-        $graph->neo4japi('index/node/', 'JSONPOST', $index);
+        $queryString = json_encode($aUserArray);
+        $user['query'] = "CREATE (n:User $queryString)";      
         
-        $index['name'] = "lastname";
-        $graph->neo4japi('index/node/', 'JSONPOST', $index);
+        print $user['query'];
         
-        $index['name'] = "email";
-        $graph->neo4japi('index/node/', 'JSONPOST', $index);
-        
-        $index['name'] = "username";
-        $graph->neo4japi('index/node/', 'JSONPOST', $index);
-        
-        
-        $test = $graph->neo4japi('index/node/', 'GET');
-        print '<pre>';
-        print_r($test);
-        print '</pre>';
-                
+        //$user['query'] = "CREATE n SET n:Use";
+        //$apiCall = $graph->neo4japi('cypher', 'JSONPOST');
 	}
 
 	/**

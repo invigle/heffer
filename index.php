@@ -11,16 +11,16 @@ $usr = array(
             'username'=>'jjameson',
             'sexualpref'=>'straight',
             'birthday'=>'1984-11-26',
-            'institution'=>'',
+            'institution'=>false,
             'relationshipstatus'=>'single',
             'gender'=>'female',
-            'profilepicid'=>'',
+            'profilepicid'=>false,
             'followercount'=>'0',
             'friendcount'=>'0'
             );
 
 $user = new User();
-$test = $user->validateUsername($_GET['username']);
+$test = $user->addUser($usr);
 if($test){
     print 'pass';
 }else{
