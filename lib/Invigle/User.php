@@ -148,18 +148,13 @@ class User {
         //$graph = new Graph();
         //$api = $graph->neo4japi('node', 'JSONPOST', $aUserArray);
         
+        $queryString = "";
         foreach($aUserArray as $key => $value){
             $queryString.= "$key : \"$value\", ";
         }
         $queryString = substr($queryString, 0, -2);
-        
-        //$queryString = json_encode($aUserArray);
         $user['query'] = "CREATE (n:User {".$queryString."}) RETURN n;";      
-        
-        print $user['query'];
-        
-        //$user['query'] = "CREATE n SET n:Use";
-        //$apiCall = $graph->neo4japi('cypher', 'JSONPOST');
+        $apiCall = $graph->neo4japi('cypher', 'JSONPOST');
 	}
 
 	/**
