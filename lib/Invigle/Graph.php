@@ -87,6 +87,7 @@ class Graph {
        $setApi = $this->neo4japi($nodePath, 'JSONPOST', $jsonstring);
        
        print "NODE ID: $nodeId<hr>";
+       print "NODE PATH: $nodePath<hr>";
        print '<pre>';
        print_r($setApi);
        print '</pre>';
