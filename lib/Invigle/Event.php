@@ -187,7 +187,7 @@ class Event
 	/**
 	 * This method returns the ID of the event.
 	 * @access public
-	 * @return boolean -- public/private
+	 * @return integer
 	 */
 	public function getEventId()
 	{

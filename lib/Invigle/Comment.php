@@ -69,7 +69,7 @@ class Comment
      /**
 	 * This method returns the date of the comment
 	 * @access public
-	 * @return date
+	 * @return timestamp
 	 */
 	public function getCommentDate()
 	{
@@ -79,16 +79,80 @@ class Comment
     /**
 	 * This method sets the date of a comment.
 	 * @access public
-	 * @param $comment (string)
+	 * @param $date (timestamp)
 	 * @return boolean
 	 */
 	public function setCommentDate($date)
 	{
 		$this->_date = $date;
 	}
-
     
-    // $_date;$_cID;$_sID; $_pHID;$_eID;$_gID;$_uID;$_pID;
+    /**
+	 * This method returns the ID of the comment.
+	 * @access public
+	 * @return integer
+	 */
+	public function getCommentId()
+	{
+		return $this->_cID;
+	}
+
+	/**
+	 * This method sets the ID of the comment.
+	 * @access public
+	 * @param id (integer)
+	 * @return boolean
+	 */
+	public function setCommentId($id)
+	{
+		$this->_cID = $id;
+	}
+
+    /**
+	 * This method returns the ID of the user who posted the comment.
+	 * @access public
+	 * @return integer
+	 */
+	public function getCommentUserId()
+	{
+		return $this->_uID;
+	}
+
+	/**
+	 * This method sets the ID of the user who posted the comment.
+	 * @access public
+	 * @param id (integer)
+	 * @return boolean
+	 */
+	public function setCommentUserId($id)
+	{
+		$this->_uID = $id;
+	}
+    
+    /**
+	 * This method returns the ID of the event the comment was posted on its timeline.
+	 * @access public
+	 * @return integer
+	 */
+	public function getCommentEventId()
+	{
+		return $this->_eID;
+	}
+
+	/**
+	 * This method sets the ID of the event the comment was posted on its timeline.
+	 * @access public
+	 * @param id (integer)
+	 * @return boolean
+	 */
+	public function setCommentEventId($id)
+	{
+		$this->_eID = $id;
+	}
+    
+    //_sID; $_pHID;
+    
+    //;$_gID;$_pID;
     
     
     
