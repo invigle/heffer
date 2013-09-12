@@ -11,7 +11,8 @@ use Invigle\FrontEndUIs,
 require_once("bootstrap.php");
 
 $frontEnd = new FrontEndUIs();
+$frontEnd->setPageTitle('this page');
 
-echo $frontEnd->renderHeader('test2');
+echo $frontEnd->renderHeader();
 
 ?>
