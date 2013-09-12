@@ -22,9 +22,11 @@ $usr = array(
 $user = new User();
 $test = $user->validateUsername('jjameson');
 
-print '<pre>';
-print_r($test);
-print '</pre>';
+if($test){
+    print 'Available';
+}else{
+    print 'Taken';
+}
 
 //$arr = $user->addUser($usr);
 
