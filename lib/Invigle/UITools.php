@@ -16,7 +16,7 @@ class UITools {
     
     public function renderSmallLogo()
     {
-        return '<div class="smallLogo"></div>';
+        return '<div class="smallLogoWhite"></div>';
     }
     
  }
