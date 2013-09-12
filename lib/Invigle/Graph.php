@@ -67,9 +67,8 @@ class Graph {
     }
     
    	/**
-     * Function to edit a property in Neo4j from a universal array of $params using specified 'username'.
+     * Function to edit a property in Neo4j from a universal array of $params using indexBy and indexValue to identify the nodes ID#.
 	 * @access public
-     * @param array key/value of $params['username'] of the user to be updated.
 	 * @param array of key/value pairs to update properties.
 	 */
 	public function editProperties(array $params) {
@@ -80,10 +79,16 @@ class Graph {
        $node = explode("/", $api['data']['0']['0']['self']);
        $nodeId = end($node);
        
-       print "<b>$nodeId</b>";
+       //Unset params that we do not want to be saved in the Properties of the node.
+       unset($params['indexBy'], $params['indexValue']);
        
+       $nodePath = "node/$nodeId/properties";
+       $jsonstring = json_encode($params);
+       $setApi = $this->neo4japi($nodePath, 'JSONPOST', $jsonstring);
+       
+       print "NODE ID: $nodeId<hr>";
        print '<pre>';
-       print_r($api);
+       print_r($setApi);
        print '</pre>';
 	}
 
