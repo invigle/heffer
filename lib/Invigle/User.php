@@ -152,12 +152,9 @@ class User {
             $queryString.= "$key : \"$value\", ";
         }
         $queryString = substr($queryString, 0, -2);
-        $user['query'] = "CREATE (n:User { $queryString })";   
-           
-           
-        print $user["query"];
-           
-        $apiCall = $graph->neo4japi('cypher', 'POST', json_encode($user));
+        $user['query'] = "CREATE (n:User {".$queryString."}) RETURN n;";   
+            
+        $apiCall = $graph->neo4japi('cypher', 'JSONPOST', $user);
         
   
     return $apiCall;
