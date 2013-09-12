@@ -1,20 +1,17 @@
 <?php
 
 namespace Invigle;
-use Invigle\Search;
-
+use Invigle\Search,
+    Invigle\Everyman\Neo4j\Client,
+    Invigle\Everyman\Neo4j\Transport,
+    Invigle\Everyman\Neo4j\Node,
+    Invigle\Everyman\Neo4j\Relationship,
+    Invigle\Everyman\Neo4j\Index\NodeIndex,
+    Invigle\Everyman\Neo4j\Index\RelationshipIndex,
+    Invigle\Everyman\Neo4j\Index\NodeFulltextIndex,
+    Invigle\Everyman\Neo4j\Batch;
+    
 require_once(realpath(dirname(__FILE__)) . '/../neo4jphp.phar');
-
-namespace Everyman;
-
-use Everyman\Neo4j\Client,
-    Everyman\Neo4j\Transport,
-    Everyman\Neo4j\Node,
-    Everyman\Neo4j\Relationship,
-    Everyman\Neo4j\Index\NodeIndex,
-    Everyman\Neo4j\Index\RelationshipIndex,
-    Everyman\Neo4j\Index\NodeFulltextIndex,
-    Everyman\Neo4j\Batch;
     
 /**
  * @access public
