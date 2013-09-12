@@ -100,7 +100,7 @@ class User {
     public function validateUsernameFormatting($username)
     {
         //Rules
-        if(strlen($username < "4")){
+        if(strlen($username) < "4"){
             return false;
             break;
         }elseif($username === "admin" || $username === "invigle" || $username === "staff"){
