@@ -49,9 +49,7 @@ class User {
         $check['query'] = "MATCH n:User WHERE n.username = \"$username\" RETURN count(*);";
         $api = $graph->neo4japi('cypher', 'JSONPOST', $check);
         
-        return $api;
-        
-        if($api){
+        if($api['data'][0][0] >= "1"){
             return false;
         }else{
             return true;
@@ -67,11 +65,10 @@ class User {
     {
         $graph = new Graph();
         
-        $check['indexBy'] = "email";
-        $check['indexValue'] = $email;
-        $api = $graph->findNodeId($check);
+        $check['query'] = "MATCH n:User WHERE n.email = \"$email\" RETURN count(*);";
+        $api = $graph->neo4japi('cypher', 'JSONPOST', $check);
         
-        if($api){
+        if($api['data'][0][0] >= "1"){
             return false;
         }else{
             return true;
