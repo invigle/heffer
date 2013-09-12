@@ -12,7 +12,8 @@ function apiCall($input) {
 	$data = curl_exec($ch);
 	curl_close($ch);
 
-    return json_decode($data, true);
+    $json = json_decode($data, true);
+    return $json['data'];
 }
 
 
