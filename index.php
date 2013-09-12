@@ -8,7 +8,10 @@ function apiCall($api, $type, $postfields = array()) {
 	curl_setopt($ch, CURLOPT_TIMEOUT, 100);
         if($type === "POST"){
             curl_setopt($ch, CURLOPT_POST, 1);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $postfields);    
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $postfields);  
+        }elseif($type === "JSONPOST"){
+            curl_setopt( $ch, CURLOPT_POSTFIELDS, json_encode($postfields));
+            curl_setopt( $ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
         }
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 	$data = curl_exec($ch);
@@ -19,10 +22,14 @@ function apiCall($api, $type, $postfields = array()) {
 }
 
 
-$api['path'] = "node/6";
+$api['path'] = "node";
+$postdata['username'] = "glow";
+$postdata['firstname'] = "Gavin";
+$postdata['lastname'] = "Hanson";
+$postdata['email'] = "some@email.com";
+$postdata['password'] = "hello123";
 
-
-$arr = apiCall($api, 'GET');
+$arr = apiCall($api, 'GET', $postdata);
 print 'WORK:<hr><pre>';
 print_r($arr);
 print '</pre>';
