@@ -11,6 +11,6 @@ use Invigle\FrontEndUIs,
 
 require_once("bootstrap.php");
 
-$frontPage = new FrontPage();
+$frontPage = new FrontPage('testing');
 
 ?>
