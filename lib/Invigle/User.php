@@ -11,32 +11,33 @@ class User {
 	 * @AttributeType string
 	 * This holds the first name of the user
 	 */
-	public $_firstName;
+	private $_firstName;
 	/**
 	 * @AttributeType string
 	 * This holds the last name of the user
 	 */
-	public $_lastName;
+	private $_lastName;
 	/**
 	 * @AttributeType string
 	 * This holds the location of the user
 	 */
-	public $_location;
+	private $_location;
 	/**
 	 * @AttributeType string
 	 * This holds the email of the user
 	 */
-	public $_email;
-	public $_password;
-	public $_birthday;
-	public $_institution;
-	public $_relationshipStatus;
-	public $_gender;
-	public $_sexualPref;
-	public $_uID;
-	public $_profilePicID;
-	public $_followerCount;
-	public $_friendCount;
+	private $_email;
+	private $_password;
+	private $_birthday;
+	private $_institution;
+	private $_relationshipStatus;
+	private $_gender;
+	private $_sexualPref;
+	private $_uID;
+	private $_profilePicID;
+	private $_followerCount;
+	private $_friendCount;
+    private $_url;
     
     /**
      * This method will check the graph database to ensure a username is unique.

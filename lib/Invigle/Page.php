@@ -85,5 +85,111 @@ class Page {
 	public function addPost($aPID, $aUID, $aTimestamp) {
 		// Not yet implemented
 	}
+    
+    /**
+	 * This method returns the name of the page.
+	 * @access public
+	 * @return string
+	 */
+	public function getPageName()
+	{
+		return $this->_name;
+	}
+
+	/**
+	 * This method sets the name of the page.
+	 * @access public
+	 * @param name (string)
+	 * @return boolean
+	 */
+	public function setPageName($name)
+	{
+		$this->_name = $name;
+	}
+    
+    /**
+	 * This method returns the page category.
+	 * @access public
+	 * @return string
+	 */
+	public function getPageCategory()
+	{
+		return $this->_category;
+	}
+
+	/**
+	 * This method sets the page category.
+	 * @access public
+	 * @param category (string))
+	 * @return boolean
+	 */
+	public function setPageCategory($category)
+	{
+		$this->_category = $category;
+	}
+    
+    /**
+	 * This method returns the group short description.
+	 * @access public
+	 * @return string
+	 */
+	public function getPageDescription()
+	{
+		return $this->_shortDescription;
+	}
+
+	/**
+	 * This method sets the group short description.
+	 * @access public
+	 * @param description (string)
+	 * @return boolean
+	 */
+	public function setGroupDescription($description)
+	{
+		$this->_shortDescription = $description;
+	}
+    
+    /**
+	 * This method returns the page's slogan.
+	 * @access public
+	 * @return string
+	 */
+	public function getPageSlogan()
+	{
+		return $this->_slogan;
+	}
+
+	/**
+	 * This method sets the page's slogan.
+	 * @access public
+	 * @param slogan (string)
+	 * @return boolean
+	 */
+	public function setPageSlogan($slogan)
+	{
+		$this->_slogan = $slogan;
+	}
+    
+    /**
+	 * This method returns the page's website url.
+	 * @access public
+	 * @return url
+	 */
+	public function getPageWebsite()
+	{
+		return $this->_website;
+	}
+
+	/**
+	 * This method sets the page's website url.
+	 * @access public
+	 * @param website (url)
+	 * @return boolean
+	 */
+	public function setPageWebsite($website)
+	{
+		$this->_website = $website;
+	}
+
 }
 ?>
