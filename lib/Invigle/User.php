@@ -149,12 +149,12 @@ class User {
         //$api = $graph->neo4japi('node', 'JSONPOST', $aUserArray);
         
         foreach($aUserArray as $key => $value){
-            $queryString = "$key : \"$value\", ";
+            $queryString.= "$key : \"$value\", ";
         }
         $queryString = substr($queryString, 0, -2);
         
         //$queryString = json_encode($aUserArray);
-        $user['query'] = "CREATE (n:User {$queryString}) RETURN n;";      
+        $user['query'] = "CREATE (n:User {".$queryString."}) RETURN n;";      
         
         print $user['query'];
         
