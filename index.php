@@ -1,5 +1,5 @@
 <?php
-namespace Invigle;
+namespace Invigle\Graph;
 include("bootstrap.php");
 
 $graph = new Graph();
