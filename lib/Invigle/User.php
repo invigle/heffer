@@ -50,7 +50,7 @@ class User {
         
         $check['indexBy'] = "username";
         $check['indexValue'] = $username;
-        $api = $graph->findNodeId($user);
+        $api = $graph->findNodeId($check);
         
         print '<pre>';
         print_r($api);
