@@ -2,8 +2,6 @@
 
 namespace Invigle;
 
-use Invigle\Search;
-
 require_once(realpath(dirname(__FILE__)) . '/neo4jphp.phar');
 
 use Everyman\Neo4j\Client,
@@ -19,7 +17,7 @@ use Everyman\Neo4j\Client,
  * @access public
  * @author Grant
  */
-class Graph extends Search {
+class Graph {
 	private $_friends;
 	private $_frendsOfFriends;
 	private $_event;
@@ -50,14 +48,6 @@ class Graph extends Search {
         $this->_neo4jPort = "8001";
         $this->_client = new Client(new Transport($this->_neo4jHref, $this->_neo4jPort));
     }
-
-	/**
-	 * @access public
-	 * @param aTermsArray
-	 */
-	public function graphSearch($aTermsArray) {
-		// Not yet implemented
-	}
 
 	/**
      * Function to add node to Neo4j from a universal array of $params.
