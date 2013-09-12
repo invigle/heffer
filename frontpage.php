@@ -10,6 +10,6 @@ use Invigle\FrontEndUIs\FrontPage,
 
 require_once("bootstrap.php");
 
-$frontPage = new FrontPage('testing');
+$frontPage = new FrontPage('Invigle - "Let\'s link up"');
 
 ?>
