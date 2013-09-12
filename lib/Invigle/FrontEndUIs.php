@@ -16,12 +16,11 @@ abstract class FrontEndUIs
 	 * @access public
 	 */
 	public function renderHeader() {
-		$html = "<!DOCTYPE HTML>
-                    <html>";
-        $html .= "<head>
-                    <title>{$this->_pageTitle}</title>
-                </head>";
-        return $html;
+		return "<!DOCTYPE HTML>
+                    <html>
+                    <head>
+                        <title>{$this->_pageTitle}</title>
+                    </head>";
 	}
 
     /**
