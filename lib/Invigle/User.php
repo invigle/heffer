@@ -46,10 +46,8 @@ class User {
     public function validateUsername($username)
     {
         $graph = new Graph();
-        
-        $check['indexBy'] = "username";
-        $check['indexValue'] = $username;
-        $api = $graph->findNodeId($check);
+        $check['query'] = "START n=node:username(username = \"$username\") RETURN count(*);";
+        $api = $graph->neo4japi('cypher', 'JSONPOST', $check);
         
         if($api){
             return false;
