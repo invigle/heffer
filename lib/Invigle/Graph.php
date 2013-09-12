@@ -60,6 +60,8 @@ class Graph {
         }elseif($type === "PUT"){
             curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
             curl_setopt($ch, CURLOPT_POSTFIELDS,http_build_query($postfields));
+        }elseif($type === "DELETE"){
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
         }
     	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     	$data = curl_exec($ch);
@@ -69,6 +71,18 @@ class Graph {
         return $json;
     }
     
+    /**
+     * Find a node using cypher indexBy and indexValue
+     */
+    public function findNodeId(array $params)
+    {
+       $path = "cypher";
+       $postfields['query'] = "START n=node:$params[indexBy]($params[indexBy] = '$params[indexValue]') RETURN n;";
+       $api = $this->neo4japi('cypher', 'JSONPOST', $postfields);
+       $node = explode("/", $api['data']['0']['0']['self']);
+       return end($node);
+    }
+    
    	/**
      * Function to edit a property in Neo4j from a universal array of $params using indexBy and indexValue to identify the nodes ID#.
 	 * @access public
@@ -76,11 +90,8 @@ class Graph {
 	 */
 	public function editProperties(array $params)
     {   
-       $path = "cypher";
-       $postfields['query'] = "START n=node:$params[indexBy]($params[indexBy] = '$params[indexValue]') RETURN n;";
-       $api = $this->neo4japi('cypher', 'JSONPOST', $postfields);
-       $node = explode("/", $api['data']['0']['0']['self']);
-       $nodeId = end($node);
+       //Get the Node ID# 
+       $nodeId = $this->getNodeId($params);
        
        //Unset params that we do not want to be saved in the Properties of the node.
        unset($params['indexBy'], $params['indexValue']);
@@ -112,8 +123,14 @@ class Graph {
 	 * @access public
 	 * @param array
 	 */
-	public function deleteNode(array $params) {
-
+	public function deleteNode(array $params)
+    {
+        //Get the Node ID# 
+        $nodeId = $this->getNodeId($params);
+        
+        //Delete the Node
+        $path = "node/$nodeId";
+        $api = $this->neo4japi($path, 'DELETE');
 	}
     
     /**
@@ -121,21 +138,35 @@ class Graph {
 	 * @access public
 	 * @param $aID
 	 */
-	public function deleteNodeByID($aID) {
-
+	public function deleteNodeByID($aID)
+    {
+        //Delete the Node
+        $path = "node/$aID";
+        $api = $this->neo4japi($path, 'DELETE');
 	}
 
 	/**
+     * Add a Relationship between two nodes (aID1 and aID2) of Type = $aType.
 	 * @access public
 	 * @param aID1
 	 * @param aID2
 	 * @param aType
 	 */
-	public function addConnection($aID1, $aID2, $aType) {
-
+	public function addConnection($aID1, $aID2, $aType)
+    {
+        $path = "node/$aID1/relationships";
+        $params['to'] = "http://$this->_neo4jHref:$this->_neo4jPort/node/$aID2";
+        $params['type'] = $aType;
+        
+        $api = $this->neo4japi($path, 'POSTJSON', $params);
+        
+        print '<pre>';
+        print_r($api);
+        print '</pre>';
 	}
 
 	/**
+     * Remove a Relationship between two nodes (aID1 and aID2) of Type = $aType.
 	 * @access public
 	 * @param aID1
 	 * @param aID2
@@ -147,7 +178,7 @@ class Graph {
 
 	/**
 	 * @access public
-	 * @param aID
+	 * @param aID (starting point).
 	 * @param aType
 	 * @param aSkip
 	 * @param aLimit
