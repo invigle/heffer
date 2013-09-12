@@ -6,6 +6,7 @@ $foo['indexBy'] = "username";
 $foo['indexValue'] = "seamore101";
 
 $foo['newProperty'] = "panda";
+$foo['firstname'] = "Eatmore";
 
 $graph = new Graph();
 $arr = $graph->editProperties($foo);
