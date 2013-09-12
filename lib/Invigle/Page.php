@@ -190,6 +190,108 @@ class Page {
 	{
 		$this->_website = $website;
 	}
+    
+    /**
+	 * This method returns the page ID.
+	 * @access public
+	 * @return integer
+	 */
+	public function getPageId()
+	{
+		return $this->_pID;
+	}
 
+	/**
+	 * This method sets the group ID.
+	 * @param id (integer)
+	 * @return boolean
+	 */
+	public function setPageId($id)
+	{
+		$this->_pID = $id;
+	}
+
+    /**
+	 * This method returns location of the page.
+	 * @access public
+	 * @return string
+	 */
+	public function getPageLocation()
+	{
+		return $this->_location;
+	}
+
+	/**
+	 * This method sets the location of the page.
+	 * @access public
+	 * @param location (string)
+	 * @return boolean
+	 */
+	public function setPageLocation($location)
+	{
+		$this->_location = $location;
+	}
+    
+    /**
+	 * This method returns the number of followers of the page.
+	 * @return integer
+	 */
+	public function getNumberOfPageFollowers()
+	{
+		return $this->$_followerCount;
+	}
+
+	/**
+	 * This method sets the number of followers of the page.
+	 * @access public
+	 * @param count (integer)
+	 * @return boolean
+	 */
+	public function setNumberOfPageFollowers($count)
+	{
+		$this->_followerCount = $count;
+	}
+    
+    /**
+	 * This method returns the group type.
+	 * @access public
+	 * @return string
+	 */
+	public function getPageType()
+	{
+		return $this->_pageType;
+	}
+
+	/**
+	 * This method sets the group type.
+	 * @access public
+	 * @param type (string))
+	 * @return boolean
+	 */
+	public function setPageType($type)
+	{
+		$this->_pageType = $type;
+	}
+    
+    /**
+	 * This method returns the ID of the page profile picture.
+	 * @access public
+	 * @return integer
+	 */
+	public function getPageProfPicId()
+	{
+		return $this->_profilePicID;
+	}
+
+	/**
+	 * This method sets the ID of the page profile picture.
+	 * @access public
+	 * @param id (integer)
+	 * @return boolean
+	 */
+	public function setPageProfPicId($id)
+	{
+		$this->_profilePicID = $id;
+	}
 }
 ?>
