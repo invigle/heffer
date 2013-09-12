@@ -1,7 +1,7 @@
 <?php
 
 function apiCall() {
-	$url = "http://boss.invigle.com:8001/db/data/node";
+	$url = "http://boss.invigle.com:8001/db/data/node/6";
 
 	$ch = curl_init();
 	curl_setopt($ch, CURLOPT_URL, $url);
