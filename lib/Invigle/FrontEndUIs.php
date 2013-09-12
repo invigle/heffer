@@ -22,7 +22,7 @@ abstract class FrontEndUIs
 
     public function __construct()
     {
-        $this->UITools = new UITools();
+        $this->UITools = new Invigle\UITools;
     }
 
     /**
