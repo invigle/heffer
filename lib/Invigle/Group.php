@@ -6,13 +6,15 @@ namespace Invigle;
  * @access public
  * @author Grant
  */
-class Group {
+class Group
+{
 	private $_name;
 	private $_category;
 	private $_shortDescription;
 	private $_slogan;
 	private $_website;
 	private $_gID;
+	private $_pHID;
 	private $_location;
 	private $_memberCount;
 	private $_institution;
@@ -31,7 +33,8 @@ class Group {
 	 * 
 	 * @ReturnType boolean
 	 */
-	public function addGroup($aGroupArray) {
+	public function addGroup($aGroupArray)
+	{
 		// Not yet implemented
 	}
 
@@ -43,7 +46,8 @@ class Group {
 	 * 
 	 * @ReturnType boolean
 	 */
-	public function deleteGroup($aGID) {
+	public function deleteGroup($aGID)
+	{
 		// Not yet implemented
 	}
 
@@ -55,11 +59,12 @@ class Group {
 	 * 
 	 * @ReturnType boolean
 	 */
-	public function editGroup($aGroupArray) {
+	public function editGroup($aGroupArray)
+	{
 		// Not yet implemented
 	}
-    
-    /**
+
+	/**
 	 * This method returns the name of the group.
 	 * @access public
 	 * @return string
@@ -79,8 +84,8 @@ class Group {
 	{
 		$this->_name = $name;
 	}
-    
-    /**
+
+	/**
 	 * This method returns the group category.
 	 * @access public
 	 * @return string
@@ -100,8 +105,8 @@ class Group {
 	{
 		$this->_category = $category;
 	}
-    
-    /**
+
+	/**
 	 * This method returns the group description.
 	 * @access public
 	 * @return string
@@ -121,8 +126,8 @@ class Group {
 	{
 		$this->_description = $description;
 	}
-    
-     /**
+
+	/**
 	 * This method returns the group's slogan.
 	 * @access public
 	 * @return string
@@ -142,8 +147,8 @@ class Group {
 	{
 		$this->_slogan = $slogan;
 	}
-    
-    /**
+
+	/**
 	 * This method returns the group's website url.
 	 * @access public
 	 * @return url
@@ -163,8 +168,8 @@ class Group {
 	{
 		$this->_website = $website;
 	}
-    
-    /**
+
+	/**
 	 * This method returns the group ID.
 	 * @access public
 	 * @return integer
@@ -183,8 +188,8 @@ class Group {
 	{
 		$this->_gID = $id;
 	}
-    
-   	/**
+
+	/**
 	 * This method returns location of the group.
 	 * @access public
 	 * @return string
@@ -204,8 +209,8 @@ class Group {
 	{
 		$this->_location = $location;
 	}
-    
-    /**
+
+	/**
 	 * This method returns the number of group members. 
 	 * @access public
 	 * @return integer
@@ -225,8 +230,8 @@ class Group {
 	{
 		$this->_memberCount = $memberCount;
 	}
-    
-    /**
+
+	/**
 	 * This method returns the institution the group is associated with.
 	 * @access public
 	 * @return string
@@ -235,7 +240,7 @@ class Group {
 	{
 		return $this->_institution;
 	}
-    
+
 	/**
 	 * This method sets the institution the group is associated with.
 	 * @param institution (string)
@@ -245,8 +250,8 @@ class Group {
 	{
 		$this->_institution = $institution;
 	}
-    
-    /**
+
+	/**
 	 * This method returns 1 if the group charges a memmbership fee, 0 otherwise.
 	 * @access public
 	 * @return boolean
@@ -266,8 +271,8 @@ class Group {
 	{
 		$this->_isPaid = $paid;
 	}
-    
-    /**
+
+	/**
 	 * This method returns the payment type the group accepts memberships by.
 	 * @access public
 	 * @return integer
@@ -287,8 +292,8 @@ class Group {
 	{
 		$this->_paymentType = $payment;
 	}
-    
-    /**
+
+	/**
 	 * This method returns 1 if the group is private, 0 otherwise.
 	 * @access public
 	 * @return boolean 
@@ -308,8 +313,8 @@ class Group {
 	{
 		$this->_privacy = $privacy;
 	}
-    
-    /**
+
+	/**
 	 * This method returns the number of followers of the group.
 	 * @return integer
 	 */
@@ -328,8 +333,8 @@ class Group {
 	{
 		$this->_followerCount = $count;
 	}
-    
-    /**
+
+	/**
 	 * This method returns the ID of the group profile picture.
 	 * @access public
 	 * @return integer
@@ -350,9 +355,27 @@ class Group {
 		$this->_profilePicID = $id;
 	}
     
- 
-    
+    /**
+	 * This method returns the ID of the photo the comment is on.
+	 * @access public
+	 * @return integer
+	 */
+	public function getCommentPhotoId()
+	{
+		return $this->_pHID;
+	}
 
+	/**
+	 * This method sets the ID of the photo the comment is on.
+	 * @access public
+	 * @param id (integer)
+	 * @return boolean
+	 */
+	public function setCommentPhotoId($id)
+	{
+		$this->$_pHID = $id;
+	}
 
 }
+
 ?>

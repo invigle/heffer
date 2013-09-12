@@ -15,13 +15,15 @@ namespace Invigle;
  * @author Grant
  */
 class Messaging {
-	/**
+	
+    /**
 	 * A list of participant UIDs connected to the conversation node CVID
 	 */
 	public $_participants;
-	/**
+	
+    /**
 	 * This will be an array of 3 fields timestamp, message and userID (originator of the message)
 	 */
-	public $_messages;
+	public $_messagesArray;
 }
 ?>

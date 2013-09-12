@@ -43,10 +43,9 @@ class User {
      * @param username
      * @return boolean (true if Available, false if Taken)
      */
-    public function validateUsername($username)
+    public function validateUsername($username, Graph $graph)
     {
-        $graph = new Graph();
-        
+        //$graph = new Graph();
         $check['indexBy'] = "username";
         $check['indexValue'] = $username;
         $api = $graph->findNodeId($check);
@@ -66,7 +65,6 @@ class User {
     public function validateEmailAddress($email)
     {
         $graph = new Graph();
-        
         $check['indexBy'] = "email";
         $check['indexValue'] = $email;
         $api = $graph->findNodeId($check);
