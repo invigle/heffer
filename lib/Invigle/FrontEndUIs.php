@@ -14,6 +14,35 @@ abstract class FrontEndUIs implements Header
 {
 
     private $_pageTitle;
+    
+    /**
+     * This function renders the header
+	 * @access public
+	 */
+	public function renderHeader() {
+		$html = "<!DOCTYPE HTML>
+                    <html>";
+        $html .= "<head>
+                    <title>{$this->_pageTitle}</title>
+                </head>";
+        return $html;
+	}
+
+    /**
+     * This function renders the top nav bar
+	 * @access public
+	 */
+	public function renderTopNav() {
+		// Not yet implemented
+	}
+    
+    /**
+     * This function renders the top nav bar
+	 * @access public
+	 */
+	public function renderSideBar() {
+		// Not yet implemented
+	}
 
     /**
      * Set page title
