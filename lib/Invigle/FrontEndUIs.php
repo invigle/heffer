@@ -8,7 +8,7 @@ require_once("bootstrap.php");
  * @access public
  * @author Grant
  */
-abstract class FrontEndUIs implements Header
+abstract class FrontEndUIs
 {
 
     private $_pageTitle;
