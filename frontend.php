@@ -6,7 +6,6 @@
  */
  
 use Invigle\FrontEndUIs,
-    Invigle\FrontEndUIs\FrontPage,
     Invigle\User;
 
 require_once("bootstrap.php");
