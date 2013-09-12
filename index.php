@@ -16,7 +16,7 @@ function apiCall($input) {
 }
 
 
-$api['path'] = "nodes";
+$api['path'] = "node/6";
 
 $arr = apiCall($api);
 print 'WORK:<hr><pre>';
