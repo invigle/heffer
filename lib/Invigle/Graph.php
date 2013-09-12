@@ -162,7 +162,7 @@ class Graph {
         $json = json_encode($params);
         
         
-        $api = $this->neo4japi($path, 'POST', $json;
+        $api = $this->neo4japi($path, 'POST', $json);
         
         print '<pre>';
         print_r($api);
