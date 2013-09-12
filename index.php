@@ -20,8 +20,10 @@ $usr = array(
             );
 
 $user = new User();
-$arr = $user->addUser($usr);
+print $user->validateUsernameFormatting('12');
 
-print $arr;
+//$arr = $user->addUser($usr);
+
+//print $arr;
 
 ?>
