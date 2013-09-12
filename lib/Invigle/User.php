@@ -138,7 +138,8 @@ class User {
             die('email taken');
         }
         
-        die();
+        die('Passed all tests');
+        
         //Create the new user account in neo4j
         $graph = new Graph();
         $api = $graph->neo4japi('node', 'JSONPOST', $aUserArray);
