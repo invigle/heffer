@@ -74,7 +74,7 @@ class Graph {
 	 */
 	public function editProperties(array $params) {
 	   
-       $path = "index/node/favorites/username/seamore101";
+       $path = "index/node/favorites/key/seamore101";
        //$postfields['query'] = "START n=node(6) MATCH n-[:FRIEND_OF]-foo RETURN foo;";
        //$api = $this->neo4japi('cypher', 'JSONPOST', $postfields);
        $api = $this->neo4japi($path, 'GET');
