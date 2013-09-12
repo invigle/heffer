@@ -18,11 +18,10 @@ abstract class FrontEndUIs
 {
 
     protected $_pageTitle;
-    protected $UITools;
 
     public function __construct()
     {
-        $UITools = new UITools();
+        
     }
 
     /**
@@ -50,6 +49,7 @@ abstract class FrontEndUIs
      */
     public function renderTopNav()
     {
+        $UITools = new UITools();
         return '<div class="navbar navbar-inverse navbar-fixed-top">
                     <div class="container">
                         <div class="navbar-header">
