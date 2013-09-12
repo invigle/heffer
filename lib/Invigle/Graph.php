@@ -79,8 +79,10 @@ class Graph {
        $path = "cypher";
        $postfields['query'] = "START n=node:$params[indexBy]($params[indexBy] = '$params[indexValue]') RETURN n;";
        $api = $this->neo4japi('cypher', 'JSONPOST', $postfields);
-       $node = explode("/", $api['data']['0']['0']['self']);
-       return end($node);
+       if(isset($node)){
+           $node = explode("/", $api['data']['0']['0']['self']);
+           return end($node);
+       }
     }
     
    	/**
