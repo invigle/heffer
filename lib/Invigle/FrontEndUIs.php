@@ -18,11 +18,11 @@ abstract class FrontEndUIs
 {
 
     protected $_pageTitle;
-    protected $UITools;
+    protected $uITools;
 
     public function __construct()
     {
-        $this->UITools = new UITools();
+        $this->uITools = new UITools();
     }
 
     /**
@@ -58,7 +58,7 @@ abstract class FrontEndUIs
                                 <span class="icon-bar"></span>
                                 <span class="icon-bar"></span>
                             </button>
-                            '.$this->UITools->renderSmallLogo().'
+                            '.$this->uITools->renderSmallLogo().'
                         </div>
                         <div class="collapse navbar-collapse">
                             <ul class="nav navbar-nav">
