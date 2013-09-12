@@ -10,12 +10,10 @@ require_once("bootstrap.php");
  * @access public
  * @author Grant
  */
-abstract class FrontEndUIs
+abstract class FrontEndUIs implements Header
 {
 
     private $_pageTitle;
-    
-    abstract function renderHeader();
 
     /**
      * Set page title
