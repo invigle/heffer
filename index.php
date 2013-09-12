@@ -2,8 +2,8 @@
 namespace Invigle;
 require_once("bootstrap.php");
 
-$graph = new Graph();
-$arr = $graph->listNodes('19', 'FRIEND_OF', '0', '10');
+$user = new User();
+$arr = $user->validateUsername($_GET['username']);
 
 print 'WORK:<hr><pre>';
 print_r($arr);

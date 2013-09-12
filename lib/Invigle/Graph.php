@@ -4,7 +4,7 @@ namespace Invigle;
 
 /**
  * @access public
- * @author Grant
+ * @author Gavin Hanson
  */
 class Graph {
 	private $_friends;

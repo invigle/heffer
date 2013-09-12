@@ -37,6 +37,25 @@ class User {
 	public $_profilePicID;
 	public $_followerCount;
 	public $_friendCount;
+    
+    /**
+     * This method will check the graph database to ensure a username is unique.
+     * @param username
+     * @return boolean
+     */
+    public function validateUsername($username)
+    {
+        $graph = new Graph();
+        
+        
+        $check['indexBy'] = "username";
+        $check['indexValue'] = $username;
+        $api = $graph->findNodeId($user);
+        
+        print '<pre>';
+        print_r($api);
+        print '</pre>';
+    }
 
 	/**
 	 * This method takes as input an array with all the information of a user and adds this user to the GD as a 'user node'.
