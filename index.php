@@ -22,7 +22,7 @@ function apiCall($api, $type, $postfields = array()) {
 }
 
 
-$api['path'] = "node/26/properties/";
+$api['path'] = "node/26/properties/firstname";
 
 $arr = apiCall($api, 'GET');
 print 'WORK:<hr><pre>';
