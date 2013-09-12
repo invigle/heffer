@@ -47,20 +47,26 @@ class User {
     public function validateUsername($username, Graph $graph)
     {
 <<<<<<< HEAD
+<<<<<<< HEAD
         //$graph = new Graph();
         $check['indexBy'] = "username";
         $check['indexValue'] = $username;
         $api = $graph->findNodeId($check);
 =======
+=======
+>>>>>>> ddcd4f6222403304cea4c3ffc3f36a730415c276
         $graph = new Graph();
         $check['query'] = "MATCH n:User WHERE n.username = \"$username\" RETURN count(*);";
         $api = $graph->neo4japi('cypher', 'JSONPOST', $check);
         
+<<<<<<< HEAD
         print '<pre>';
         print_r($api);
         print '</pre>';
 >>>>>>> 762c7b4d2377345a06fe1316e7b10cf48d75cfd9
         
+=======
+>>>>>>> ddcd4f6222403304cea4c3ffc3f36a730415c276
         if($api['data'][0][0] >= "1"){
             return false;
         }else{
@@ -77,6 +83,7 @@ class User {
     {
         $graph = new Graph();
 <<<<<<< HEAD
+<<<<<<< HEAD
         $check['indexBy'] = "email";
         $check['indexValue'] = $email;
         $api = $graph->findNodeId($check);
@@ -85,6 +92,11 @@ class User {
         $check['query'] = "MATCH n:User WHERE n.email = \"$email\" RETURN count(*);";
         $api = $graph->neo4japi('cypher', 'JSONPOST', $check);
 >>>>>>> 762c7b4d2377345a06fe1316e7b10cf48d75cfd9
+=======
+        
+        $check['query'] = "MATCH n:User WHERE n.email = \"$email\" RETURN count(*);";
+        $api = $graph->neo4japi('cypher', 'JSONPOST', $check);
+>>>>>>> ddcd4f6222403304cea4c3ffc3f36a730415c276
         
         if($api['data'][0][0] >= "1"){
             return false;

@@ -20,12 +20,12 @@ $usr = array(
             );
 
 $user = new User();
-$test = $user->validateUsername($_GET['username']);
+$test = $user->validateUsernameFormatting($_GET['username']);
 
 if($test){
-    print 'Available';
+    print 'Accepted';
 }else{
-    print 'Taken';
+    print 'Declined';
 }
 
 //$arr = $user->addUser($usr);
