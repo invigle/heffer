@@ -21,11 +21,10 @@ $usr = array(
 
 $user = new User();
 $test = $user->addUser($usr);
-if($test){
-    print 'pass';
-}else{
-    print 'fail';
-}
+
+print '<pre>';
+print_r($test);
+print '</pre>';
 
 //$arr = $user->addUser($usr);
 
