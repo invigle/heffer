@@ -1,8 +1,13 @@
 <?php
 
 /**
- * @author Grant Millar
- * @copyright 2013
+ * frontpage - The Invigle home page
+ * 
+ * @package   
+ * @author heffer
+ * @copyright Gavin Hanson
+ * @version 2013
+ * @access public
  */
  
 use Invigle\FrontEndUIs\FrontPage,

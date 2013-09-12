@@ -3,9 +3,15 @@
 namespace Invigle;
 
 /**
+ * FrontEndUIs - Contains the functions needed to render different elements of a page
+ * 
+ * @package   
+ * @author heffer
+ * @copyright Gavin Hanson
+ * @version 2013
  * @access public
- * @author Grant
  */
+ 
 abstract class FrontEndUIs
 {
 
@@ -16,11 +22,15 @@ abstract class FrontEndUIs
 	 * @access public
 	 */
 	public function renderHeader() {
-		return "<!DOCTYPE HTML>
+		return '<!DOCTYPE HTML>
                     <html>
                     <head>
-                        <title>{$this->_pageTitle}</title>
-                    </head>";
+                        <meta charset="utf-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <meta name="description" content="">
+                        <meta name="author" content="">
+                        <title>'.$this->_pageTitle.'</title>
+                    </head>';
 	}
 
     /**
@@ -28,7 +38,7 @@ abstract class FrontEndUIs
 	 * @access public
 	 */
 	public function renderTopNav() {
-		// Not yet implemented
+		
 	}
     
     /**
