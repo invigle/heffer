@@ -94,11 +94,11 @@ class Graph {
             }
        }
  
-       //$nodePath = "node/$nodeId/properties";
-       //$setApi = $this->neo4japi($nodePath, 'PUT', $params);
+       //Update the nodes Properties
+       $nodePath = "node/$nodeId/properties";
+       $setApi = $this->neo4japi($nodePath, 'PUT', $params);
        
        print "NODE ID: $nodeId<hr>";
-       //print "NODE PATH: $nodePath<hr>";
        print '<pre>';
        print_r($api);
        print_r($params);
