@@ -20,7 +20,12 @@ $usr = array(
             );
 
 $user = new User();
-print $user->validateUsernameFormatting('1234');
+$test = $user->validateUsernameFormatting($_GET['username']);
+if($test){
+    print 'pass';
+}else{
+    print 'fail';
+}
 
 //$arr = $user->addUser($usr);
 
