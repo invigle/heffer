@@ -29,7 +29,7 @@ $postdata['lastname'] = "Hanson";
 $postdata['email'] = "some@email.com";
 $postdata['password'] = "hello123";
 
-$arr = apiCall($api, 'GET', $postdata);
+$arr = apiCall($api, 'JSONPOST', $postdata);
 print 'WORK:<hr><pre>';
 print_r($arr);
 print '</pre>';
