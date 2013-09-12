@@ -20,7 +20,7 @@ $usr = array(
             );
 
 $user = new User();
-$test = $user->validateUsernameFormatting($_GET['username']);
+$test = $user->validateEmailFormatting($_GET['email']);
 if($test){
     print 'pass';
 }else{
