@@ -1,6 +1,7 @@
 <?php
 
 namespace Invigle;
+namespace Event;
 
 use Invigle\Search;
 
@@ -65,15 +66,11 @@ class Graph extends Search {
 	 * @param array
 	 */
 	public function addNode(array $params) {
-        
         $index = new NodeIndex($this->_client, $params['indexBy']);
-        
         $node = $this->_client->makeNode()->save();
-        
         foreach($params as $key => $value){
             $node->setProperty($key, $value)->save();
         }
-        
         $index->add($node, $params['indexBy'], $node->getProperty($params['indexBy']));
 	}
     

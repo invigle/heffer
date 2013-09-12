@@ -101,7 +101,7 @@
     return $this->_date;
     }
         
-        /**
+    /**
     * This method sets the date of the event.
     * @access public
     * @param date (date)
@@ -120,7 +120,7 @@
     return $this->_category;
     }
         
-        /**
+    /**
     * This method sets the category of the event.
     * @access public
     * @param category (string))
@@ -139,7 +139,7 @@
     return $this->_description;
     }
         
-        /**
+    /**
     * This method sets the description of the event.
     * @access public
     * @param description (string)
@@ -177,7 +177,7 @@
     return $this->_eID;
     }
         
-        /**
+    /**
     * This method sets the ID of the event.
     * @access public
     * @param id (integer)
@@ -195,7 +195,7 @@
     public function getEventInstitution(){
     return $this->_institution;
     }
-        /**
+    /**
     * This method sets the institution of the event.
     * @access public
     * @param $institution (string)
@@ -214,7 +214,7 @@
     return $this->_uID;
     }
         
-        /**
+    /**
     * This method sets the ID of the organiser of the event.
     * @access public
     * @param id (integer)
@@ -233,7 +233,7 @@
     return $this->_gID;
     }
         
-        /**
+    /**
     * This method sets the ID of the group which organises the event.
     * @access public
     * @param id (integer)
@@ -252,7 +252,7 @@
     return $this->_isPaid;
     }
         
-        /**
+    /**
     * This method sets the payment state of the event.
     * @access public
     * @param paid (boolean)
@@ -290,7 +290,7 @@
     return $this->_location;
     }
         
-        /**
+    /**
     * This method sets the location of the event.
     * @access public
     * @param location (string)
@@ -309,7 +309,7 @@
     return $this->$_attendeeCount;
     }
         
-        /**
+    /**
     * This method sets the number of attendees of the event.
     * @access public
     * @param attendees (integer)
@@ -328,7 +328,7 @@
     return $this->_invitedCount;
     }
         
-        /**
+    /**
     * This method sets the number of users who have been invited to the event.
     * @access public
     * @param invitees (integer)
@@ -347,7 +347,7 @@
     return $this->_eventType;
     }
      
-        /**
+     /**
     * This method sets the type of the event.
     * @access public
     * @param type (string)
@@ -366,7 +366,7 @@
     return $this->_pID;
     }
         
-        /**
+    /**
     * This method sets the ID of the page of the event.
     * @access public
     * @param id (integer)
@@ -385,7 +385,7 @@
     return $this->_profilePicID;
     }
         
-        /**
+    /**
     * This method sets the ID of the profile picture of the event.
     * @access public
     * @param id (integer)
@@ -404,7 +404,7 @@
     return $this->_timestamp;
     }
         
-        /**
+    /**
     * This method sets the timestamp in UTC that the event was created at.
     * @access public
     * @param timestamp (date)
