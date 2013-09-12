@@ -169,18 +169,18 @@ class Graph {
         $arr['query'] = "START n1=node($aID1) MATCH n1-[fr:$aType]-all RETURN fr;";
         $api = $this->neo4japi('cypher', 'JSONPOST', $arr);
         
-        /*
         foreach($api['data'] as $row){
             $exp = explode("/", $row[0]['self']);
             $id = end($exp);
             
-            if(end($exp) === "$aID2" && $row['']){
-                
+            if(end($exp) === "$aID2"){
+                $nPath = "relationship/".end($exp)."";
+                $delApi = $this->neo4japi($nPath, 'DELETE');
             }
-        }*/
+        }
         
         print '<pre>';
-        print_r($api);
+        print_r($delApi);
         print '</pre>';
 	}
 
