@@ -10,7 +10,7 @@ require_once("bootstrap.php");
  * @access public
  * @author Grant
  */
-class FrontEndUIs
+abstract class FrontEndUIs
 {
 
     private $_pageTitle;
@@ -24,6 +24,8 @@ class FrontEndUIs
         $this->_pageTitle = $pageTitle;
         echo $this->renderHeader();
     }
+    
+    abstract function renderHeader();
 
     /**
      * Set page title
