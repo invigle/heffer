@@ -135,10 +135,7 @@ class User {
         }
         
         $graph = new Graph();
-        $api = $graph->neo4japi('node', 'JSONPOST', $aUserArray);
-        
-        print '<pre>'.print_r($api).'</pre>';
-        
+        $api = $graph->neo4japi('node', 'JSONPOST', $aUserArray);        
 	}
 
 	/**
