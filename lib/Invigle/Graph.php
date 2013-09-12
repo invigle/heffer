@@ -71,8 +71,8 @@ class Graph {
 	 * @access public
 	 * @param array of key/value pairs to update properties.
 	 */
-	public function editProperties(array $params) {
-	   
+	public function editProperties(array $params)
+    {   
        $path = "cypher";
        $postfields['query'] = "START n=node:$params[indexBy]($params[indexBy] = '$params[indexValue]') RETURN n;";
        $api = $this->neo4japi('cypher', 'JSONPOST', $postfields);
@@ -82,8 +82,8 @@ class Graph {
        //Unset params that we do not want to be saved in the Properties of the node.
        unset($params['indexBy'], $params['indexValue']);
        
-       $nodePath = "node/$nodeId/properties";
        $jsonstring = json_encode($params);
+       $nodePath = "node/$nodeId/properties $jsonstring";
        $setApi = $this->neo4japi($nodePath, 'JSONPOST', $jsonstring);
        
        print "NODE ID: $nodeId<hr>";
