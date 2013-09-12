@@ -20,7 +20,7 @@ $usr = array(
             );
 
 $user = new User();
-print $user->validateUsernameFormatting('12');
+print $user->validateUsernameFormatting('invigle');
 
 //$arr = $user->addUser($usr);
 
