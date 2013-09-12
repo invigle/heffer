@@ -123,23 +123,23 @@ class User {
 	 */
 	public function addUser($aUserArray) {
 		if (!$this->validateUsernameFormatting($aUserArray['username'])){
-            return 'username-invalid';
-            die('user invalid');
+            //return 'username-invalid';
+            //die('user invalid');
 		}
         
         if (!$this->validateUsername($aUserArray['username'])) {
-            return 'username-taken';
-            die('user taken');
+            //return 'username-taken';
+            //die('user taken');
         }
         
         if (!$this->validateEmailFormatting($aUserArray['email'])) {
-            return 'email-invalid';
-            die('email invalid');
+            //return 'email-invalid';
+            //die('email invalid');
         }
         
         if (!$this->validateEmailAddress($aUserArray['email'])) {
-            return 'email-taken';
-            die('email taken');
+            //return 'email-taken';
+            //die('email taken');
         }
         
         //Create the new user account in neo4j
