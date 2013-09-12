@@ -94,16 +94,17 @@ class Graph {
                 $newParams[$key] = $value;
             }
        }
+       
+       //Check for new Params
+       foreach($params as $key => $value){
+            if(!isset($params[$key])){
+                $newParams[$key] = $value;
+            }
+       }
  
        //Update the nodes Properties
        $nodePath = "node/$nodeId/properties";
-       $setApi = $this->neo4japi($nodePath, 'PUT', $params);
-       
-       print "NODE ID: $nodeId<hr>";
-       print '<pre>';
-       print_r($api['data'][0][0]['data']);
-       print_r($newParams);
-       print '</pre>';
+       $setApi = $this->neo4japi($nodePath, 'PUT', $newParams);
 	}
 
 	/**
