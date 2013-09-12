@@ -57,6 +57,9 @@ class Graph {
         }elseif($type === "JSONPOST"){
             curl_setopt( $ch, CURLOPT_POSTFIELDS, json_encode($postfields));
             curl_setopt( $ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
+        }elseif($type === "PUT"){
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+            curl_setopt($ch, CURLOPT_POSTFIELDS,http_build_query($postfields));
         }
     	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     	$data = curl_exec($ch);
@@ -82,9 +85,9 @@ class Graph {
        //Unset params that we do not want to be saved in the Properties of the node.
        unset($params['indexBy'], $params['indexValue']);
        
-       $jsonstring = json_encode($params);
-       $nodePath = "node/$nodeId/properties $jsonstring";
-       $setApi = $this->neo4japi($nodePath, 'JSONPOST', $jsonstring);
+       //$jsonstring = json_encode($params);
+       $nodePath = "node/$nodeId/properties";
+       $setApi = $this->neo4japi($nodePath, 'JSONPOST', $params);
        
        print "NODE ID: $nodeId<hr>";
        print "NODE PATH: $nodePath<hr>";
