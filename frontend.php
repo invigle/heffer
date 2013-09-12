@@ -6,7 +6,6 @@
  */
  
 use Invigle\FrontEndUIs,
-    Invigle\FrontEndUIs\Header,
     Invigle\FrontEndUIs\FrontPage,
     Invigle\User;
 
