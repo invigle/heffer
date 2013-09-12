@@ -11,6 +11,6 @@ use Invigle\FrontEndUIs,
 
 require_once("bootstrap.php");
 
-$frontEndUI = new FrontEndUIs($pageTitle);
+$frontEndUI = new FrontEndUIs('testing page render');
 
 ?>
