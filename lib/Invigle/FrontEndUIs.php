@@ -2,6 +2,8 @@
 
 namespace Invigle;
 
+use Invigle\FrontEndUIs\Header;
+
 /**
  * @access public
  * @author Grant
