@@ -13,7 +13,7 @@ class EN_GB extends Language
 
     public function construct__()
     {
-        $this->frontPage = array(
+        $this->_frontPage = array(
             'pageTitle' => "Invigle - \"Let\'s Link Up!\""
             
         );

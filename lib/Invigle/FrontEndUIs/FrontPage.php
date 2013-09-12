@@ -18,7 +18,8 @@ class FrontPage extends FrontEndUIs {
      */
     public function __construct(Language $language)
     {
-        $this->_pageTitle = $language->frontPage['pageTitle'];
+        echo "<pre>".var_dump($language)."</pre>";
+        $this->_pageTitle = $language->_frontPage['pageTitle'];
         echo $this->renderHeader();
     }
     
