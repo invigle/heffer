@@ -5,9 +5,11 @@ require_once("bootstrap.php");
 $user = new User();
 $arr = $user->validateUsername($_GET['username']);
 
-print 'WORK:<hr><pre>';
-print_r($arr);
-print '</pre>';
+if($arr){
+    print 'Username Taken';
+}else{
+    print 'Username Available';
+}
 
 
 ?>
