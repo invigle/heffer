@@ -75,8 +75,9 @@ class Graph {
 	public function editProperties(array $params) {
 	   
        $path = "cypher";
-       $postfields['query'] = "START n=node:$params[indexBy]($params[indexBy] = '$params[indexValue]') RETURN n.id;";
+       $postfields['query'] = "START n=node:$params[indexBy]($params[indexBy] = '$params[indexValue]') RETURN n;";
        $api = $this->neo4japi('cypher', 'JSONPOST', $postfields);
+       
        
        print '<pre>';
        print_r($api);
