@@ -41,7 +41,7 @@ class User {
     /**
      * This method will check the graph database to ensure a username is unique.
      * @param username
-     * @return boolean
+     * @return boolean (true if Available, false if Taken)
      */
     public function validateUsername($username)
     {
@@ -49,6 +49,26 @@ class User {
         
         $check['indexBy'] = "username";
         $check['indexValue'] = $username;
+        $api = $graph->findNodeId($check);
+        
+        if($api){
+            return false;
+        }else{
+            return true;
+        }
+    }
+    
+    /**
+     * This method will check the graph database to ensure a email address is unique and valid
+     * @param email
+     * @return boolean (true if Available, false if Taken)
+     */
+    public function validateEmailAddress($email)
+    {
+        $graph = new Graph();
+        
+        $check['indexBy'] = "email";
+        $check['indexValue'] = $email;
         $api = $graph->findNodeId($check);
         
         if($api){

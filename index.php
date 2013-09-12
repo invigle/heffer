@@ -3,7 +3,7 @@ namespace Invigle;
 require_once("bootstrap.php");
 
 $user = new User();
-$arr = $user->validateUsername($_GET['username']);
+$arr = $user->validateEmailAddress($_GET['email']);
 
 if(!$arr){
     print 'Username Taken';
