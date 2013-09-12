@@ -155,13 +155,9 @@ class Graph {
 	public function addConnection($aID1, $aID2, $aType)
     {
         
-        $params['to'] = "http://$this->_neo4jHref:$this->_neo4jPort/node/$aID2";
-        $params['type'] = $aType;
+        $arr['query'] = "START n1=node($aID1), n2=node($aID2) CREATE n1-[fr:$aType]-n2 RETURN fr;";
+        $api = $this->neo4japi('cypher', 'JSONPOST', $arr);
         
-        $path = "node/19/relationships {\"to\":\"http://boss.invigle.com:8001/db/data/node/31\", \"type\":\"LINKED_TO\"}";       
-        $api = $this->neo4japi($path, 'POST');
-        
-        print "Path: $path<br>";
         print '<pre>';
         print_r($api);
         print '</pre>';
