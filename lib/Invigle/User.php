@@ -120,21 +120,25 @@ class User {
 	public function addUser($aUserArray) {
 		if (!$this->validateUsernameFormatting($aUserArray['username'])){
             return 'username-invalid';
+            die('user invalid');
 		}
         
         if (!$this->validateUsername($aUserArray['username'])) {
             return 'username-taken';
+            die('user taken');
         }
         
         if (!$this->validateEmailFormatting($aUserArray['email'])) {
             return 'email-invalid';
+            die('email invalid');
         }
         
         if (!$this->validateEmailAddress($aUserArray['email'])) {
             return 'email-taken';
+            die('email taken');
         }
         
-        
+        die();
         //Create the new user account in neo4j
         $graph = new Graph();
         $api = $graph->neo4japi('node', 'JSONPOST', $aUserArray);
