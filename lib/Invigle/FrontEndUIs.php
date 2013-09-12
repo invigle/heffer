@@ -11,7 +11,7 @@ require_once("bootstrap.php");
 abstract class FrontEndUIs
 {
 
-    private $_pageTitle;
+    protected $_pageTitle;
     
     /**
      * This function renders the header
