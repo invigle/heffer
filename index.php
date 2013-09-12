@@ -11,20 +11,21 @@ $usr = array(
             'username'=>'jjameson',
             'sexualpref'=>'straight',
             'birthday'=>'1984-11-26',
-            'institution'=>false,
+            'institution'=>'',
             'relationshipstatus'=>'single',
             'gender'=>'female',
-            'profilepicid'=>false,
+            'profilepicid'=>'',
             'followercount'=>'0',
             'friendcount'=>'0'
             );
 
 $user = new User();
-$test = $user->addUser($usr);
+$test = $user->validateUsername($_GET['username']);
+
 if($test){
-    print 'pass';
+    print 'Available';
 }else{
-    print 'fail';
+    print 'Taken';
 }
 
 //$arr = $user->addUser($usr);

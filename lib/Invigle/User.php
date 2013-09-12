@@ -45,12 +45,22 @@ class User {
      */
     public function validateUsername($username, Graph $graph)
     {
+<<<<<<< HEAD
         //$graph = new Graph();
         $check['indexBy'] = "username";
         $check['indexValue'] = $username;
         $api = $graph->findNodeId($check);
+=======
+        $graph = new Graph();
+        $check['query'] = "MATCH n:User WHERE n.username = \"$username\" RETURN count(*);";
+        $api = $graph->neo4japi('cypher', 'JSONPOST', $check);
         
-        if($api){
+        print '<pre>';
+        print_r($api);
+        print '</pre>';
+>>>>>>> 762c7b4d2377345a06fe1316e7b10cf48d75cfd9
+        
+        if($api['data'][0][0] >= "1"){
             return false;
         }else{
             return true;
@@ -65,11 +75,17 @@ class User {
     public function validateEmailAddress($email)
     {
         $graph = new Graph();
+<<<<<<< HEAD
         $check['indexBy'] = "email";
         $check['indexValue'] = $email;
         $api = $graph->findNodeId($check);
+=======
         
-        if($api){
+        $check['query'] = "MATCH n:User WHERE n.email = \"$email\" RETURN count(*);";
+        $api = $graph->neo4japi('cypher', 'JSONPOST', $check);
+>>>>>>> 762c7b4d2377345a06fe1316e7b10cf48d75cfd9
+        
+        if($api['data'][0][0] >= "1"){
             return false;
         }else{
             return true;
@@ -123,36 +139,39 @@ class User {
 	 */
 	public function addUser($aUserArray) {
 		if (!$this->validateUsernameFormatting($aUserArray['username'])){
-            return 'username-invalid';
-            die('user invalid');
+            //return 'username-invalid';
+            //die('user invalid');
 		}
         
         if (!$this->validateUsername($aUserArray['username'])) {
-            return 'username-taken';
-            die('user taken');
+            //return 'username-taken';
+            //die('user taken');
         }
         
         if (!$this->validateEmailFormatting($aUserArray['email'])) {
-            return 'email-invalid';
-            die('email invalid');
+            //return 'email-invalid';
+            //die('email invalid');
         }
         
         if (!$this->validateEmailAddress($aUserArray['email'])) {
-            return 'email-taken';
-            die('email taken');
+            //return 'email-taken';
+            //die('email taken');
         }
         
         //Create the new user account in neo4j
-        //$graph = new Graph();
-        //$api = $graph->neo4japi('node', 'JSONPOST', $aUserArray);
+        $graph = new Graph();    
         
-        $queryString = json_encode($aUserArray);
-        $user['query'] = "CREATE (n:User $queryString)";      
+        $queryString = "";
+        foreach($aUserArray as $key => $value){
+            $queryString.= "$key : \"$value\", ";
+        }
+        $queryString = substr($queryString, 0, -2);
+        $user['query'] = "CREATE (n:User {".$queryString."}) RETURN n;";   
+            
+        $apiCall = $graph->neo4japi('cypher', 'JSONPOST', $user);
         
-        print $user['query'];
-        
-        //$user['query'] = "CREATE n SET n:Use";
-        //$apiCall = $graph->neo4japi('cypher', 'JSONPOST');
+  
+    return $apiCall;
 	}
 
 	/**

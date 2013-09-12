@@ -28,6 +28,13 @@ class FrontPage extends FrontEndUIs {
         $this->_pageTitle = $language->_frontPage['pageTitle'];
         echo $this->renderHeader();
         echo $this->renderTopNav();
+        echo $this->renderJSLinks();
+    }
+    
+    private function renderJSLinks() {
+        return '<script src="/assets/bootstrap/js/jquery.js"></script>
+                <script src="http://getbootstrap.com/dist/js/bootstrap.min.js"></script>';
+                //'<script src="/assets/bootstrap/js/collapse.js"></script>';
     }
     
  }
