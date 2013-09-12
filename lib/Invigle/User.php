@@ -103,6 +103,9 @@ class User {
         if(strlen($username) < "4"){
             return false;
             break;
+        }elseif(is_numeric($username)){
+            return false;
+            break;
         }elseif($username === "admin" || $username === "invigle" || $username === "staff"){
             return false;
             break;
