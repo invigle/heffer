@@ -47,12 +47,15 @@ class User {
     {
         $graph = new Graph();
         
-        
         $check['indexBy'] = "username";
         $check['indexValue'] = $username;
         $api = $graph->findNodeId($check);
         
-        print_r($api);
+        if($api){
+            return false;
+        }else{
+            return true;
+        }
     }
 
 	/**
