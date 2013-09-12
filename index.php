@@ -3,7 +3,7 @@ namespace Invigle;
 require_once("bootstrap.php");
 
 $foo['indexBy'] = "username";
-$foo['indexValue'] = "dilbert101";
+$foo['indexValue'] = "seamore101";
 
 $foo['newProperty'] = "panda";
 

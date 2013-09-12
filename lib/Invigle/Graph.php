@@ -84,15 +84,14 @@ class Graph {
        
        //Unset params that we do not want to be saved in the Properties of the node.
        unset($params['indexBy'], $params['indexValue']);
-       
-       //$jsonstring = json_encode($params);
-       $nodePath = "node/$nodeId/properties";
-       $setApi = $this->neo4japi($nodePath, 'PUT', $params);
+ 
+       //$nodePath = "node/$nodeId/properties";
+       //$setApi = $this->neo4japi($nodePath, 'PUT', $params);
        
        print "NODE ID: $nodeId<hr>";
-       print "NODE PATH: $nodePath<hr>";
+       //print "NODE PATH: $nodePath<hr>";
        print '<pre>';
-       print_r($setApi);
+       print_r($api);
        print '</pre>';
 	}
 
