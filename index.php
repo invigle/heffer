@@ -16,7 +16,7 @@ function apiCall() {
 }
 
 $arr = apiCall();
-print '<pre>';
+print 'WORK:<hr><pre>';
 print_r($arr);
 print '</pre>';
 
