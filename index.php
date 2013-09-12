@@ -18,7 +18,7 @@ function apiCall($api, $type, $postfields = array()) {
 	curl_close($ch);
 
     $json = json_decode($data, true);
-    return $json['data'];
+    return $json;
 }
 
 
