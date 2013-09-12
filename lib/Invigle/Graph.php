@@ -88,11 +88,7 @@ class Graph {
        //Copy all existing params into a new array checking recursively for updates in the params argument.
        //$newParams = $params;
        foreach($api['data'][0][0]['data'] as $key => $value){
-            if(isset($params[$key])){
-                $newPparams[$key] = $params[$key];
-            }else{
-                $newPparams[$key] = $value;
-            }
+            $newParams[$key] = $value;
        }
  
        //Update the nodes Properties
