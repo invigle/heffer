@@ -14,15 +14,15 @@ class FrontEndUIs
 {
 
     private $_pageTitle;
-    public $_header;
 
     /**
      * Construct creates all the classes we need to render a page
      * @access public
      */
-    public function __construct()
+    public function __construct($pageTitle)
     {
-        $this->_header = new Header();
+        $this->_pageTitle = $pageTitle;
+        echo $this->renderHeader();
     }
 
     /**
