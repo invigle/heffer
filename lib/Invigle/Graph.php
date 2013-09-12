@@ -173,7 +173,9 @@ class Graph {
             $exp = explode("/", $row[0]['self']);
             $id = end($exp);
             
-            if(end($exp) === "$aID2"){
+            print "$id<br />";
+            
+            if($id === $aID2){
                 $nPath = "relationship/".end($exp)."";
                 $delApi = $this->neo4japi($nPath, 'DELETE');
             }
