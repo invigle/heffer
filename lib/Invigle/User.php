@@ -49,6 +49,10 @@ class User {
         $check['query'] = "MATCH n:User WHERE n.username = \"$username\" RETURN count(*);";
         $api = $graph->neo4japi('cypher', 'JSONPOST', $check);
         
+        print '<pre>';
+        print_r($api);
+        print '</pre>';
+        
         if($api['data'][0][0] >= "1"){
             return false;
         }else{
@@ -67,10 +71,6 @@ class User {
         
         $check['query'] = "MATCH n:User WHERE n.email = \"$email\" RETURN count(*);";
         $api = $graph->neo4japi('cypher', 'JSONPOST', $check);
-        
-        print '<pre>';
-        print_r($api);
-        print '</pre>';
         
         if($api['data'][0][0] >= "1"){
             return false;
