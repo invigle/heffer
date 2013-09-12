@@ -20,7 +20,7 @@ $usr = array(
             );
 
 $user = new User();
-$test = $user->validateUsername('jjameson');
+$test = $user->validateUsername('jjameson1');
 
 if($test){
     print 'Available';
