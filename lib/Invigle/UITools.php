@@ -1,6 +1,6 @@
 <?php
  
-namespace Invigle\UITools;
+namespace Invigle;
  
 /**
  * FrontPage - This renders the front home page
