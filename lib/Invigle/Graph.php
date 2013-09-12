@@ -88,9 +88,9 @@ class Graph {
        //Copy all existing params into a new array checking recursively for updates in the params argument.
        foreach($api['data'][0][0]['data'] as $key => $value){
             if(isset($params[$key])){
-                $newParams[$key] = $value;
+                $params[$key] = $value;
             }else{
-                $newParams[$key] = $value;
+                $params[$key] = $value;
             }
        }
  
@@ -101,7 +101,7 @@ class Graph {
        //print "NODE PATH: $nodePath<hr>";
        print '<pre>';
        print_r($api);
-       print_r($newParams);
+       print_r($params);
        print '</pre>';
 	}
 
