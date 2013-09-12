@@ -12,9 +12,7 @@ function apiCall() {
 	$data = curl_exec($ch);
 	curl_close($ch);
 
-    return $data;
-
-    //return json_decode($data, true);
+    return json_decode($data, true);
 }
 
 $arr = apiCall();
