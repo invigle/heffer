@@ -5,6 +5,8 @@ require_once("bootstrap.php");
 $foo['indexBy'] = "username";
 $foo['indexValue'] = "dilbert101";
 
+$foo['newProperty'] = "panda";
+
 $graph = new Graph();
 $arr = $graph->editProperties($foo);
 
