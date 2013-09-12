@@ -5,19 +5,20 @@
  * @copyright 2013
  */
  
- namespace Invigle\FrontEndUIs;
+namespace Invigle\FrontEndUIs;
  
- use Invigle\FrontEndUIs;
+use Invigle\FrontEndUIs,
+    Invigle\Language;
  
- class FrontPage extends FrontEndUIs {
+class FrontPage extends FrontEndUIs {
     
     /**
      * Construct creates all the classes we need to render a page
      * @access public
      */
-    public function __construct($pageTitle)
+    public function __construct(Language $language)
     {
-        $this->_pageTitle = $pageTitle;
+        $this->_pageTitle = $language->frontPage['pageTitle'];
         echo $this->renderHeader();
     }
     
