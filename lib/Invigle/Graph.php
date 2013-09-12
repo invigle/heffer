@@ -154,13 +154,8 @@ class Graph {
 	 */
 	public function addConnection($aID1, $aID2, $aType)
     {
-        
         $arr['query'] = "START n1=node($aID1), n2=node($aID2) CREATE n1-[fr:$aType]->n2 RETURN fr;";
         $api = $this->neo4japi('cypher', 'JSONPOST', $arr);
-        
-        print '<pre>';
-        print_r($api);
-        print '</pre>';
 	}
 
 	/**
