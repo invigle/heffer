@@ -22,6 +22,7 @@ class Event
 	private $_location;
 	private $_attendeeCount;
 	private $_invitedCount;
+    private $_followerCount;
 	private $_eventType;
 	private $_pID;
 	private $_profilePicID;
@@ -122,7 +123,7 @@ class Event
 	}
 
 	/**
-	 * This method returns the category of the event.
+	 * This method returns the event category (public or private).
 	 * @access public
 	 * @return string
 	 */
@@ -132,7 +133,7 @@ class Event
 	}
 
 	/**
-	 * This method sets the category of the event.
+	 * This method sets the event category (public or private).
 	 * @access public
 	 * @param category (string))
 	 * @return boolean
@@ -164,9 +165,9 @@ class Event
 	}
 
 	/**
-	 * This method returns the privacy of the event.
+	 * This method returns 1 if the event if private, 0 otherwise.
 	 * @access public
-	 * @return boolean -- public = 0 /private = 1
+	 * @return boolean 
 	 */
 	public function getEventPrivacy()
 	{
@@ -174,7 +175,7 @@ class Event
 	}
 
 	/**
-	 * This method sets the privacy of the event.
+	 * This method sets the value _privacy to 1 if the event is private, 0 otherwise.
 	 * @access public
 	 * @param privacy (boolean)
 	 * @return boolean
@@ -218,7 +219,7 @@ class Event
 	/**
 	 * This method sets the institution of the event.
 	 * @access public
-	 * @param $institution (string)
+	 * @param institution (string)
 	 * @return boolean
 	 */
 	public function setEventInstitution($institution)
@@ -269,7 +270,7 @@ class Event
 	}
 
 	/**
-	 * This method returns 0 if the event is paid, 1 otherwise.
+	 * This method returns 1 if the event charges an attendance fee, 0 otherwise.
 	 * @access public
 	 * @return boolean
 	 */
@@ -279,7 +280,7 @@ class Event
 	}
 
 	/**
-	 * This method sets the payment state of the event.
+	 * This method sets the value to 1 if the event charges an attendance fee, 0 otherwise.
 	 * @access public
 	 * @param paid (boolean)
 	 * @return boolean
@@ -456,6 +457,29 @@ class Event
 	{
 		$this->_timestamp = $timestamp;
 	}
+    
+    /**
+	 * This method returns the number of followers of the event.
+	 * @return integer
+	 */
+	public function getNumberOfEventFollowers()
+	{
+		return $this->$_followerCount;
+	}
+
+	/**
+	 * This method sets the number of followers of the event.
+	 * @access public
+	 * @param count (integer)
+	 * @return boolean
+	 */
+	public function setNumberOfEventFollowers($count)
+	{
+		$this->_followerCount = $count;
+	}
+    
+    
+    
 }
 
 ?>

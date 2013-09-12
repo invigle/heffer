@@ -150,9 +150,7 @@ class Comment
 		$this->_eID = $id;
 	}
     
-    //_sID; $_pHID;
     
-    //;$_gID;$_pID;
     
     
     
