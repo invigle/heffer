@@ -32,8 +32,7 @@ class FrontPage extends FrontEndUIs {
     }
     
     private function renderJSLinks() {
-        return '<script src="/assets/bootstrap/js/jquery.js"></script>
-                <script src="/assets/bootstrap/js/collapse.js"></script>';
+        return '<script src="/assets/bootstrap/js/collapse.js"></script>';
     }
     
  }
