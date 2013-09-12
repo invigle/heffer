@@ -130,7 +130,7 @@ class User {
             return 'email-invalid';
         }
         
-        if (!$this->validateEmail($aUserArray['email'])) {
+        if (!$this->validateEmailAddress($aUserArray['email'])) {
             return 'email-taken';
         }
         
