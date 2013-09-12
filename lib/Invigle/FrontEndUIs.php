@@ -14,16 +14,6 @@ abstract class FrontEndUIs
 {
 
     private $_pageTitle;
-
-    /**
-     * Construct creates all the classes we need to render a page
-     * @access public
-     */
-    public function __construct($pageTitle)
-    {
-        $this->_pageTitle = $pageTitle;
-        echo $this->renderHeader();
-    }
     
     abstract function renderHeader();
 

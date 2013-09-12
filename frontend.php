@@ -7,10 +7,11 @@
  
 use Invigle\FrontEndUIs,
     Invigle\FrontEndUIs\Header,
+    Invigle\FrontEndUIs\FrontPage,
     Invigle\User;
 
 require_once("bootstrap.php");
 
-$frontEndUI = new FrontEndUIs('testing page render');
+$frontEndUI = new FrontPage('testing page render');
 
 ?>
