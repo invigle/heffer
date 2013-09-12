@@ -2,14 +2,19 @@
 namespace Invigle;
 require_once("bootstrap.php");
 
-$user = new User();
-$arr = $user->validateEmailAddress($_GET['email']);
 
-if(!$arr){
-    print 'Username Taken';
-}else{
-    print 'Username Available';
-}
+$usr = array(
+            'firstname'=>"Jenna",
+            'lasname'=>"Jameson",
+            'email'=>"hugetits@hotmail.com",
+            'password'=>'LovesC0CK',
+            'username'=>'jjameson',
+            'sexualpref'=>'straight'
+            );
+
+
+$user = new User();
+$arr = $user->addUser($usr);
 
 
 ?>

@@ -77,6 +77,37 @@ class User {
             return true;
         }
     }
+    
+    /**
+     * This method will check that the entered email address is valid.
+     * @param email
+     * @return boolean (true if Valid, false if Not)
+     */
+    public function validateEmailFormatting($email)
+    {
+        if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
+            return false;
+        }else{
+            return true;
+        }
+    }
+    
+    /**
+     * This method will check that the entered username is valid
+     * @param username
+     * @return boolean
+     */
+    public function validateUsernameFormatting($username)
+    {
+        //Rules
+        if(strlen($username < "4")){
+            return false;
+        }elseif($username === "admin" || $username === "invigle" || $username === "staff"){
+            return false;
+        }else{
+            return true;
+        }
+    }
 
 	/**
 	 * This method takes as input an array with all the information of a user and adds this user to the GD as a 'user node'.
@@ -87,7 +118,27 @@ class User {
 	 * @ReturnType boolean
 	 */
 	public function addUser($aUserArray) {
-		// Not yet implemented
+		if (!$this->validateUsernameFormatting($aUserArray['username'])){
+            return 'username-invalid';
+		}
+        
+        if (!$this->validateUsername($aUserArray['username'])) {
+            return 'username-taken';
+        }
+        
+        if (!$this->validateEmailFormatting($aUserArray['email'])) {
+            return 'email-invalid';
+        }
+        
+        if (!$this->validateEmail($aUserArray['email'])) {
+            return 'email-taken';
+        }
+        
+        $graph = new Graph();
+        $api = $graph->new4japi('node', 'JSONPOST', $aUserArray);
+        
+        print '<pre>'.print_r($api).'</pre>';
+        
 	}
 
 	/**
