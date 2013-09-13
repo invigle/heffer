@@ -160,11 +160,11 @@ class FrontPage extends FrontEndUIs {
             $error = "";
         }
         
-        return ''.$error.'<br /><br /><br /><br /><br /><br /><br />
+        return ''.$error.'
                     <form method="POST" action="'.$_SERVER['PHP_SELF'].'">
                     <input type="hidden" name="regform" value="submit">
                         <h2>'.$this->_language->_frontPage["register"].'</h2>
-                        <div class="row-fluid">
+                        <div class="row">
                             <div class="col-md-12">
                             
                                 <div class="col-md-6">
