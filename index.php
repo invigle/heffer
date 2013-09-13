@@ -1,5 +1,6 @@
 <?php
 namespace Invigle;
+require_once("configuration.php");
 require_once("bootstrap.php");
 
 

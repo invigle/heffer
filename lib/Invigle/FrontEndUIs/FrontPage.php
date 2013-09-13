@@ -116,13 +116,14 @@ class FrontPage extends FrontEndUIs {
                 $userArray['dob_day'] = $_POST['dob_day'];
                 $userArray['dob_month'] = $_POST['dob_month'];
                 $userArray['dob_year'] = $_POST['dob_year'];
+                $userArray['password'] = $_POST['password'];
             }
             
             //At this point either an $error will be set or the API Call will have been successful and $add will contain the new users 'Node ID#' from Neo4J.
         }
         
         return '<div class="container">
-                '.$error.'
+                '.$error.''.CONF_SECURESALT.'
                     <form method="POST" action="'.$_SERVER['PHP_SELF'].'">
                     <input type="hidden" name="regform" value="submit">
                         <h2>'.$this->_language->_frontPage["register"].'</h2>
