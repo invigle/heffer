@@ -41,73 +41,74 @@ class FrontPage extends FrontEndUIs {
     private function registrationForm()
     {       
         return '<div class="container">
-                    <h2>'.$this->_language->_frontPage["register"].'</h2>
-                    <div class="row-fluid">
-                        <div class="col-md-6">
-                            <input type="text" class="form-control col-md-6" name="firstname" value="" placeholder="'.$this->_language->_frontPage["firstname"].'">
-                        </div>
-                        <div class="col-md-6">
-                            <input type="text" class="form-control col-md-6" name="lastname" value="" placeholder="'.$this->_language->_frontPage["lastname"].'">
-                        </div>
-                    </div>
-                    <div class="row-fluid">
-                        <div class="col-md-12">
-                            <input type="text" class="form-control col-md-12" name="email" value="" placeholder="'.$this->_language->_frontPage["emailaddress"].'">
-                        </div>
-                    </div>
-                    <div class="row-fluid">
-                        <div class="col-md-12">
-                            <input type="text" class="form-control col-md-12" name="confirmemail" value="" placeholder="'.$this->_language->_frontPage["confirmemailaddress"].'">
-                        </div>
-                    </div>
-                    <div class="row-fluid">
-                        <div class="col-md-6">
-                            <input type="text" class="form-control col-md-6" name="username" value="" placeholder="'.$this->_language->_frontPage["username"].'">
-                        </div>
-                        <div class="col-md-6">
-                            <input type="password" class="form-control col-md-6" name="password" value="" placeholder="'.$this->_language->_frontPage["password"].'">
-                        </div>
-                    </div>
-                    <div class="row-fluid">
-                        <div class="col-md-6">
-                            <h4>'.$this->_language->_frontPage["birthdate"].'</h4>
-                            <div class="row-fluid">
-                                <div class="col-md-3">
-                                    <input type="text" name="dob_day" class="form-control" placeholder="'.$this->_language->_frontPage["day"].'">
-                                </div>
-                                <div class="col-md-3">
-                                    <input type="text" name="dob_month" class="form-control" placeholder="'.$this->_language->_frontPage["month"].'">
-                                </div>
-                                <div class="col-md-6">
-                                    <input type="text" name="dob_year" class="form-control" placeholder="'.$this->_language->_frontPage["year"].'">
-                                </div>
+                    <form method="" action="POST">
+                        <h2>'.$this->_language->_frontPage["register"].'</h2>
+                        <div class="row-fluid">
+                            <div class="col-md-6">
+                                <input type="text" class="form-control col-md-6" name="firstname" value="" placeholder="'.$this->_language->_frontPage["firstname"].'">
+                            </div>
+                            <div class="col-md-6">
+                                <input type="text" class="form-control col-md-6" name="lastname" value="" placeholder="'.$this->_language->_frontPage["lastname"].'">
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <h4>'.$this->_language->_frontPage["gender"].'</h4>
-                            <div class="row-fluid">
-                                <div class="col-md-6">
-                                    <div class="radio">
-                                      <label>
-                                          <input type="radio" name="gender" id="gender_male" value="male" checked>
-                                          '.$this->_language->_frontPage["male"].'
-                                      </label>
+                        <div class="row-fluid">
+                            <div class="col-md-12">
+                                <input type="text" class="form-control col-md-12" name="email" value="" placeholder="'.$this->_language->_frontPage["emailaddress"].'">
+                            </div>
+                        </div>
+                        <div class="row-fluid">
+                            <div class="col-md-12">
+                                <input type="text" class="form-control col-md-12" name="confirmemail" value="" placeholder="'.$this->_language->_frontPage["confirmemailaddress"].'">
+                            </div>
+                        </div>
+                        <div class="row-fluid">
+                            <div class="col-md-6">
+                                <input type="text" class="form-control col-md-6" name="username" value="" placeholder="'.$this->_language->_frontPage["username"].'">
+                            </div>
+                            <div class="col-md-6">
+                                <input type="password" class="form-control col-md-6" name="password" value="" placeholder="'.$this->_language->_frontPage["password"].'">
+                            </div>
+                        </div>
+                        <div class="row-fluid">
+                            <div class="col-md-6">
+                                <h4>'.$this->_language->_frontPage["birthdate"].'</h4>
+                                <div class="row-fluid">
+                                    <div class="col-md-3">
+                                        <input type="text" name="dob_day" class="form-control" placeholder="'.$this->_language->_frontPage["day"].'">
                                     </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="radio">
-                                        <label>
-                                            <input type="radio" name="gender" id="gender_female" value="female">
-                                            '.$this->_language->_frontPage["female"].'
-                                        </label>
+                                    <div class="col-md-3">
+                                        <input type="text" name="dob_month" class="form-control" placeholder="'.$this->_language->_frontPage["month"].'">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input type="text" name="dob_year" class="form-control" placeholder="'.$this->_language->_frontPage["year"].'">
                                     </div>
                                 </div>
                             </div>
+                            <div class="col-md-6">
+                                <h4>'.$this->_language->_frontPage["gender"].'</h4>
+                                <div class="row-fluid">
+                                    <div class="col-md-6">
+                                        <div class="radio">
+                                          <label>
+                                              <input type="radio" name="gender" id="gender_male" value="male" checked>
+                                              '.$this->_language->_frontPage["male"].'
+                                          </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="radio">
+                                            <label>
+                                                <input type="radio" name="gender" id="gender_female" value="female">
+                                                '.$this->_language->_frontPage["female"].'
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    
-                    <input type="submit" name="register" value="'.$this->_language->_frontPage["registerButton"].'">
-                    
+                        
+                        <input type="submit" name="register" value="'.$this->_language->_frontPage["registerButton"].'">
+                    </form>
                 </div>';
     }
     
