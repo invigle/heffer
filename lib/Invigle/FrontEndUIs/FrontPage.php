@@ -44,7 +44,7 @@ class FrontPage extends FrontEndUIs {
     private function authenticationLayer()
     {
         return '<div class="container">
-                    <div class="row">
+                    <div class="row-fluid">
                         <div class="md-col-4">
                             '.$this->loginForm($_POST).'
                         </div>
