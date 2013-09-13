@@ -59,8 +59,6 @@ class FrontPage extends FrontEndUIs {
     {
         if(isset($_POST['loginform'])){
             $user = new User();
-            
-            $run['query'] = "MATCH n:User WHERE n.email = '$_POST[email]' RETURN n;";
             $login = $user->loginUser($_POST);
             
             print '<pre>';

@@ -160,6 +160,20 @@ class User {
   
     return $userId;
 	}
+    
+    /**
+     * This method takes input as an array from $_POST and logs in a user.
+     */
+    public function loginUser(array $user)
+    {
+        $graph = new Graph();        
+    
+        $run['query'] = "MATCH n:User WHERE n.email = '$_POST[email]' RETURN n;";    
+        $login = $graph->neo4japi('cypher', 'JSONPOST', $run);
+        
+    
+    return $login;        
+    }
 
 	/**
 	 * This method takes as input the ID of a user and deletes the node that represent this user from the GD.
