@@ -26,13 +26,12 @@ if(isset($_SESSION['sid']) && isset($_SESSION['uid'])){
     $user = new User();
     $val = $user->validateSession();
     
-    print 'Sessions Detected, Checking';
+    print 'Sessions Detected, Checking<hr>';
+    if($val){
+        print 'Genuine';
+    }else{
+        print 'Hax0r';
+    }
 }
-
-
-print 'SESSION DATA:<br />';
-print '<pre>';
-print_r($_SESSION);
-print '</pre>';
 
 ?>

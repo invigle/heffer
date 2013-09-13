@@ -222,9 +222,19 @@ class User {
         $val['query'] = "MATCH n:User WHERE n.sessionid='$_SESSION[sid]' RETURN n;";
         $api = $graph->neo4japi('cypher', 'JSONPOST', $val);
         
-        print '<pre>';
-        print_r($api);
-        print '</pre>';
+        if(isset($api['data'][0][0]['data'])){
+            $userInfo = $api['data'][0][0]['data'];
+            if($userInfo['ipaddress'] !== $_SERVER['REMOTE_ADDR']){
+                //IP Does not match session, Kick this fool out!
+                return false;
+            }else{
+                //This guys for true, let em' stay.
+                return true;
+            }
+        
+        }else{
+            return false;
+        }
     }
 
 	/**
