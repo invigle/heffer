@@ -4,7 +4,7 @@
 
 /**
  * @access public
- * @author Grant
+ * @author Manos
  */
 class Page
 {
@@ -24,9 +24,7 @@ class Page
 	 * adds this page to the GD as a 'page node'.
 	 * @access public
 	 * @param aPageArray
-	 * @return boolean
-	 * 
-	 * @ReturnType boolean
+	 * @return integer
 	 */
 	public function addPage($aPageArray)
 	{
@@ -49,24 +47,30 @@ class Page
 		return $pageId;
 	}
 
-	/**
-	 * This method takes as input the ID of a page and deletes the node that represent this page from the GD.
-	 * @access public
+	/** Function to delete a page node given an ID.
+	 * @access private
 	 * @param aPID
+	 * @return boolean
 	 */
 	public function deletePage($aPID)
 	{
-		// Not yet implemented
+		$graph = new Graph();
+		$succDelete = $graph->deleteNodeByID($aPID);
+		return $succDelete;
 	}
 
 	/**
-	 * This method edits some of the properties of a page in the GD by updating the current node in the GD with information provided by the pageArray which is the input to the editPage method
+	 * This method edits some of the properties of a page in the GD by updating the current node in 
+	 * the GD with information provided by the pageArray which is the input to the editPage method
 	 * @access public
 	 * @param aPageArray
+	 * @return boolean
 	 */
 	public function editPage($aPageArray)
 	{
-		// Not yet implemented
+		$graph = new Graph();
+		$succDelete = $graph->editGroup($aPageArray);
+		return $succDelete;
 	}
 
 	/**

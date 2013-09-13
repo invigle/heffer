@@ -2,9 +2,11 @@
 
 namespace Invigle;
 
+use Invigle\Graph;
+
 /**
  * @access public
- * @author GGM //Grant-Gavin-Manos
+ * @author Manos
  */
 class Comment
 {
@@ -17,17 +19,15 @@ class Comment
 	private $_gID;
 	private $_uID;
 	private $_pID;
-    
-    /**
+
+	/**
 	 * This method takes as input an array with all the information of a comment and 
 	 * adds this comment to the GD as a 'comment node'.
 	 * @access public
 	 * @param aDataArray
-	 * @return boolean
-	 * 
-	 * @ReturnType boolean
+	 * @return integer
 	 */
-	public function addComment($aDataArray)
+	public function createComment($aDataArray)
 	{
 		//Create the new comment account in neo4j
 		$graph = new Graph();
@@ -45,32 +45,31 @@ class Comment
 		$commentId = end($bit);
 		return $commentId;
 	}
-    
-	/**
-	 * @access private
-	 * @param aDataArray
-	 */
-	public function createComment($aDataArray)
-	{
-		// Not yet implemented
-	}
 
-	/**
+	/** Function to delete a comment node given an ID.
 	 * @access private
 	 * @param aCID
+	 * @return boolean
 	 */
 	public function deleteComment($aCID)
 	{
-		// Not yet implemented
+		$graph = new Graph();
+		$succDelete = $graph->deleteNodeByID($aCID);
+        return $succDelete;
 	}
-
-	/**
-	 * @access private
-	 * @param aDataArray
+    
+    /**
+	 * This method edits some of the properties of a comment in the GD by updating the current node in 
+	 * the GD with information provided by the metaArray which is the input to the editComment method
+	 * @access public
+	 * @param aMetaArray
+	 * @return boolean
 	 */
-	public function editComment($aDataArray)
+	public function editComment($aMetaArray)
 	{
-		// Not yet implemented
+		$graph = new Graph();
+		$succDelete = $graph->editProperties($aMetaArray);
+        return $succDelete;
 	}
 
 	/**

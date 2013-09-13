@@ -4,7 +4,7 @@ namespace Invigle;
 
 /**
  * @access public
- * @author Grant
+ * @author Manos
  */
 class Group
 {
@@ -30,9 +30,7 @@ class Group
 	 * adds this group to the GD as an 'group node'.
 	 * @access public
 	 * @param aGroupArray
-	 * @return boolean
-	 * 
-	 * @ReturnType boolean
+	 * @return integer
 	 */
 	public function addGroup($aGroupArray)
 	{
@@ -46,37 +44,37 @@ class Group
 		$queryString = substr($queryString, 0, -2);
 		$event['query'] = "CREATE (n:Group {" . $queryString . "}) RETURN n;";
 		$apiCall = $graph->neo4japi('cypher', 'JSONPOST', $group);
-        
+
 		//return the New Group ID.
 		$bit = explode("/", $apiCall['data'][0][0]['self']);
 		$groupId = end($bit);
 		return $groupId;
 	}
 
-	/**
-	 * This method takes as input the ID of a group and deletes the node that represent this group from the GD.
-	 * @access public
+	/** Function to delete a group node given an ID.
+	 * @access private
 	 * @param aGID
 	 * @return boolean
-	 * 
-	 * @ReturnType boolean
 	 */
 	public function deleteGroup($aGID)
 	{
-		// Not yet implemented
+		$graph = new Graph();
+		$succDelete = $graph->deleteNodeByID($aGID);
+        return $succDelete;
 	}
-
-	/**
-	 * This method edits some of the properties of a group in the GD by updating the current node in the GD with information provided by the groupArray which is the input to the editGroup method
+    
+    /**
+	 * This method edits some of the properties of a group in the GD by updating the current node in 
+	 * the GD with information provided by the groupArray which is the input to the editGroup method
 	 * @access public
 	 * @param aGroupArray
 	 * @return boolean
-	 * 
-	 * @ReturnType boolean
 	 */
 	public function editGroup($aGroupArray)
 	{
-		// Not yet implemented
+		$graph = new Graph();
+		$succDelete = $graph->editGroup($aGroupArray);
+        return $succDelete;
 	}
 
 	/**
@@ -369,8 +367,8 @@ class Group
 	{
 		$this->_profilePicID = $id;
 	}
-    
-    /**
+
+	/**
 	 * This method returns the ID of the photo the comment is on.
 	 * @access public
 	 * @return integer
@@ -390,8 +388,8 @@ class Group
 	{
 		$this->$_pHID = $id;
 	}
-    
-    /**
+
+	/**
 	 * This method returns the group type.
 	 * @access public
 	 * @return string
@@ -412,4 +410,5 @@ class Group
 		$this->_groupType = $type;
 	}
 }
+
 ?>

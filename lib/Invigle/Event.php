@@ -4,7 +4,7 @@ namespace Invigle;
 
 /**
  * @access private
- *
+ * @author Manos
  */
 class Event
 {
@@ -22,7 +22,7 @@ class Event
 	private $_location;
 	private $_attendeeCount;
 	private $_invitedCount;
-    private $_followerCount;
+	private $_followerCount;
 	private $_eventType;
 	private $_pID;
 	private $_profilePicID;
@@ -33,9 +33,7 @@ class Event
 	 * adds this event to the GD as an 'event node'.
 	 * @access public
 	 * @param aEventArray
-	 * @return boolean
-	 * 
-	 * @ReturnType boolean
+	 * @return integer
 	 */
 	public function addEvent($aEventArray)
 	{
@@ -56,25 +54,30 @@ class Event
 		return $eventId;
 	}
 
-	/**
-	 * This method takes as input the ID of an event and deletes the node that represent this event from the GD.
-	 * @access public
+	/** Function to delete an event node given an ID.
+	 * @access private
 	 * @param aEID
 	 * @return boolean
 	 */
 	public function deleteEvent($aEID)
 	{
-		// Not yet implemented
+		$graph = new Graph();
+		$succDelete = $graph->deleteNodeByID($aEID);
+		return $succDelete;
 	}
 
 	/**
-	 * This method edits some of the properties of an event in the GD by updating the current node in the GD with information provided by the metaArray which is the input to the editEvent method
+	 * This method edits some of the properties of an event in the GD by updating the current node in 
+	 * the GD with information provided by the metaArray which is the input to the editEvent method
 	 * @access public
 	 * @param aMetaArray
+	 * @return boolean
 	 */
 	public function editEvent($aMetaArray)
 	{
-		// Not yet implemented
+		$graph = new Graph();
+		$succDelete = $graph->editProperties($aMetaArray);
+        return $succDelete;
 	}
 
 	/**
@@ -233,7 +236,7 @@ class Event
 	{
 		return $this->_institution;
 	}
-    
+
 	/**
 	 * This method sets the institution of the event.
 	 * @access public
@@ -475,8 +478,8 @@ class Event
 	{
 		$this->_timestamp = $timestamp;
 	}
-    
-    /**
+
+	/**
 	 * This method returns the number of followers of the event.
 	 * @return integer
 	 */
@@ -495,9 +498,8 @@ class Event
 	{
 		$this->_followerCount = $count;
 	}
-    
-    
-    
+
+
 }
 
 ?>
