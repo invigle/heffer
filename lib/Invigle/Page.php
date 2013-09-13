@@ -70,7 +70,7 @@ class Page
 	public function editPage($pArray)
 	{
 		$graph = new Graph();
-		$succDelete = $graph->editGroup($pArray);
+		$succDelete = $graph->editNodeProperties($pArray);
 		return $succDelete;
 	}
 

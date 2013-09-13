@@ -54,14 +54,20 @@ class Photo {
 		$succDelete = $graph->deleteNodeByID($phID);
 		return $succDelete;
 	}
-
-	/**
+    
+    /**
+	 * This method takes as inputs a photo ID, the ID of the tagger and the taggeee of a photo.
 	 * @access public
-	 * @param aPHID
-	 * @param aUID
+	 * @param phID, taggerUID, taggeeUID
+	 * @return boolean
 	 */
-	public function addTag($aPHID, $aUID) {
-		// Not yet implemented
+	public function addTag($phID, $taggerUID, $taggeeUID) 
+	{
+		$graph = new Graph();
+        $edgeType = 'taggedIn';
+		$succTag = $graph->addConnection($taggeeUID, $phID, $edgeType);
+        
+        return succTag; 
 	}
 
 	/**

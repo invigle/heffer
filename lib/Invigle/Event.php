@@ -77,7 +77,7 @@ class Event
 	public function editEvent($eArray)
 	{
 		$graph = new Graph();
-		$succDelete = $graph->editProperties($eArray);
+		$succDelete = $graph->editNodeProperties($eArray);
 		return $succDelete;
 	}
 

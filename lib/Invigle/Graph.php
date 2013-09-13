@@ -100,7 +100,7 @@ class Graph
 	 * @access public
 	 * @param array of key/value pairs to update properties.
 	 */
-	public function editProperties(array $params)
+	public function editNodeProperties(array $params)
 	{
 		//Get the Node ID#
 		$nodeId = $this->getNodeId($params);
@@ -134,6 +134,17 @@ class Graph
 		$nodePath = "node/$nodeId/properties";
 		$setApi = $this->neo4japi($nodePath, 'PUT', $newParams);
 	}
+    
+    /**
+	 * Function to edit a property of an edge in Neo4j <TBF>
+	 * @access public
+	 * @param array of key/value pairs to update properties.
+	 */
+	public function editEdgeProperties(array $params)
+	{
+	   //TBF
+	}
+    
 
 	/**
 	 * Function to delete node from Neo4j using an array containing 'indexBy' and 'indexValue'

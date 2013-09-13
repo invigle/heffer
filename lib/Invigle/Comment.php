@@ -67,7 +67,7 @@ class Comment
 	public function editComment($cArray)
 	{
 		$graph = new Graph();
-		$succDelete = $graph->editProperties($cArray);
+		$succDelete = $graph->editNodeProperties($cArray);
         return $succDelete;
 	}
 

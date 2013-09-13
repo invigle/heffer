@@ -74,7 +74,7 @@ class Group
 	public function editGroup($gArray)
 	{
 		$graph = new Graph();
-		$succDelete = $graph->editGroup($gArray);
+		$succDelete = $graph->editNodeProperties($gArray);
         return $succDelete;
 	}
 
