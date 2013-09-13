@@ -44,11 +44,13 @@ class FrontPage extends FrontEndUIs {
     private function authenticationLayer()
     {
         return '<div class="container">
-                    <div class="md-col-4">
-                        '.$this->loginForm($_POST).'
-                    </div>
-                    <div class="md-col-6">
-                        '.$this->registrationForm($_POST).'
+                    <div class="row">
+                        <div class="md-col-4">
+                            '.$this->loginForm($_POST).'
+                        </div>
+                        <div class="md-col-6">
+                            '.$this->registrationForm($_POST).'
+                        </div>
                     </div>
                 </div>';
     }
