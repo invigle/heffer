@@ -50,8 +50,20 @@ class FrontPage extends FrontEndUIs {
                             <input type="text" class="form-control col-md-6" name="lastname" value="" placeholder="'.$this->_language->_frontPage["lastname"].'">
                         </div>
                     </div>
-                    <input type="text" class="form-control col-md-12" name="email" value="" placeholder="'.$this->_language->_frontPage["emailaddress"].'"><br>
-                    <input type="text" class="form-control col-md-12" name="confirmemail" value="" placeholder="'.$this->_language->_frontPage["confirmemailaddress"].'">
+                    <div class="row">
+                        <input type="text" class="form-control col-md-12" name="email" value="" placeholder="'.$this->_language->_frontPage["emailaddress"].'"><br>
+                    </div>
+                    <div class="row">
+                        <input type="text" class="form-control col-md-12" name="confirmemail" value="" placeholder="'.$this->_language->_frontPage["confirmemailaddress"].'">
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <input type="text" class="form-control col-md-6" name="username" value="" placeholder="'.$this->_language->_frontPage["username"].'">
+                        </div>
+                        <div class="col-md-6">
+                            <input type="password" class="form-control col-md-6" name="password" value="" placeholder="'.$this->_language->_frontPage["password"].'">
+                        </div>
+                    </div>
                 </div>';
     }
     
