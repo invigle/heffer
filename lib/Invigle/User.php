@@ -150,6 +150,10 @@ class User {
             
         $apiCall = $graph->neo4japi('cypher', 'JSONPOST', $user);
         
+        //Email the new User their login credentials?
+        
+        //Login the new User and forward them to a profile page.
+        
   
     return $apiCall;
 	}

@@ -38,10 +38,20 @@ class FrontPage extends FrontEndUIs {
                 //'<script src="/assets/bootstrap/js/collapse.js"></script>';
     }
     
-    private function registrationForm()
-    {       
+    private function registrationForm($_POST)
+    {   
+        if($_POST['regform']){
+            $user = new User();
+            $add = $user->addUser($_POST);
+            
+            print '<pre>';
+            print_r($add);
+            print '</pre>';
+        }
+        
         return '<div class="container">
-                    <form method="POST" action="">
+                    <form method="POST" action="PHP_SELF">
+                    <input type="hidden" name="regform" value="submit">
                         <h2>'.$this->_language->_frontPage["register"].'</h2>
                         <div class="row-fluid">
                             <div class="col-md-6">
