@@ -50,7 +50,11 @@ class FrontPage extends FrontEndUIs {
                         'lastname'=>'',
                         'email'=>'',
                         'birthdate'=>'',
-                        'gender'=>''
+                        'gender'=>'',
+                        'confirmemail'=>'',
+                        'dob_day' => '',
+                        'dob_month' => '',
+                        'dob_year' => '',
                           );
         
         if(isset($_POST['regform'])){
@@ -105,6 +109,15 @@ class FrontPage extends FrontEndUIs {
                 $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["username-invalid"].'';
             }elseif($add === "email-invalid"){
                 $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["email-invalid"].'';
+            }
+            
+            if(isset($error)){
+                $userArray = array(
+                        'confirmemail'=>'',
+                        'dob_day' => '',
+                        'dob_month' => '',
+                        'dob_year' => '',
+                          );
             }
             
             print '<pre>';
