@@ -87,16 +87,20 @@ class FrontPage extends FrontEndUIs {
                             <h4>'.$this->_language->frontPage["gender"].'</h4>
                             <div class="row-fluid">
                                 <div class="col-md-6">
-                                    Male
+                                    <div class="radio">
+                                      <label>
+                                          <input type="radio" name="gender" id="gender_male" value="male" checked>
+                                          Male
+                                      </label>
+                                    </div>
                                 </div>
                                 <div class="col-md-6">
-                                    Female
+                                    <label>
+                                        <input type="radio" name="gender" id="gender_female" value="female" checked>
+                                        Female
+                                    </label>
                                 </div>
                             </div>
-                        </div>
-                        
-                        <div class="col-md-6">
-                            <input type="password" class="form-control col-md-6" name="password" value="" placeholder="'.$this->_language->_frontPage["password"].'">
                         </div>
                     </div>
                 </div>';
