@@ -28,8 +28,8 @@ class FrontPage extends FrontEndUIs {
         $this->_pageTitle = $language->_frontPage['pageTitle'];
         echo $this->renderHeader();
         echo $this->renderTopNav();
-        echo $this->renderJSLinks();
         echo $this->registrationForm();
+        echo $this->renderJSLinks();
     }
     
     private function renderJSLinks() {
