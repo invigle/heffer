@@ -42,7 +42,7 @@ class FrontPage extends FrontEndUIs {
     {       
         return '<div class="container">
                     <h3>'.$this->_language->_frontPage["register"].'</h3>
-                    <div class="row">
+                    <div class="row-fluid">
                         <div class="col-md-6">
                             <input type="text" class="form-control col-md-6" name="firstname" value="" placeholder="'.$this->_language->_frontPage["firstname"].'">
                         </div>
@@ -50,9 +50,9 @@ class FrontPage extends FrontEndUIs {
                             <input type="text" class="form-control col-md-6" name="lastname" value="" placeholder="'.$this->_language->_frontPage["lastname"].'">
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row-fluid">
                         <div class="col-md-12">
-                            <input type="text" class="form-control col-md-12" name="email" value="" placeholder="'.$this->_language->_frontPage["emailaddress"].'"><br>
+                            <input type="text" class="form-control col-md-12" name="email" value="" placeholder="'.$this->_language->_frontPage["emailaddress"].'">
                         </div>
                     </div>
                     <div class="row">
