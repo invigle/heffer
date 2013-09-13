@@ -21,6 +21,13 @@ $language = new EN_GB();
 
 $frontPage = new FrontPage($language);
 
+if(isset($_SESSION['sid']) && isset($_SESSION['uid'])){
+    //Session is set... But is it a real one?
+    $user = new User();
+    $val = $validate->validateSession();
+}
+
+
 print 'SESSION DATA:<br />';
 print '<pre>';
 print_r($_SESSION);

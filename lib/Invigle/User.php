@@ -215,6 +215,17 @@ class User {
     /**
      * This method checks the currently set $_SESSION data against the neo4j database and returns a boolean for true or false responses.
      */
+    public function validateSession()
+    {
+        $graph = new Graph();
+        
+        $val['query'] = "MATCH n:User WHERE n.sessionid='$_SESSION[sid]' RETURN n;";
+        $api = $graph->neo4japi('cypher', 'JSONPOST', $val);
+        
+        print '<pre>';
+        print_r($api);
+        print '</pre>';
+    }
 
 	/**
 	 * This method takes as input the ID of a user and deletes the node that represent this user from the GD.
