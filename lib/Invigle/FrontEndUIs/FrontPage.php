@@ -72,6 +72,9 @@ class FrontPage extends FrontEndUIs {
             }
             
         }
+        if(!isset($login)){
+            $error = "";
+        }
         
         return ''.$error.'
                 <form method="POST" action="'.$_SERVER['PHP_SELF'].'">
