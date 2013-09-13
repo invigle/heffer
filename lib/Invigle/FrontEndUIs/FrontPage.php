@@ -41,7 +41,7 @@ class FrontPage extends FrontEndUIs {
     private function registrationForm()
     {       
         return '<div class="container">
-                    <h3>'.$this->_language->_frontPage["register"].'</h3>
+                    <h2>'.$this->_language->_frontPage["register"].'</h2>
                     <div class="row-fluid">
                         <div class="col-md-6">
                             <input type="text" class="form-control col-md-6" name="firstname" value="" placeholder="'.$this->_language->_frontPage["firstname"].'">
@@ -105,6 +105,9 @@ class FrontPage extends FrontEndUIs {
                             </div>
                         </div>
                     </div>
+                    
+                    <input type="submit" name="register" value="'.$this->_language->_frontPage["registerButton"].'" class="btn btn-large btn-success">
+                    
                 </div>';
     }
     
