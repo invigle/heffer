@@ -24,7 +24,7 @@ class Photo {
 	 * @param phArray
 	 * @return integer
 	 */
-	public function addLocation($phArray)
+	public function addPhoto($phArray)
 	{
 		//Create the new photo in neo4j
 		$graph = new Graph();
