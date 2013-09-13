@@ -20,12 +20,12 @@ class FrontPage extends FrontEndUIs {
     /**
      * Construct creates all the classes we need to render a page
      * @access public
-     */
-     
-    public function __construct(Language $language)
+     */    
+    public function __construct(Language $theLanguage)
     {
+        $this->_language = $theLanguage;
         parent::__construct();
-        $this->_pageTitle = $language->_frontPage['pageTitle'];
+        $this->_pageTitle = $this->_language->_frontPage['pageTitle'];
         echo $this->renderHeader();
         echo $this->renderTopNav();
         echo $this->registrationForm();
@@ -40,7 +40,7 @@ class FrontPage extends FrontEndUIs {
     
     private function registrationForm()
     {
-        return "This is a reg form $language->_register";
+        return "This is a reg form $this->_language->_register";
     }
     
  }
