@@ -44,7 +44,7 @@ class FrontPage extends FrontEndUIs {
     private function authenticationLayer()
     {
         return '<div class="container">
-                    <div class="row-fluid">
+                    <div class="row">
                         <div class="md-col-4">
                             LOGIN
                         </div>
