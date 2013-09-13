@@ -40,7 +40,7 @@ class FrontPage extends FrontEndUIs {
     
     private function registrationForm()
     {
-        return "This is a reg form $this->_language->_register";
+        return "This is a reg form $this->_language->frontPage['register']";
     }
     
  }
