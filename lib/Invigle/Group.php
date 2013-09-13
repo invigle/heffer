@@ -26,7 +26,8 @@ class Group
 	private $_profilePicID;
 
 	/**
-	 * This method takes as input an array with all the information of a group and adds this group to the GD as a 'group node'.
+	 * This method takes as input an array with all the information of a group and 
+	 * adds this group to the GD as an 'group node'.
 	 * @access public
 	 * @param aGroupArray
 	 * @return boolean
@@ -35,7 +36,21 @@ class Group
 	 */
 	public function addGroup($aGroupArray)
 	{
-		// Not yet implemented
+		//Create the new event account in neo4j
+		$graph = new Graph();
+		$queryString = "";
+		foreach ($aArray as $key => $value)
+		{
+			$queryString .= "$key : \"$value\", ";
+		}
+		$queryString = substr($queryString, 0, -2);
+		$event['query'] = "CREATE (n:Group {" . $queryString . "}) RETURN n;";
+		$apiCall = $graph->neo4japi('cypher', 'JSONPOST', $group);
+        
+		//return the New Group ID.
+		$bit = explode("/", $apiCall['data'][0][0]['self']);
+		$groupId = end($bit);
+		return $groupId;
 	}
 
 	/**

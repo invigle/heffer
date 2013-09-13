@@ -20,8 +20,8 @@ class Page
 	public $_profilePicID;
 
 	/**
-	 * This method takes as input a page with all the information of a page and 
-	 * adds this event to the GD as a 'page node'.
+	 * This method takes as input an array with all the information of a page and 
+	 * adds this page to the GD as a 'page node'.
 	 * @access public
 	 * @param aPageArray
 	 * @return boolean
@@ -32,7 +32,6 @@ class Page
 	{
 		//Create the new page account in neo4j
 		$graph = new Graph();
-
 		$queryString = "";
 		foreach ($aPageArray as $key => $value)
 		{
@@ -45,7 +44,7 @@ class Page
 
 		//return the New Page ID.
 		$bit = explode("/", $apiCall['data'][0][0]['self']);
-		$userId = end($bit);
+		$pageId = end($bit);
 
 		return $pageId;
 	}

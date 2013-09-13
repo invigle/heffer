@@ -17,7 +17,35 @@ class Comment
 	private $_gID;
 	private $_uID;
 	private $_pID;
+    
+    /**
+	 * This method takes as input an array with all the information of a comment and 
+	 * adds this comment to the GD as a 'comment node'.
+	 * @access public
+	 * @param aDataArray
+	 * @return boolean
+	 * 
+	 * @ReturnType boolean
+	 */
+	public function addComment($aDataArray)
+	{
+		//Create the new comment account in neo4j
+		$graph = new Graph();
+		$queryString = "";
+		foreach ($aArray as $key => $value)
+		{
+			$queryString .= "$key : \"$value\", ";
+		}
+		$queryString = substr($queryString, 0, -2);
+		$event['query'] = "CREATE (n:Comment {" . $queryString . "}) RETURN n;";
+		$apiCall = $graph->neo4japi('cypher', 'JSONPOST', $comment);
 
+		//return the New Event ID.
+		$bit = explode("/", $apiCall['data'][0][0]['self']);
+		$commentId = end($bit);
+		return $commentId;
+	}
+    
 	/**
 	 * @access private
 	 * @param aDataArray

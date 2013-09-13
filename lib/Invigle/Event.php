@@ -29,13 +29,31 @@ class Event
 	private $_timestamp;
 
 	/**
-	 * This method takes as input an array with all the information of an event and adds this event to the GD as an 'event node'.
+	 * This method takes as input an array with all the information of an event and 
+	 * adds this event to the GD as an 'event node'.
 	 * @access public
-	 * @param aMetaArray
+	 * @param aEventArray
+	 * @return boolean
+	 * 
+	 * @ReturnType boolean
 	 */
-	public function addEvent($aMetaArray)
+	public function addEvent($aEventArray)
 	{
-		// Not yet implemented
+		//Create the new event account in neo4j
+		$graph = new Graph();
+		$queryString = "";
+		foreach ($aArray as $key => $value)
+		{
+			$queryString .= "$key : \"$value\", ";
+		}
+		$queryString = substr($queryString, 0, -2);
+		$event['query'] = "CREATE (n:Event {" . $queryString . "}) RETURN n;";
+		$apiCall = $graph->neo4japi('cypher', 'JSONPOST', $event);
+
+		//return the New Event ID.
+		$bit = explode("/", $apiCall['data'][0][0]['self']);
+		$eventId = end($bit);
+		return $eventId;
 	}
 
 	/**
