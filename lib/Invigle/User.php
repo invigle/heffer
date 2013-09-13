@@ -44,7 +44,7 @@ class User {
      * @param username
      * @return boolean (true if Available, false if Taken)
      */
-    public function validateUsername($username, Graph $graph)
+    public function validateUsername($username)
     {
         $graph = new Graph();
         $check['query'] = "MATCH n:User WHERE n.username = \"$username\" RETURN count(*);";
