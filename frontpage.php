@@ -21,17 +21,10 @@ $language = new EN_GB();
 
 $frontPage = new FrontPage($language);
 
-if(isset($_SESSION['sid']) && isset($_SESSION['uid'])){
-    //Session is set... But is it a real one?
-    $user = new User();
-    $val = $user->validateSession();
-    
-    print 'Sessions Detected, Checking<hr>';
-    if($val){
-        print 'Genuine';
-    }else{
-        print 'Hax0r';
-    }
+if($this->_loggedin){
+    print 'Logged In';
+}else{
+    print 'Not Logged In';
 }
 
 ?>

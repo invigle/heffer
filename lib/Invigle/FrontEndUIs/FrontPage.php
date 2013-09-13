@@ -28,7 +28,11 @@ class FrontPage extends FrontEndUIs {
         parent::__construct();
         $this->_pageTitle = $this->_language->_frontPage['pageTitle'];
         
-        $this->_loggedin = $user->validateSession();
+        if(isset($_SESSION['sid']) && isset($_SESSION['uid'])){
+            //Session is set... But is it a real one?
+            $this->_loggedin = $user->validateSession();
+        }
+        
         
         echo $this->renderHeader();
         echo '<body>';
