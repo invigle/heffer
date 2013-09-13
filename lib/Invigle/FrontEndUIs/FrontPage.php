@@ -32,6 +32,8 @@ class FrontPage extends FrontEndUIs {
             //Session is set... But is it a real one?
             $user = new User();
             $this->_loggedin = $user->validateSession();
+        }else{
+            $this->_loggedin = false;
         }
         
         
