@@ -112,10 +112,10 @@ class FrontPage extends FrontEndUIs {
             }
             
             if(isset($error)){
-                $userArray['confirmemail'] = "";
-                $userArray['dob_day'] = "";
-                $userArray['dob_month'] = "";
-                $userArray['dob_year'] = "";
+                $userArray['confirmemail'] = $_POST['confirmemail'];
+                $userArray['dob_day'] = $_POST['dob_day'];
+                $userArray['dob_month'] = $_POST['dob_month'];
+                $userArray['dob_year'] = $_POST['dob_year'];
             }
             
             //At this point either an $error will be set or the API Call will have been successful and $add will contain the new users 'Node ID#' from Neo4J.
