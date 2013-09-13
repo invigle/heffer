@@ -44,8 +44,9 @@ class EN_GB extends Language
             'pw-too-short' => "The password you have entered is too short, you must use a minimum of 6 characters.",
             'firstname-too-short' => "Your First name must be at least 2 characters long.",
             'lasrname-too-short' => "Your Last name must be at least 2 characters long.",
-            'name-is-numeric' => "First and Last names cannot be numeric."
-            
+            'name-is-numeric' => "First and Last names cannot be numeric.",
+            'loginHere' => "Login Here",
+                        
         );
     }
 }

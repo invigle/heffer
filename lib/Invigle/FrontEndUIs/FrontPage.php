@@ -57,7 +57,11 @@ class FrontPage extends FrontEndUIs {
     
     private function loginForm($_POST)
     {
-        return "Login Here";
+        return '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">
+                    <input type="hidden" name="loginform" value="submit">
+                    <h2>'.$this->_language->_frontPage["loginHere"].'</h2>
+                    
+                </form>';
     }
     
     private function registrationForm($_POST)
