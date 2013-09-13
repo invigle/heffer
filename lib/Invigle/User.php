@@ -190,7 +190,7 @@ class User {
                 $_SESSION['sid'] = session_ID();
                 
                 //Store the users logged in status in Neo4j.
-                $updateDB['query'] = "MATCH n:User WHERE n.email = '$userInput[email]' SET n.sessionid='$_SESSION[sid]' SET ipaddress='$_SERVER[REMOTE_ADDR]' SET n.lastAction='".time()."' RETURN n;";
+                $updateDB['query'] = "MATCH n:User WHERE n.email = '$userInput[email]' SET n.sessionid='$_SESSION[sid]' SET n.ipaddress='$_SERVER[REMOTE_ADDR]' SET n.lastAction='".time()."' RETURN n;";
                 $update = $graph->neo4japi('cypher', 'JSONPOST', $updateDB);
                 
                 print '<pre>';
