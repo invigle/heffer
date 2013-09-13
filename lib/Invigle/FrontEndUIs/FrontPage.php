@@ -72,7 +72,7 @@ class FrontPage extends FrontEndUIs {
             }
             
         }
-        if(!isset($login)){
+        if(!isset($error)){
             $error = "";
         }
         
