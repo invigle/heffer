@@ -45,11 +45,11 @@ class FrontPage extends FrontEndUIs {
     {
         return '<div class="container">
                     <div class="row">
-                        <div class="md-col-4">
-                            LOGIN
+                        <div class="col-md-4">
+                            '.$this->loginForm($_POST).'
                         </div>
-                        <div class="md-col-8">
-                            REG
+                        <div class="col-md-8">
+                            '.$this->registrationForm($_POST).'
                         </div>
                     </div>
                 </div>';
@@ -57,7 +57,20 @@ class FrontPage extends FrontEndUIs {
     
     private function loginForm($_POST)
     {
-        return "Login Here";
+        return '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">
+                    <input type="hidden" name="loginform" value="submit">
+                    <h2>'.$this->_language->_frontPage["loginHere"].'</h2>
+                    
+                    <label for="email">'.$this->_language->_frontPage["emailaddress"].'</label>
+                    <input type="text" class="form-control col-md-12" id="email" placeholder="">
+                    <br />
+                    
+                    <label for="password">'.$this->_language->_frontPage["password"].'</label>
+                    <input type="password" class="form-control col-md-12" id="password" placeholder="">
+                    
+                    <br>
+                    <input type="submit" name="login" value="'.$this->_language->_frontPage["login-now"].'">
+                </form>';
     }
     
     private function registrationForm($_POST)
@@ -142,11 +155,16 @@ class FrontPage extends FrontEndUIs {
             //At this point either an $error will be set or the API Call will have been successful and $add will contain the new users 'Node ID#' from Neo4J.
         }
         
+        //Check if $error is set if not then set an empty one to suppress PHP NOTICE errors.
+        if(!isset($error)){
+            $error = "";
+        }
+        
         return ''.$error.'
                     <form method="POST" action="'.$_SERVER['PHP_SELF'].'">
                     <input type="hidden" name="regform" value="submit">
                         <h2>'.$this->_language->_frontPage["register"].'</h2>
-                        <div class="row-fluid">
+                        <div class="row">                           
                             <div class="col-md-6">
                                 <input type="text" class="form-control col-md-6" name="firstname" value="'.$userArray['firstname'].'" placeholder="'.$this->_language->_frontPage["firstname"].'">
                             </div>
@@ -154,17 +172,17 @@ class FrontPage extends FrontEndUIs {
                                 <input type="text" class="form-control col-md-6" name="lastname" value="'.$userArray['lastname'].'" placeholder="'.$this->_language->_frontPage["lastname"].'">
                             </div>
                         </div>
-                        <div class="row-fluid">
+                        <div class="row">
                             <div class="col-md-12">
                                 <input type="text" class="form-control col-md-12" name="email" value="'.$userArray['email'].'" placeholder="'.$this->_language->_frontPage["emailaddress"].'">
                             </div>
                         </div>
-                        <div class="row-fluid">
+                        <div class="row">
                             <div class="col-md-12">
                                 <input type="text" class="form-control col-md-12" name="confirmemail" value="'.$userArray['confirmemail'].'" placeholder="'.$this->_language->_frontPage["confirmemailaddress"].'">
                             </div>
                         </div>
-                        <div class="row-fluid">
+                        <div class="row">
                             <div class="col-md-6">
                                 <input type="text" class="form-control col-md-6" name="username" value="'.$userArray['username'].'" placeholder="'.$this->_language->_frontPage["username"].'">
                             </div>
@@ -172,10 +190,10 @@ class FrontPage extends FrontEndUIs {
                                 <input type="password" class="form-control col-md-6" name="password" value="'.$userArray['password'].'" placeholder="'.$this->_language->_frontPage["password"].'">
                             </div>
                         </div>
-                        <div class="row-fluid">
+                        <div class="row">
                             <div class="col-md-6">
                                 <h4>'.$this->_language->_frontPage["birthdate"].'</h4>
-                                <div class="row-fluid">
+                                <div class="row">
                                     <div class="col-md-3">
                                         <input type="text" name="dob_day" class="form-control" value="'.$userArray['dob_day'].'" placeholder="'.$this->_language->_frontPage["day"].'">
                                     </div>
@@ -189,7 +207,7 @@ class FrontPage extends FrontEndUIs {
                             </div>
                             <div class="col-md-6">
                                 <h4>'.$this->_language->_frontPage["gender"].'</h4>
-                                <div class="row-fluid">
+                                <div class="row">
                                     <div class="col-md-6">
                                         <div class="radio">
                                           <label>
