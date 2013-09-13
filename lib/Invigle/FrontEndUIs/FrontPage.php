@@ -57,6 +57,13 @@ class FrontPage extends FrontEndUIs {
     
     private function loginForm($_POST)
     {
+        if(isset($_POST['loginform'])){
+            $user = new User();
+            
+            
+            
+        }
+        
         return '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">
                     <input type="hidden" name="loginform" value="submit">
                     <h2>'.$this->_language->_frontPage["loginHere"].'</h2>
@@ -67,7 +74,9 @@ class FrontPage extends FrontEndUIs {
                     
                     <label for="password">'.$this->_language->_frontPage["password"].'</label>
                     <input type="password" class="form-control col-md-12" id="password" placeholder="">
-                    
+                    <br>
+                    <input type="checkbox" name="rememberme" value="yes" id="rememberme">
+                    <label for="rememberme">Remember Me?</label>
                     <br>
                     <input type="submit" name="login" value="'.$this->_language->_frontPage["login-now"].'">
                 </form>';
