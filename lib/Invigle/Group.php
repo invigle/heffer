@@ -61,10 +61,10 @@ class Group
 	{
 		$graph = new Graph();
 		$succ = $graph->deleteNodeByID($gID);
-        return $succ;
+		return $succ;
 	}
-    
-    /**
+
+	/**
 	 * This method edits some of the properties of a group in the GD by updating the current node in 
 	 * the GD with information provided by the gArray which is the input to the editGroup method
 	 * @access public
@@ -75,10 +75,10 @@ class Group
 	{
 		$graph = new Graph();
 		$succ = $graph->editNodeProperties($gArray);
-        return $succ;
+		return $succ;
 	}
-    
-    /**
+
+	/**
 	 * This method takes as inputs a page ID and a location ID and adds the edge to neo4j.
 	 * @access public
 	 * @param pID, locID
@@ -104,6 +104,34 @@ class Group
 		$graph = new Graph();
 		$connectionType = 'LOCATED_AT';
 		$succ = $graph->deleteConnection($gID, $locID, $connectionType);
+		return $succ;
+	}
+
+	/**
+	 * This method takes as inputs a group ID and a event ID and adds the edge to neo4j.
+	 * @access public
+	 * @param gID, eID
+	 * @return boolean
+	 */
+	public function addGroupEvent($gID, $eID)
+	{
+		$graph = new Graph();
+		$connectionType = 'ORGANISER_OF';
+		$succ = $graph->addConnection($gID, $eID, $connectionType);
+		return $succ;
+	}
+    
+    /**
+	 * This method takes as inputs a group ID and a event ID and deltes from neo4j.
+	 * @access public
+	 * @param gID, eID
+	 * @return boolean
+	 */
+	public function deleteGroupEvent($gID, $eID)
+	{
+		$graph = new Graph();
+		$connectionType = 'ORGANISER_OF';
+		$succ = $graph->deleteConnection($gID, $eID, $connectionType);
 		return $succ;
 	}
 

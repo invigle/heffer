@@ -104,6 +104,35 @@ class Page
 		return $succ;
 	}
 
+	/**
+	 * This method takes as inputs a page ID and a event ID and adds the edge to neo4j.
+	 * @access public
+	 * @param pID, eID
+	 * @return boolean
+	 */
+	public function addPageEvent($pID, $eID)
+	{
+		$graph = new Graph();
+		$connectionType = 'ORGANISER_OF';
+		$succ = $graph->addConnection($pID, $eID, $connectionType);
+		return $succ;
+	}
+
+
+	/**
+	 * This method takes as inputs a page ID and a event ID and deletes the edge from neo4j.
+	 * @access public
+	 * @param pID, eID
+	 * @return boolean
+	 */
+	public function deletePageEvent($pID, $eID)
+	{
+		$graph = new Graph();
+		$connectionType = 'ORGANISER_OF';
+		$succ = $graph->deleteConnection($pID, $eID, $connectionType);
+		return $succ;
+	}
+
 
 	/**
 	 * @access public
