@@ -1,5 +1,4 @@
 <?php
- 
 namespace Invigle\FrontEndUIs;
  
 use Invigle\FrontEndUIs,
@@ -42,7 +41,7 @@ class FrontPage extends FrontEndUIs {
     
     private function registrationForm($_POST)
     {   
-        if($_POST['regform']){
+        if(isset($_POST['regform'])){
             $user = new User();
             $add = $user->addUser($_POST);
             
