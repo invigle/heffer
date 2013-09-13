@@ -164,12 +164,51 @@ class User {
     /**
      * This method takes input as an array from $_POST and logs in a user.
      */
-    public function loginUser(array $user)
+    public function loginUser(array $userInput)
     {
         $graph = new Graph();        
     
-        $run['query'] = "MATCH n:User WHERE n.email = '$_POST[email]' RETURN n;";    
+        $run['query'] = "MATCH n:User WHERE n.email = '$userInput[email]' RETURN n;";    
         $login = $graph->neo4japi('cypher', 'JSONPOST', $run);
+        
+        if(isset($login['data'][0][0]['data'])){
+            $userData = $login['data'][0][0]['data'];
+            
+            //Extract the users ID# from the database
+            $bit = explode("/", $login['data'][0][0]['self']);
+            $usersID = end($bit);
+            
+            $inputPassword = hash('sha256', CONF_SECURITYSALT.$userInput['password']);
+            
+            if($inputPassword === $userData['password']){               
+                /* Handle Users Session */
+                //This function generates a new function to prevent screenwatch driven session hijacks.
+                session_regenerate_id();
+                
+                //Set the sessions based on session_id();
+                $_SESSION['uid'] = $usersID;
+                $_SESSION['sid'] = session_ID();
+                
+                //Store the users logged in status in Neo4j.
+                $updateDB['query'] = "MATCH n:User WHERE n.email = '$userInput[email]' SET n.sessionid='$_SESSION[sid]' SET ipaddress='$_SERVER[REMOTE_ADDR]' SET n.lastAction='".time()."' RETURN n;";
+                $update = $graph->neo4japi('cypher', 'JSONPOST', $updateDB);
+                
+                print '<pre>';
+                print_r($_SESSION);
+                print '</pre><hr><pre>';
+                print_r($update);
+                print '</pre>';
+                                
+                return true;
+            }else{
+                return false;
+            }
+            
+            
+        }else{
+            return false;
+        }
+        
         
     
     return $login;        

@@ -66,7 +66,7 @@ class FrontPage extends FrontEndUIs {
             print '</pre>';
             
             //If the user wants to be remembered then we should set a cookie.
-            if($_POST['rememberme'] === "yes"){
+            if(isset($_POST['rememberme'])){
                 //Duplicate the session into a Cookie.
             }
             
