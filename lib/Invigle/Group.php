@@ -22,7 +22,7 @@ class Group
 	private $_paymentType;
 	private $_privacy;
 	private $_followerCount;
-	//private $_groupType;
+	private $_groupType;
 	private $_profilePicID;
 
 	/**
@@ -375,7 +375,26 @@ class Group
 	{
 		$this->$_pHID = $id;
 	}
+    
+    /**
+	 * This method returns the group type.
+	 * @access public
+	 * @return string
+	 */
+	public function getGroupType()
+	{
+		return $this->_groupType;
+	}
 
+	/**
+	 * This method sets the group type.
+	 * @access public
+	 * @param type (string))
+	 * @return boolean
+	 */
+	public function setGroupType($type)
+	{
+		$this->_groupType = $type;
+	}
 }
-
 ?>
