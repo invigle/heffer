@@ -51,10 +51,14 @@ class FrontPage extends FrontEndUIs {
                         </div>
                     </div>
                     <div class="row">
-                        <input type="text" class="form-control col-md-12" name="email" value="" placeholder="'.$this->_language->_frontPage["emailaddress"].'"><br>
+                        <div class="col-md-12">
+                            <input type="text" class="form-control col-md-12" name="email" value="" placeholder="'.$this->_language->_frontPage["emailaddress"].'"><br>
+                        </div>
                     </div>
                     <div class="row">
-                        <input type="text" class="form-control col-md-12" name="confirmemail" value="" placeholder="'.$this->_language->_frontPage["confirmemailaddress"].'">
+                        <div class="col-md-12">
+                            <input type="text" class="form-control col-md-12" name="confirmemail" value="" placeholder="'.$this->_language->_frontPage["confirmemailaddress"].'">
+                        </div>
                     </div>
                     <div class="row">
                         <div class="col-md-6">
