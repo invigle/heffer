@@ -123,7 +123,7 @@ class FrontPage extends FrontEndUIs {
         }
         
         return '<div class="container">
-                '.$error.''.CONF_SECURESALT.'
+                '.$error.''.CONF_SECURITYSALT.'
                     <form method="POST" action="'.$_SERVER['PHP_SELF'].'">
                     <input type="hidden" name="regform" value="submit">
                         <h2>'.$this->_language->_frontPage["register"].'</h2>
