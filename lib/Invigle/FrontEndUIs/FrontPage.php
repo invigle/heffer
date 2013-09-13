@@ -30,7 +30,7 @@ class FrontPage extends FrontEndUIs {
         echo $this->renderHeader();
         echo '<body>';
         echo $this->renderTopNav();
-        echo $this->registrationForm($_POST);
+        echo $this->authenticationLayer();
         echo $this->renderJSLinks();
         echo '</body>';
     }
@@ -39,6 +39,23 @@ class FrontPage extends FrontEndUIs {
         return '<script src="/assets/bootstrap/js/jquery.js"></script>
                 <script src="http://getbootstrap.com/dist/js/bootstrap.min.js"></script>';
                 //'<script src="/assets/bootstrap/js/collapse.js"></script>';
+    }
+    
+    private function authenticationLayer()
+    {
+        return '<div class="container">
+                    <div class="md-col-4">
+                        '.$this->loginForm($_POST).'
+                    </div>
+                    <div class="md-col-6">
+                        '.$this->registrationForm($_POST).'
+                    </div>
+                </div>';
+    }
+    
+    private function loginForm($_POST)
+    {
+        return "Login Here";
     }
     
     private function registrationForm($_POST)
