@@ -140,8 +140,7 @@ class FrontPage extends FrontEndUIs {
             //At this point either an $error will be set or the API Call will have been successful and $add will contain the new users 'Node ID#' from Neo4J.
         }
         
-        return '<div class="container">
-                '.$error.'
+        return ''.$error.'
                     <form method="POST" action="'.$_SERVER['PHP_SELF'].'">
                     <input type="hidden" name="regform" value="submit">
                         <h2>'.$this->_language->_frontPage["register"].'</h2>
@@ -210,8 +209,7 @@ class FrontPage extends FrontEndUIs {
                         </div>
                         
                         <input type="submit" name="register" value="'.$this->_language->_frontPage["registerButton"].'">
-                    </form>
-                </div>';
+                    </form>';
     }
     
  }
