@@ -15,6 +15,12 @@ class Photo {
 	private $_uID;
 	private $_tagArray;
 	private $_pID;
+    private $_nodeType;
+    
+    public function __construct()
+	{
+		$this->_nodeType = 'Photo';
+	}
 
 
     /**

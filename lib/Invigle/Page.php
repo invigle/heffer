@@ -19,6 +19,12 @@ class Page
 	public $_followerCount;
 	public $_pageType;
 	public $_profilePicID;
+    private $_nodeType;
+    
+    public function __construct()
+	{
+		$this->_nodeType = 'Page';
+	}
 
 	/**
 	 * This method takes as input an array with all the information of a page and 

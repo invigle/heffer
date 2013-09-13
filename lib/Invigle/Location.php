@@ -14,6 +14,12 @@ class Location
 	private $_name;
 	private $_coordinates;
 	private $_postCode;
+    private $_nodeType;
+    
+    public function __construct()
+	{
+		$this->_nodeType = 'Location';
+	}
 
 	/**
 	 * This method takes as input an array with all the information of a location and 

@@ -14,6 +14,12 @@ class Status {
 	public $_gID;
 	public $_uID;
 	public $_pID;
+    private $_nodeType;
+    
+    public function __construct()
+	{
+		$this->_nodeType = 'Status';
+	}
 
 	/**
 	 * This method creates a 'status node' in the GD by getting as an input the date, the ID of the type of node that updated this status; event/group/user/page

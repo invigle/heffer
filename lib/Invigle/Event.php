@@ -28,6 +28,12 @@ class Event
 	private $_pID;
 	private $_profilePicID;
 	private $_timestamp;
+    private $_nodeType;
+    
+    public function __construct()
+	{
+		$this->_nodeType = 'Event';
+	}
 
 	/**
 	 * This method takes as input an array with all the information of an event and 

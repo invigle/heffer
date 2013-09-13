@@ -25,6 +25,12 @@ class Group
 	private $_followerCount;
 	private $_groupType;
 	private $_profilePicID;
+    private $_nodeType;
+    
+    public function __construct()
+	{
+		$this->_nodeType = 'Group';
+	}
 
 	/**
 	 * This method takes as input an array with all the information of a group and 

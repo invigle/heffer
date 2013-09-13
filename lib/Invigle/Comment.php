@@ -18,6 +18,12 @@ class Comment
 	private $_gID;
 	private $_uID;
 	private $_pID;
+	private $_nodeType;
+
+	public function __construct()
+	{
+		$this->_nodeType = 'Comment';
+	}
 
 	/**
 	 * This method takes as input an array with all the information of a comment and 
@@ -54,10 +60,10 @@ class Comment
 	{
 		$graph = new Graph();
 		$succDelete = $graph->deleteNodeByID($cID);
-        return $succDelete;
+		return $succDelete;
 	}
-    
-    /**
+
+	/**
 	 * This method edits some of the properties of a comment in the GD by updating the current node in 
 	 * the GD with information provided by the cArray which is the input to the editComment method
 	 * @access public
@@ -68,7 +74,7 @@ class Comment
 	{
 		$graph = new Graph();
 		$succEdit = $graph->editNodeProperties($cArray);
-        return $succEdit;
+		return $succEdit;
 	}
 
 	/**
