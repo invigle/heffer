@@ -61,10 +61,6 @@ class FrontPage extends FrontEndUIs {
             $user = new User();
             $login = $user->loginUser($_POST);
             
-            print '<pre>';
-            print_r($login);
-            print '</pre>';
-            
             //If the user wants to be remembered then we should set a cookie.
             if(isset($_POST['rememberme'])){
                 //Duplicate the session into a Cookie.
@@ -81,7 +77,7 @@ class FrontPage extends FrontEndUIs {
                     <br />
                     
                     <label for="password">'.$this->_language->_frontPage["password"].'</label>
-                    <input type="password" class="form-control col-md-12" id="password" placeholder="">
+                    <input type="password" class="form-control col-md-12" id="password" name="password" placeholder="">
                     <br>
                     <input type="checkbox" name="rememberme" value="yes" id="rememberme">
                     <label for="rememberme">Remember Me?</label>
