@@ -154,8 +154,11 @@ class User {
         
         //Login the new User and forward them to a profile page.
         
+        //return the New User ID.
+        $bit = explode("/", $apiCall['data'][0][0]['self']);
+        $userId = end($bit);
   
-    return $apiCall;
+    return $userId;
 	}
 
 	/**
