@@ -46,10 +46,10 @@ class FrontPage extends FrontEndUIs {
         return '<div class="container">
                     <div class="row-fluid">
                         <div class="md-col-4">
-                            '.$this->loginForm($_POST).'
+                            LOGIN
                         </div>
-                        <div class="md-col-6">
-                            '.$this->registrationForm($_POST).'
+                        <div class="md-col-8">
+                            REG
                         </div>
                     </div>
                 </div>';
