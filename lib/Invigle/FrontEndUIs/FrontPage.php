@@ -27,8 +27,8 @@ class FrontPage extends FrontEndUIs {
         parent::__construct();
         $this->_pageTitle = $this->_language->_frontPage['pageTitle'];
         echo $this->renderHeader();
-        echo $this->renderTopNav();
         echo '<body>';
+        echo $this->renderTopNav();
         echo $this->registrationForm();
         echo $this->renderJSLinks();
         echo '</body>';
