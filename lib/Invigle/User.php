@@ -189,15 +189,13 @@ class User {
                 $_SESSION['uid'] = $usersID;
                 $_SESSION['sid'] = session_ID();
                 
-                //Store the users logged in status in Neo4j.
-                $updateDB['query'] = "MATCH n:User WHERE n.email = '$userInput[email]' SET n.sessionid='$_SESSION[sid]' SET n.ipaddress='$_SERVER[REMOTE_ADDR]' SET n.lastAction='".time()."' RETURN n;";
-                $update = $graph->neo4japi('cypher', 'JSONPOST', $updateDB);
+                if(!isset($userInput['rememberme'])){
+                    $userInput['rememberme'] = "no";
+                }
                 
-                print '<pre>';
-                print_r($_SESSION);
-                print '</pre><hr><pre>';
-                print_r($update);
-                print '</pre>';
+                //Store the users logged in status in Neo4j.
+                $updateDB['query'] = "MATCH n:User WHERE n.email = '$userInput[email]' SET n.sessionid='$_SESSION[sid]' SET n.ipaddress='$_SERVER[REMOTE_ADDR]' SET n.lastAction='".time()."' SET n.rememberme='".$userInput['rememberme']."' RETURN n;";
+                $update = $graph->neo4japi('cypher', 'JSONPOST', $updateDB);
                                 
                 return true;
             }else{
@@ -211,7 +209,7 @@ class User {
         
         
     
-    return $login;        
+    return false;        
     }
 
 	/**
