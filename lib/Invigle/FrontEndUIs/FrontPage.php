@@ -41,7 +41,7 @@ class FrontPage extends FrontEndUIs {
     private function registrationForm()
     {       
         return '<div class="container">
-                    <form method="" action="POST">
+                    <form method="POST" action="">
                         <h2>'.$this->_language->_frontPage["register"].'</h2>
                         <div class="row-fluid">
                             <div class="col-md-6">
