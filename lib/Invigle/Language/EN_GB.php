@@ -20,7 +20,7 @@ class EN_GB extends Language
     {
         $this->_frontPage = array(
             'pageTitle' => "Invigle - \"Let's Link Up!\"",
-            'register' => "Register",
+            'register' => "RegisterABC",
             'firstname' => "First Name",
             'lastname' => "Last Name",
             'emailaddress' => "Email Address",
