@@ -1,6 +1,7 @@
 <?php
 
-//namespace Invigle;
+namespace Invigle;
+use Invigle\Graph;
 
 /**
  * @access public
@@ -23,15 +24,15 @@ class Page
 	 * This method takes as input an array with all the information of a page and 
 	 * adds this page to the GD as a 'page node'.
 	 * @access public
-	 * @param aPageArray
+	 * @param pArray
 	 * @return integer
 	 */
-	public function addPage($aPageArray)
+	public function addPage($pArray)
 	{
-		//Create the new page account in neo4j
+		//Create the new page in neo4j
 		$graph = new Graph();
 		$queryString = "";
-		foreach ($aPageArray as $key => $value)
+		foreach ($pArray as $key => $value)
 		{
 			$queryString .= "$key : \"$value\", ";
 		}
@@ -49,35 +50,35 @@ class Page
 
 	/** Function to delete a page node given an ID.
 	 * @access private
-	 * @param aPID
+	 * @param pID
 	 * @return boolean
 	 */
-	public function deletePage($aPID)
+	public function deletePage($pID)
 	{
 		$graph = new Graph();
-		$succDelete = $graph->deleteNodeByID($aPID);
+		$succDelete = $graph->deleteNodeByID($pID);
 		return $succDelete;
 	}
 
 	/**
 	 * This method edits some of the properties of a page in the GD by updating the current node in 
-	 * the GD with information provided by the pageArray which is the input to the editPage method
+	 * the GD with information provided by the pArray which is the input to the editPage method
 	 * @access public
-	 * @param aPageArray
+	 * @param pArray
 	 * @return boolean
 	 */
-	public function editPage($aPageArray)
+	public function editPage($pArray)
 	{
 		$graph = new Graph();
-		$succDelete = $graph->editGroup($aPageArray);
+		$succDelete = $graph->editGroup($pArray);
 		return $succDelete;
 	}
 
 	/**
 	 * @access public
-	 * @param aPID
+	 * @param id
 	 */
-	public function getPage($aPID)
+	public function getPage($id)
 	{
 		// Not yet implemented
 	}
@@ -85,11 +86,11 @@ class Page
 	/**
 	 * This method takes the ID of a page and gets 'limit' number of page followers. When the users scrolls down the page, they can see the next set of followers by the method skipping a number of followers indicated by the third argument of the method called 'skip'.
 	 * @access public
-	 * @param aPID
-	 * @param aLimit
-	 * @param aSkip
+	 * @param id
+	 * @param limit
+	 * @param skip
 	 */
-	public function getFollowers($aPID, $aLimit, $aSkip)
+	public function getFollowers($id, $limit, $skip)
 	{
 		// Not yet implemented
 	}
@@ -97,11 +98,11 @@ class Page
 	/**
 	 * This method takes the ID of a page and retrieves a number of items on the page's timeline determined by the input limit. When the users scrolls down the page, they can see the next set of items by the method skipping a number of items indicated by the third argument of the method called 'skip'.
 	 * @access public
-	 * @param aPID
-	 * @param aLimit
-	 * @param aSkip
+	 * @param id
+	 * @param limit
+	 * @param skip
 	 */
-	public function getTimeline($aPID, $aLimit, $aSkip)
+	public function getTimeline($id, $limit, $skip)
 	{
 		// Not yet implemented
 	}
@@ -109,11 +110,11 @@ class Page
 	/**
 	 * This method takes as input the ID of a page and the ID of the user who adds a post on that page and creates a new 'post node' in the GD.
 	 * @access public
-	 * @param aPID
-	 * @param aUID
-	 * @param aTimestamp
+	 * @param pID
+	 * @param uID
+	 * @param timestamp
 	 */
-	public function addPost($aPID, $aUID, $aTimestamp)
+	public function addPost($pID, $uID, $timestamp)
 	{
 		// Not yet implemented
 	}
@@ -325,7 +326,6 @@ class Page
 	{
 		$this->_profilePicID = $id;
 	}
-
 }
 
 ?>

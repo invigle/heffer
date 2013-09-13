@@ -1,6 +1,7 @@
 <?php
 
 namespace Invigle;
+use Invigle\Graph;
 
 /**
  * @access public
@@ -29,15 +30,15 @@ class Group
 	 * This method takes as input an array with all the information of a group and 
 	 * adds this group to the GD as an 'group node'.
 	 * @access public
-	 * @param aGroupArray
+	 * @param gArray
 	 * @return integer
 	 */
-	public function addGroup($aGroupArray)
+	public function addGroup($gArray)
 	{
-		//Create the new event account in neo4j
+		//Create the new group in neo4j
 		$graph = new Graph();
 		$queryString = "";
-		foreach ($aArray as $key => $value)
+		foreach ($gArray as $key => $value)
 		{
 			$queryString .= "$key : \"$value\", ";
 		}
@@ -45,7 +46,7 @@ class Group
 		$event['query'] = "CREATE (n:Group {" . $queryString . "}) RETURN n;";
 		$apiCall = $graph->neo4japi('cypher', 'JSONPOST', $group);
 
-		//return the New Group ID.
+		//return the new group ID.
 		$bit = explode("/", $apiCall['data'][0][0]['self']);
 		$groupId = end($bit);
 		return $groupId;
@@ -53,27 +54,27 @@ class Group
 
 	/** Function to delete a group node given an ID.
 	 * @access private
-	 * @param aGID
+	 * @param gID
 	 * @return boolean
 	 */
-	public function deleteGroup($aGID)
+	public function deleteGroup($gID)
 	{
 		$graph = new Graph();
-		$succDelete = $graph->deleteNodeByID($aGID);
+		$succDelete = $graph->deleteNodeByID($gID);
         return $succDelete;
 	}
     
     /**
 	 * This method edits some of the properties of a group in the GD by updating the current node in 
-	 * the GD with information provided by the groupArray which is the input to the editGroup method
+	 * the GD with information provided by the gArray which is the input to the editGroup method
 	 * @access public
-	 * @param aGroupArray
+	 * @param gArray
 	 * @return boolean
 	 */
-	public function editGroup($aGroupArray)
+	public function editGroup($gArray)
 	{
 		$graph = new Graph();
-		$succDelete = $graph->editGroup($aGroupArray);
+		$succDelete = $graph->editGroup($gArray);
         return $succDelete;
 	}
 

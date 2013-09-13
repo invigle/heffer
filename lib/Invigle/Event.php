@@ -1,6 +1,7 @@
 <?php
 
 namespace Invigle;
+use Invigle\Graph;
 
 /**
  * @access private
@@ -32,15 +33,15 @@ class Event
 	 * This method takes as input an array with all the information of an event and 
 	 * adds this event to the GD as an 'event node'.
 	 * @access public
-	 * @param aEventArray
+	 * @param eArray
 	 * @return integer
 	 */
-	public function addEvent($aEventArray)
+	public function addEvent($eArray)
 	{
-		//Create the new event account in neo4j
+		//Create the new event in neo4j
 		$graph = new Graph();
 		$queryString = "";
-		foreach ($aArray as $key => $value)
+		foreach ($eArray as $key => $value)
 		{
 			$queryString .= "$key : \"$value\", ";
 		}
@@ -56,28 +57,28 @@ class Event
 
 	/** Function to delete an event node given an ID.
 	 * @access private
-	 * @param aEID
+	 * @param eID
 	 * @return boolean
 	 */
-	public function deleteEvent($aEID)
+	public function deleteEvent($eID)
 	{
 		$graph = new Graph();
-		$succDelete = $graph->deleteNodeByID($aEID);
+		$succDelete = $graph->deleteNodeByID($eID);
 		return $succDelete;
 	}
 
 	/**
 	 * This method edits some of the properties of an event in the GD by updating the current node in 
-	 * the GD with information provided by the metaArray which is the input to the editEvent method
+	 * the GD with information provided by the eArray which is the input to the editEvent method
 	 * @access public
-	 * @param aMetaArray
+	 * @param eArray
 	 * @return boolean
 	 */
-	public function editEvent($aMetaArray)
+	public function editEvent($eArray)
 	{
 		$graph = new Graph();
-		$succDelete = $graph->editProperties($aMetaArray);
-        return $succDelete;
+		$succDelete = $graph->editProperties($eArray);
+		return $succDelete;
 	}
 
 	/**
@@ -498,8 +499,6 @@ class Event
 	{
 		$this->_followerCount = $count;
 	}
-
-
 }
 
 ?>

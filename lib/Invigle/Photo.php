@@ -1,6 +1,7 @@
 <?php
 
 namespace Invigle;
+use Invigle\Graph;
 
 /**
  * @access public
@@ -15,21 +16,43 @@ class Photo {
 	private $_tagArray;
 	private $_pID;
 
-	/**
-	 * @access public
-	 * @param aMetaArray
-	 * @param aPhoto
-	 */
-	public function addPhoto($aMetaArray, $aPhoto) {
-		// Not yet implemented
-	}
 
-	/**
+    /**
+	 * This method takes as input an array with all the information of a photo and 
+	 * adds this photo to the GD as a 'photo node'.
 	 * @access public
-	 * @param aPHID
+	 * @param phArray
+	 * @return integer
 	 */
-	public function deletePhoto($aPHID) {
-		// Not yet implemented
+	public function addLocation($phArray)
+	{
+		//Create the new photo in neo4j
+		$graph = new Graph();
+		$queryString = "";
+		foreach ($phArray as $key => $value)
+		{
+			$queryString .= "$key: \"$value\", ";
+		}
+		$queryString = substr($queryString, 0, -2);
+		$photo['query'] = "CREATE (n:Photo {" . $queryString . "}) RETURN n;";
+		$apiCall = $graph->neo4japi('cypher', 'JSONPOST', $photo);
+
+		//return the new photo ID.
+		$bit = explode("/", $apiCall['data'][0][0]['self']);
+		$photoId = end($bit);
+		return $photoId;
+	}
+    
+    /** Function to delete a photo node given an ID.
+	 * @access private
+	 * @param phID
+	 * @return boolean
+	 */
+	public function deletePhoto($phID)
+	{
+		$graph = new Graph();
+		$succDelete = $graph->deleteNodeByID($phID);
+		return $succDelete;
 	}
 
 	/**
