@@ -28,7 +28,7 @@ class FrontPage extends FrontEndUIs {
         echo $this->renderHeader();
         echo '<body>';
         echo $this->renderTopNav();
-        echo $this->registrationForm();
+        echo $this->registrationForm($_POST);
         echo $this->renderJSLinks();
         echo '</body>';
     }
