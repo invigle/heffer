@@ -226,6 +226,9 @@ class User {
             $userInfo = $api['data'][0][0]['data'];
             if($userInfo['ipaddress'] !== $_SERVER['REMOTE_ADDR']){
                 //IP Does not match session, Kick this fool out!
+                $_SESSION['sid'] = "";
+                $_SESSION['uid'] = "";
+                session_destroy();
                 return false;
             }else{
                 //This guys for true, let em' stay.
