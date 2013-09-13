@@ -9,6 +9,7 @@
  * @version 2013
  * @access public
  */
+require_once("configuration.php");
  
 use Invigle\FrontEndUIs\FrontPage,
     Invigle\Language\EN_GB,
