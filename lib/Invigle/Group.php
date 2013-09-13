@@ -77,6 +77,35 @@ class Group
 		$succ = $graph->editNodeProperties($gArray);
         return $succ;
 	}
+    
+    /**
+	 * This method takes as inputs a page ID and a location ID and adds the edge to neo4j.
+	 * @access public
+	 * @param pID, locID
+	 * @return boolean
+	 */
+	public function addGroupLocation($gID, $locID)
+	{
+		$graph = new Graph();
+		$connectionType = 'LOCATED_AT';
+		$succ = $graph->addConnection($gID, $locID, $connectionType);
+		return $succ;
+	}
+
+
+	/**
+	 * This method takes as inputs a page ID and a location ID and deletes the edge to neo4j.
+	 * @access public
+	 * @param pID, locID
+	 * @return boolean
+	 */
+	public function deleteGroupLocation($gID, $locID)
+	{
+		$graph = new Graph();
+		$connectionType = 'LOCATED_AT';
+		$succ = $graph->deleteConnection($gID, $locID, $connectionType);
+		return $succ;
+	}
 
 	/**
 	 * This method returns the name of the group.
