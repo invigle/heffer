@@ -164,16 +164,12 @@ class FrontPage extends FrontEndUIs {
                     <form method="POST" action="'.$_SERVER['PHP_SELF'].'">
                     <input type="hidden" name="regform" value="submit">
                         <h2>'.$this->_language->_frontPage["register"].'</h2>
-                        <div class="row">
-                            <div class="col-md-12">
-                            
-                                <div class="col-md-6">
-                                    <input type="text" class="form-control col-md-6" name="firstname" value="'.$userArray['firstname'].'" placeholder="'.$this->_language->_frontPage["firstname"].'">
-                                </div>
-                                <div class="col-md-6">
-                                    <input type="text" class="form-control col-md-6" name="lastname" value="'.$userArray['lastname'].'" placeholder="'.$this->_language->_frontPage["lastname"].'">
-                                </div>
-                            
+                        <div class="row">                           
+                            <div class="col-md-6">
+                                <input type="text" class="form-control col-md-6" name="firstname" value="'.$userArray['firstname'].'" placeholder="'.$this->_language->_frontPage["firstname"].'">
+                            </div>
+                            <div class="col-md-6">
+                                <input type="text" class="form-control col-md-6" name="lastname" value="'.$userArray['lastname'].'" placeholder="'.$this->_language->_frontPage["lastname"].'">
                             </div>
                         </div>
                         <div class="row-fluid">
