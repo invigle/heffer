@@ -41,15 +41,17 @@ class FrontPage extends FrontEndUIs {
     private function registrationForm()
     {       
         return '<div class="container">
-                <h3>'.$this->_language->_frontPage["register"].'</h3>
-                <div class="row">
-                    <div class="col-md-6">
-                        <input type="text" class="form-control col-md-6" name="firstname" value="" placeholder="'.$this->_language->_frontPage["firstname"].'">
+                    <h3>'.$this->_language->_frontPage["register"].'</h3>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <input type="text" class="form-control col-md-6" name="firstname" value="" placeholder="'.$this->_language->_frontPage["firstname"].'">
+                        </div>
+                        <div class="col-md-6">
+                            <input type="text" class="form-control col-md-6" name="lastname" value="" placeholder="'.$this->_language->_frontPage["lastname"].'">
+                        </div>
                     </div>
-                    <div class="col-md-6">
-                        <input type="text" class="col-md-6" name="lastname" value="" placeholder="'.$this->_language->_frontPage["lastname"].'">
-                    </div>
-                </div>
+                    <input type="text" class="form-control col-md-12" name="email" value="" placeholder="'.$this->_language->_frontPage["emailaddress"].'"><br>
+                    <input type="text" class="form-control col-md-12" name="confirmemail" value="" placeholder="'.$this->_language->_frontPage["confirmemailaddress"].'">
                 </div>';
     }
     
