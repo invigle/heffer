@@ -60,7 +60,17 @@ class FrontPage extends FrontEndUIs {
         if(isset($_POST['loginform'])){
             $user = new User();
             
+            $run['query'] = "MATCH n:User WHERE n.email = '$_POST[email]' RETURN n;";
+            $login = $user->loginUser($_POST);
             
+            print '<pre>';
+            print_r($login);
+            print '</pre>';
+            
+            //If the user wants to be remembered then we should set a cookie.
+            if($_POST['rememberme'] === "yes"){
+                //Duplicate the session into a Cookie.
+            }
             
         }
         
@@ -69,7 +79,7 @@ class FrontPage extends FrontEndUIs {
                     <h2>'.$this->_language->_frontPage["loginHere"].'</h2>
                     
                     <label for="email">'.$this->_language->_frontPage["emailaddress"].'</label>
-                    <input type="text" class="form-control col-md-12" id="email" placeholder="">
+                    <input type="text" class="form-control col-md-12" id="email" name="email" placeholder="">
                     <br />
                     
                     <label for="password">'.$this->_language->_frontPage["password"].'</label>
@@ -109,7 +119,11 @@ class FrontPage extends FrontEndUIs {
                             'lastname'=>$_POST['lastname'],
                             'email'=>$_POST['email'],
                             'birthdate'=>"$_POST[dob_day]-$_POST[dob_month]-$_POST[dob_year]",
-                            'gender'=>$_POST['gender']
+                            'gender'=>$_POST['gender'],
+                            'sessionid'=>'',
+                            'ipaddress'=>$_SERVER['REMOTE_ADDR'],
+                            'lastAction'=>time(),
+                            'rememberme'=>''
                               );
             
             //Check that the Date of Birth fields are numeric values only.

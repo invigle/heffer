@@ -1,5 +1,5 @@
 <?php
-
+session_start();
 /**
  * frontpage - The Invigle home page
  * 
