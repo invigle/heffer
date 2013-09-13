@@ -47,6 +47,7 @@ class EN_GB extends Language
             'name-is-numeric' => "First and Last names cannot be numeric.",
             'loginHere' => "Login Here",
             'login-now' => "Login Now",
+            'login-failed' => "Your usernamd and password did not match any user in our database.",
                         
         );
     }

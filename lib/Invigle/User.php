@@ -211,6 +211,10 @@ class User {
     
     return false;        
     }
+    
+    /**
+     * This method checks the currently set $_SESSION data against the neo4j database and returns a boolean for true or false responses.
+     */
 
 	/**
 	 * This method takes as input the ID of a user and deletes the node that represent this user from the GD.

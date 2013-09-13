@@ -66,9 +66,15 @@ class FrontPage extends FrontEndUIs {
                 //Duplicate the session into a Cookie.
             }
             
+            
+            if(!$login){
+                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["login-failed"].'';
+            }
+            
         }
         
-        return '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">
+        return ''.$error.'
+                <form method="POST" action="'.$_SERVER['PHP_SELF'].'">
                     <input type="hidden" name="loginform" value="submit">
                     <h2>'.$this->_language->_frontPage["loginHere"].'</h2>
                     
