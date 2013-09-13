@@ -63,8 +63,8 @@ class Location
 	public function editLocation($lArray)
 	{
 		$graph = new Graph();
-		$succDelete = $graph->editNodeProperties($lArray);
-		return $succDelete;
+		$succEdit = $graph->editNodeProperties($lArray);
+		return $succEdit;
 	}
 
 	/**
