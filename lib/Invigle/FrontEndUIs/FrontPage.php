@@ -106,7 +106,7 @@ class FrontPage extends FrontEndUIs {
                         </div>
                     </div>
                     
-                    <input type="submit" name="register" value="'.$this->_language->_frontPage["registerButton"].'" class="btn btn-large btn-success">
+                    <input type="submit" name="register" value="'.$this->_language->_frontPage["registerButton"].'">
                     
                 </div>';
     }
