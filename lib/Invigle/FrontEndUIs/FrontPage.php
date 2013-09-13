@@ -73,13 +73,13 @@ class FrontPage extends FrontEndUIs {
                             <h4>'.$this->_language->frontPage["birthdate"].'</h4>
                             <div class="row-fluid">
                                 <div class="col-md-3">
-                                    <input type="text" name="dob_day" class="form-control" placeholder="Day [DD]">
+                                    <input type="text" name="dob_day" class="form-control" placeholder="'.$this->_language->frontPage["day"].'">
                                 </div>
                                 <div class="col-md-3">
-                                    <input type="text" name="dob_month" class="form-control" placeholder="Month [MM]">
+                                    <input type="text" name="dob_month" class="form-control" placeholder="'.$this->_language->frontPage["month"].'">
                                 </div>
                                 <div class="col-md-6">
-                                    <input type="text" name="dob_year" class="form-control" placeholder="Year [YYYY]">
+                                    <input type="text" name="dob_year" class="form-control" placeholder="'.$this->_language->frontPage["year"].'">
                                 </div>
                             </div>
                         </div>
@@ -90,14 +90,14 @@ class FrontPage extends FrontEndUIs {
                                     <div class="radio">
                                       <label>
                                           <input type="radio" name="gender" id="gender_male" value="male" checked>
-                                          Male
+                                          '.$this->_language->frontPage["male"].'
                                       </label>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <label>
                                         <input type="radio" name="gender" id="gender_female" value="female" checked>
-                                        Female
+                                        '.$this->_language->frontPage["female"].'
                                     </label>
                                 </div>
                             </div>

@@ -31,9 +31,9 @@ class EN_GB extends Language
             'gender' => "Gender",
             'male' => "Male",
             'female' => "Female",
-            'month' => "Month",
-            'day' => "Day",
-            'year' => "Year",
+            'month' => "Month [MM]",
+            'day' => "Day [DD]",
+            'year' => "Year [YYYY]",
             'registerButton' => "Get Started"
         );
     }
