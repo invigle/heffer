@@ -46,6 +46,7 @@ class EN_GB extends Language
             'lasrname-too-short' => "Your Last name must be at least 2 characters long.",
             'name-is-numeric' => "First and Last names cannot be numeric.",
             'loginHere' => "Login Here",
+            'login-now' => "Login Now",
                         
         );
     }

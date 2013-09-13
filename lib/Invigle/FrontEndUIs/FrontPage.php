@@ -60,13 +60,16 @@ class FrontPage extends FrontEndUIs {
         return '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">
                     <input type="hidden" name="loginform" value="submit">
                     <h2>'.$this->_language->_frontPage["loginHere"].'</h2>
-                    <div class="row-fluid">
-                        <label for="email">Email Address</label>
-                        <input type="text" class="form-control col-md-12" id="email" placeholder="Your email address">
-                        <br />
-                        <label for="password">Password</label>
-                        <input type="password" class="form-control col-md-12" id="password" placeholder="Your password">
-                    </div>
+                    
+                    <label for="email">'.$this->_language->_frontPage["emailaddress"].'</label>
+                    <input type="text" class="form-control col-md-12" id="email" placeholder="">
+                    <br />
+                    
+                    <label for="password">'.$this->_language->_frontPage["password"].'</label>
+                    <input type="password" class="form-control col-md-12" id="password" placeholder="">
+                    
+                    <br>
+                    <input type="submit" name="login" value="'.$this->_language->_frontPage["login-now"].'">
                 </form>';
     }
     
