@@ -55,15 +55,46 @@ class FrontPage extends FrontEndUIs {
                             <input type="text" class="form-control col-md-12" name="email" value="" placeholder="'.$this->_language->_frontPage["emailaddress"].'">
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row-fluid">
                         <div class="col-md-12">
                             <input type="text" class="form-control col-md-12" name="confirmemail" value="" placeholder="'.$this->_language->_frontPage["confirmemailaddress"].'">
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row-fluid">
                         <div class="col-md-6">
                             <input type="text" class="form-control col-md-6" name="username" value="" placeholder="'.$this->_language->_frontPage["username"].'">
                         </div>
+                        <div class="col-md-6">
+                            <input type="password" class="form-control col-md-6" name="password" value="" placeholder="'.$this->_language->_frontPage["password"].'">
+                        </div>
+                    </div>
+                    <div class="row-fluid">
+                        <div class="col-md-6">
+                            <h4>'.$this->_language->frontPage["birthdate"].'</h4>
+                            <div class="row-fluid">
+                                <div class="col-md-3">
+                                    <input type="text" name="dob_day" class="form-control" placeholder="Day [DD]">
+                                </div>
+                                <div class="col-md-3">
+                                    <input type="text" name="dob_month" class="form-control" placeholder="Month [MM]">
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="text" name="dob_year" class="form-control" placeholder="Year [YYYY]">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h4>'.$this->_language->frontPage["gender"].'</h4>
+                            <div class="row-fluid">
+                                <div class="col-md-6">
+                                    Male
+                                </div>
+                                <div class="col-md-6">
+                                    Female
+                                </div>
+                            </div>
+                        </div>
+                        
                         <div class="col-md-6">
                             <input type="password" class="form-control col-md-6" name="password" value="" placeholder="'.$this->_language->_frontPage["password"].'">
                         </div>
