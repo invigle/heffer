@@ -45,7 +45,53 @@ class FrontPage extends FrontEndUIs {
     {   
         if(isset($_POST['regform'])){
             $user = new User();
-            $add = $user->addUser($_POST);
+            
+            $userArray = array(
+                            'username'=>$_POST['username'],
+                            'password'=>$_POST['password'],
+                            'firstname'=>$_POST['firstname'],
+                            'lastname'=>$_POST['lastname'],
+                            'email'=>$_POST['email'],
+                            'birthdate'=>"$_POST[dob_day]-$_POST[dob_month]-$_POST[dob_year]",
+                            'gender'=>$_POST['gender']
+                              );
+            
+            //Check that the Date of Birth fields are numeric values only.
+            if(!is_numeric($_POST['dob_day']) || !is_numeric($_POST['dob_month']) || !is_numeric($_POST['dob_year'])){
+                return '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["dob-invalid"].'';
+            }
+            
+            //Check that the users password is more than 6 characters long.
+            if(strlen($_POST['password'] <= "6")){
+                return '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["pw-too-short"].'';
+            }
+            
+            //Check that firstname and lastname are more than 2 characters long and are not numeric.
+            if(strlen($_POST['firstname']) < "2"){
+                return '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["firstname-too-short"].'';
+            }
+            if(is_numeric($_POST['firstname'])){
+                return '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["name-is-numeric"].'';
+            }
+            if(strlen($_POST['lastname']) < "2"){
+                return '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["lastname-too-short"].'';
+            }
+            if(is_numeric($_POST['lastname'])){
+                return '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["name-is-numeric"].'';
+            }
+            
+            //Attempt to add the user.
+            $add = $user->addUser($userArray);
+            
+            if($add === "email-taken"){
+                return '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["email-taken"].'';
+            }elseif($add === "username-taken"){
+                return '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["username-taken"].'';
+            }elseif($add === "username-invalid"){
+                return '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["username-invalid"].'';
+            }elseif($add === "email-invalid"){
+                return '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["email-invalid"].'';
+            }
             
             print '<pre>';
             print_r($add);
