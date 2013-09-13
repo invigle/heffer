@@ -142,6 +142,11 @@ class FrontPage extends FrontEndUIs {
             //At this point either an $error will be set or the API Call will have been successful and $add will contain the new users 'Node ID#' from Neo4J.
         }
         
+        //Check if $error is set if not then set an empty one to suppress PHP NOTICE errors.
+        if(!isset($error)){
+            $error = "";
+        }
+        
         return ''.$error.'
                     <form method="POST" action="'.$_SERVER['PHP_SELF'].'">
                     <input type="hidden" name="regform" value="submit">
