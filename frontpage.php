@@ -21,4 +21,9 @@ $language = new EN_GB();
 
 $frontPage = new FrontPage($language);
 
+print 'SESSION DATA:<br />';
+print '<pre>';
+print_r($_SESSION);
+print '</pre>';
+
 ?>
