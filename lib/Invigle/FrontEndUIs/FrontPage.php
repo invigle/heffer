@@ -60,9 +60,10 @@ class FrontPage extends FrontEndUIs {
         if(isset($_POST['regform'])){
             $user = new User();
             
+            //$userArray Variables that will be stored in neo4j.
             $userArray = array(
                             'username'=>$_POST['username'],
-                            'password'=>$_POST['password'],
+                            'password'=>hash('sha256', CONF_SECURITYSALT.$_POST['password']), //SHA256 Hash the users password with SECURITYSALT from Configuration.php
                             'firstname'=>$_POST['firstname'],
                             'lastname'=>$_POST['lastname'],
                             'email'=>$_POST['email'],
@@ -123,7 +124,7 @@ class FrontPage extends FrontEndUIs {
         }
         
         return '<div class="container">
-                '.$error.''.CONF_SECURITYSALT.'
+                '.$error.'
                     <form method="POST" action="'.$_SERVER['PHP_SELF'].'">
                     <input type="hidden" name="regform" value="submit">
                         <h2>'.$this->_language->_frontPage["register"].'</h2>
