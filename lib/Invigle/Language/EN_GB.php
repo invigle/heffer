@@ -19,7 +19,22 @@ class EN_GB extends Language
     public function __construct()
     {
         $this->_frontPage = array(
-            'pageTitle' => "Invigle - \"Let's Link Up!\""
+            'pageTitle' => "Invigle - \"Let's Link Up!\"",
+            'register' => "Register",
+            'firstname' => "First Name",
+            'lastname' => "Last Name",
+            'emailaddress' => "Email Address",
+            'confirmemailaddress' => "Confirm Email Address",
+            'username' => "Username",
+            'password' => "Password",
+            'birthdate' => "Date of Birth",
+            'gender' => "Gender",
+            'male' => "Male",
+            'female' => "Female",
+            'month' => "Month [MM]",
+            'day' => "Day [DD]",
+            'year' => "Year [YYYY]",
+            'registerButton' => "Get Started"
         );
     }
 }

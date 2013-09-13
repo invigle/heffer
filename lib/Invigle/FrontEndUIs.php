@@ -19,6 +19,7 @@ abstract class FrontEndUIs
 
     protected $_pageTitle;
     public $UITools;
+    protected $_language;
 
     public function __construct()
     {
