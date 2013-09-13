@@ -45,11 +45,11 @@ class FrontPage extends FrontEndUIs {
     {
         return '<div class="container">
                     <div class="row">
-                        <div class="md-col-4">
-                            LOGIN
+                        <div class="col-md-4">
+                            '.$this->loginForm($_POST).'
                         </div>
-                        <div class="md-col-8">
-                            REG
+                        <div class="col-md-8">
+                            '.$this->registrationForm($_POST).'
                         </div>
                     </div>
                 </div>';
