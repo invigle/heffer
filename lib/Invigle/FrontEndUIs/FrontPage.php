@@ -2,7 +2,9 @@
 namespace Invigle\FrontEndUIs;
  
 use Invigle\FrontEndUIs,
-    Invigle\Language;
+    Invigle\Language,
+    Invigle\User;
+
  
 /**
  * FrontPage - This renders the front home page
