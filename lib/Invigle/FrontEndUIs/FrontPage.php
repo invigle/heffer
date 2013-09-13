@@ -52,7 +52,7 @@ class FrontPage extends FrontEndUIs {
     private function authenticationLayer()
     {
         if($this->_loggedin){
-            return '<b>'.$this->_language->_frontpage["logged-in-as"].' [USERS NAME] (<a href="?a=logout">Logout</a>)</b>';
+            return '<b>'.$this->_language->_frontPage["logged-in-as"].' [USERS NAME] (<a href="?a=logout">Logout</a>)</b>';
         }else{
             return '<div class="container">
                         <div class="row">
