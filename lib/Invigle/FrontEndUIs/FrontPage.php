@@ -51,7 +51,7 @@ class FrontPage extends FrontEndUIs {
         }
         
         return '<div class="container">
-                    <form method="POST" action="PHP_SELF">
+                    <form method="POST" action="'.$_SERVER['PHP_SELF'].'">
                     <input type="hidden" name="regform" value="submit">
                         <h2>'.$this->_language->_frontPage["register"].'</h2>
                         <div class="row-fluid">
