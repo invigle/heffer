@@ -43,6 +43,16 @@ class FrontPage extends FrontEndUIs {
     
     private function registrationForm($_POST)
     {   
+        $userArray = array(
+                        'username'=>'',
+                        'password'=>'',
+                        'firstname'=>'',
+                        'lastname'=>'',
+                        'email'=>'',
+                        'birthdate'=>'',
+                        'gender'=>''
+                          );
+        
         if(isset($_POST['regform'])){
             $user = new User();
             
@@ -58,39 +68,43 @@ class FrontPage extends FrontEndUIs {
             
             //Check that the Date of Birth fields are numeric values only.
             if(!is_numeric($_POST['dob_day']) || !is_numeric($_POST['dob_month']) || !is_numeric($_POST['dob_year'])){
-                return '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["dob-invalid"].'';
+                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["dob-invalid"].'';
             }
             
             //Check that the users password is more than 6 characters long.
             if(strlen($_POST['password'] <= "6")){
-                return '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["pw-too-short"].'';
+                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["pw-too-short"].'';
             }
             
             //Check that firstname and lastname are more than 2 characters long and are not numeric.
             if(strlen($_POST['firstname']) < "2"){
-                return '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["firstname-too-short"].'';
+                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["firstname-too-short"].'';
             }
             if(is_numeric($_POST['firstname'])){
-                return '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["name-is-numeric"].'';
+                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["name-is-numeric"].'';
             }
             if(strlen($_POST['lastname']) < "2"){
-                return '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["lastname-too-short"].'';
+                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["lastname-too-short"].'';
             }
             if(is_numeric($_POST['lastname'])){
-                return '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["name-is-numeric"].'';
+                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["name-is-numeric"].'';
             }
             
-            //Attempt to add the user.
-            $add = $user->addUser($userArray);
+            //If no error is set yet
+            if(!isset($error)){
+                //Attempt to add the user.
+                $add = $user->addUser($userArray);
+            }
             
+            //Check for errors in the addUser() function.
             if($add === "email-taken"){
-                return '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["email-taken"].'';
+                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["email-taken"].'';
             }elseif($add === "username-taken"){
-                return '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["username-taken"].'';
+                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["username-taken"].'';
             }elseif($add === "username-invalid"){
-                return '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["username-invalid"].'';
+                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["username-invalid"].'';
             }elseif($add === "email-invalid"){
-                return '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["email-invalid"].'';
+                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["email-invalid"].'';
             }
             
             print '<pre>';
@@ -98,34 +112,35 @@ class FrontPage extends FrontEndUIs {
             print '</pre>';
         }
         
-        return '<div class="container">
+        return ''.$error.'
+                <div class="container">
                     <form method="POST" action="'.$_SERVER['PHP_SELF'].'">
                     <input type="hidden" name="regform" value="submit">
                         <h2>'.$this->_language->_frontPage["register"].'</h2>
                         <div class="row-fluid">
                             <div class="col-md-6">
-                                <input type="text" class="form-control col-md-6" name="firstname" value="" placeholder="'.$this->_language->_frontPage["firstname"].'">
+                                <input type="text" class="form-control col-md-6" name="firstname" value="'.$userArray['firstname'].'" placeholder="'.$this->_language->_frontPage["firstname"].'">
                             </div>
                             <div class="col-md-6">
-                                <input type="text" class="form-control col-md-6" name="lastname" value="" placeholder="'.$this->_language->_frontPage["lastname"].'">
+                                <input type="text" class="form-control col-md-6" name="lastname" value="'.$userArray['lastname'].'" placeholder="'.$this->_language->_frontPage["lastname"].'">
                             </div>
                         </div>
                         <div class="row-fluid">
                             <div class="col-md-12">
-                                <input type="text" class="form-control col-md-12" name="email" value="" placeholder="'.$this->_language->_frontPage["emailaddress"].'">
+                                <input type="text" class="form-control col-md-12" name="email" value="'.$userArray['email'].'" placeholder="'.$this->_language->_frontPage["emailaddress"].'">
                             </div>
                         </div>
                         <div class="row-fluid">
                             <div class="col-md-12">
-                                <input type="text" class="form-control col-md-12" name="confirmemail" value="" placeholder="'.$this->_language->_frontPage["confirmemailaddress"].'">
+                                <input type="text" class="form-control col-md-12" name="confirmemail" value="'.$userArray['confirmemail'].'" placeholder="'.$this->_language->_frontPage["confirmemailaddress"].'">
                             </div>
                         </div>
                         <div class="row-fluid">
                             <div class="col-md-6">
-                                <input type="text" class="form-control col-md-6" name="username" value="" placeholder="'.$this->_language->_frontPage["username"].'">
+                                <input type="text" class="form-control col-md-6" name="username" value="'.$userArray['username'].'" placeholder="'.$this->_language->_frontPage["username"].'">
                             </div>
                             <div class="col-md-6">
-                                <input type="password" class="form-control col-md-6" name="password" value="" placeholder="'.$this->_language->_frontPage["password"].'">
+                                <input type="password" class="form-control col-md-6" name="password" value="'.$userArray['password'].'" placeholder="'.$this->_language->_frontPage["password"].'">
                             </div>
                         </div>
                         <div class="row-fluid">
@@ -133,13 +148,13 @@ class FrontPage extends FrontEndUIs {
                                 <h4>'.$this->_language->_frontPage["birthdate"].'</h4>
                                 <div class="row-fluid">
                                     <div class="col-md-3">
-                                        <input type="text" name="dob_day" class="form-control" placeholder="'.$this->_language->_frontPage["day"].'">
+                                        <input type="text" name="dob_day" class="form-control" value="'.$userArray['dob_day'].'" placeholder="'.$this->_language->_frontPage["day"].'">
                                     </div>
                                     <div class="col-md-3">
-                                        <input type="text" name="dob_month" class="form-control" placeholder="'.$this->_language->_frontPage["month"].'">
+                                        <input type="text" name="dob_month" class="form-control" value="'.$userArray['dob_month'].'" placeholder="'.$this->_language->_frontPage["month"].'">
                                     </div>
                                     <div class="col-md-6">
-                                        <input type="text" name="dob_year" class="form-control" placeholder="'.$this->_language->_frontPage["year"].'">
+                                        <input type="text" name="dob_year" class="form-control" value="'.$userArray['dob_year'].'" placeholder="'.$this->_language->_frontPage["year"].'">
                                     </div>
                                 </div>
                             </div>
