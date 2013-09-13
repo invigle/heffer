@@ -17,8 +17,12 @@ use Invigle\FrontEndUIs\FrontPage,
 
 require_once("bootstrap.php");
 
-$language = new EN_GB();
+if($_GET['a'] === "logout"){
+    $user = new User();
+    $user->userLogout();
+}
 
+$language = new EN_GB();
 $frontPage = new FrontPage($language);
 
 ?>

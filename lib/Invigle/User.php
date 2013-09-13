@@ -240,6 +240,17 @@ class User {
         }
     }
 
+    /**
+     * This method will logout the currently logged in user.
+     */
+    public function userLogout()
+    {
+        $_SESSION['sid'] = "";
+        $_SESISON['uid'] = "";
+        session_destroy();
+    return true;
+    }
+
 	/**
 	 * This method takes as input the ID of a user and deletes the node that represent this user from the GD.
 	 * @access public
