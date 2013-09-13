@@ -112,12 +112,10 @@ class FrontPage extends FrontEndUIs {
             }
             
             if(isset($error)){
-                $userArray = array(
-                        'confirmemail'=>'',
-                        'dob_day' => '',
-                        'dob_month' => '',
-                        'dob_year' => '',
-                          );
+                $userArray['confirmemail'] = "";
+                $userArray['dob_day'];
+                $userArray['dob_month'];
+                $userArray['dob_year'];
             }
             
             print '<pre>';
