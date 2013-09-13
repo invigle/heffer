@@ -57,6 +57,7 @@ class FrontPage extends FrontEndUIs {
             $user = new User();
             $userInfo = $user->userDetails();
             
+            
             return '<div class="container">
                         <b>'.$this->_language->_frontPage["logged-in-as"].' '.$userInfo['firstname'].' '.$userInfo['lastname'].'</b> (<a href="?logout=true">Logout</a>)
                     </div>';
