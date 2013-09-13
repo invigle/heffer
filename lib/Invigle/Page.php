@@ -1,12 +1,13 @@
 <?php
 
-namespace Invigle;
+//namespace Invigle;
 
 /**
  * @access public
  * @author Grant
  */
-class Page {
+class Page
+{
 	public $_name;
 	public $_category;
 	public $_shortDescription;
@@ -19,12 +20,34 @@ class Page {
 	public $_profilePicID;
 
 	/**
-	 * This method takes as input an array with all the information of a page and adds this page to the GD as a 'page node'.
+	 * This method takes as input a page with all the information of a page and 
+	 * adds this event to the GD as a 'page node'.
 	 * @access public
 	 * @param aPageArray
+	 * @return boolean
+	 * 
+	 * @ReturnType boolean
 	 */
-	public function addPage($aPageArray) {
-		// Not yet implemented
+	public function addPage($aPageArray)
+	{
+		//Create the new page account in neo4j
+		$graph = new Graph();
+
+		$queryString = "";
+		foreach ($aPageArray as $key => $value)
+		{
+			$queryString .= "$key : \"$value\", ";
+		}
+		$queryString = substr($queryString, 0, -2);
+		$page['query'] = "CREATE (n:Page {" . $queryString . "}) RETURN n;";
+
+		$apiCall = $graph->neo4japi('cypher', 'JSONPOST', $page);
+
+		//return the New Page ID.
+		$bit = explode("/", $apiCall['data'][0][0]['self']);
+		$userId = end($bit);
+
+		return $pageId;
 	}
 
 	/**
@@ -32,7 +55,8 @@ class Page {
 	 * @access public
 	 * @param aPID
 	 */
-	public function deletePage($aPID) {
+	public function deletePage($aPID)
+	{
 		// Not yet implemented
 	}
 
@@ -41,7 +65,8 @@ class Page {
 	 * @access public
 	 * @param aPageArray
 	 */
-	public function editPage($aPageArray) {
+	public function editPage($aPageArray)
+	{
 		// Not yet implemented
 	}
 
@@ -49,7 +74,8 @@ class Page {
 	 * @access public
 	 * @param aPID
 	 */
-	public function getPage($aPID) {
+	public function getPage($aPID)
+	{
 		// Not yet implemented
 	}
 
@@ -60,7 +86,8 @@ class Page {
 	 * @param aLimit
 	 * @param aSkip
 	 */
-	public function getFollowers($aPID, $aLimit, $aSkip) {
+	public function getFollowers($aPID, $aLimit, $aSkip)
+	{
 		// Not yet implemented
 	}
 
@@ -71,7 +98,8 @@ class Page {
 	 * @param aLimit
 	 * @param aSkip
 	 */
-	public function getTimeline($aPID, $aLimit, $aSkip) {
+	public function getTimeline($aPID, $aLimit, $aSkip)
+	{
 		// Not yet implemented
 	}
 
@@ -82,11 +110,12 @@ class Page {
 	 * @param aUID
 	 * @param aTimestamp
 	 */
-	public function addPost($aPID, $aUID, $aTimestamp) {
+	public function addPost($aPID, $aUID, $aTimestamp)
+	{
 		// Not yet implemented
 	}
-    
-    /**
+
+	/**
 	 * This method returns the name of the page.
 	 * @access public
 	 * @return string
@@ -106,8 +135,8 @@ class Page {
 	{
 		$this->_name = $name;
 	}
-    
-    /**
+
+	/**
 	 * This method returns the page category.
 	 * @access public
 	 * @return string
@@ -127,8 +156,8 @@ class Page {
 	{
 		$this->_category = $category;
 	}
-    
-    /**
+
+	/**
 	 * This method returns the group short description.
 	 * @access public
 	 * @return string
@@ -148,8 +177,8 @@ class Page {
 	{
 		$this->_shortDescription = $description;
 	}
-    
-    /**
+
+	/**
 	 * This method returns the page's slogan.
 	 * @access public
 	 * @return string
@@ -169,8 +198,8 @@ class Page {
 	{
 		$this->_slogan = $slogan;
 	}
-    
-    /**
+
+	/**
 	 * This method returns the page's website url.
 	 * @access public
 	 * @return url
@@ -190,8 +219,8 @@ class Page {
 	{
 		$this->_website = $website;
 	}
-    
-    /**
+
+	/**
 	 * This method returns the page ID.
 	 * @access public
 	 * @return integer
@@ -211,7 +240,7 @@ class Page {
 		$this->_pID = $id;
 	}
 
-    /**
+	/**
 	 * This method returns location of the page.
 	 * @access public
 	 * @return string
@@ -231,8 +260,8 @@ class Page {
 	{
 		$this->_location = $location;
 	}
-    
-    /**
+
+	/**
 	 * This method returns the number of followers of the page.
 	 * @return integer
 	 */
@@ -251,8 +280,8 @@ class Page {
 	{
 		$this->_followerCount = $count;
 	}
-    
-    /**
+
+	/**
 	 * This method returns the group type.
 	 * @access public
 	 * @return string
@@ -272,8 +301,8 @@ class Page {
 	{
 		$this->_pageType = $type;
 	}
-    
-    /**
+
+	/**
 	 * This method returns the ID of the page profile picture.
 	 * @access public
 	 * @return integer
@@ -293,5 +322,7 @@ class Page {
 	{
 		$this->_profilePicID = $id;
 	}
+
 }
+
 ?>
