@@ -95,10 +95,12 @@ class FrontPage extends FrontEndUIs {
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <label>
-                                        <input type="radio" name="gender" id="gender_female" value="female" checked>
-                                        '.$this->_language->frontPage["female"].'
-                                    </label>
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio" name="gender" id="gender_female" value="female">
+                                            '.$this->_language->frontPage["female"].'
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
