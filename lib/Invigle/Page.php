@@ -74,6 +74,37 @@ class Page
 		return $succ;
 	}
 
+
+	/**
+	 * This method takes as inputs a page ID and a location ID and adds the edge to neo4j.
+	 * @access public
+	 * @param pID, locID
+	 * @return boolean
+	 */
+	public function addPageLocation($pID, $locID)
+	{
+		$graph = new Graph();
+		$connectionType = 'LOCATED_AT';
+		$succ = $graph->addConnection($pID, $locID, $connectionType);
+		return $succ;
+	}
+
+
+	/**
+	 * This method takes as inputs a page ID and a location ID and deletes the edge to neo4j.
+	 * @access public
+	 * @param pID, locID
+	 * @return boolean
+	 */
+	public function deletePageLocation($pID, $locID)
+	{
+		$graph = new Graph();
+		$connectionType = 'LOCATED_AT';
+		$succ = $graph->deleteConnection($pID, $locID, $connectionType);
+		return $succ;
+	}
+
+
 	/**
 	 * @access public
 	 * @param id
