@@ -53,7 +53,7 @@ class FrontPage extends FrontEndUIs {
     {
         if($this->_loggedin){
             return '<div class="container">
-                        <b>'.$this->_language->_frontPage["logged-in-as"].' [USERS NAME]</b> (<a href="?a=logout">Logout</a>)
+                        <b>'.$this->_language->_frontPage["logged-in-as"].' [USERS NAME]</b> (<a href="?logout=true">Logout</a>)
                     </div>';
         }else{
             return '<div class="container">

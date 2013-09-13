@@ -17,7 +17,7 @@ use Invigle\FrontEndUIs\FrontPage,
 
 require_once("bootstrap.php");
 
-if($_GET['a'] === "logout"){
+if(isset($_GET['logout'])){
     $user = new User();
     $user->userLogout();
 }
