@@ -21,10 +21,4 @@ $language = new EN_GB();
 
 $frontPage = new FrontPage($language);
 
-if($this->_loggedin){
-    print 'Logged In';
-}else{
-    print 'Not Logged In';
-}
-
 ?>

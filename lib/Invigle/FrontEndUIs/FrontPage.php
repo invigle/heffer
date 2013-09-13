@@ -51,6 +51,12 @@ class FrontPage extends FrontEndUIs {
     
     private function authenticationLayer()
     {
+        if($this->_loggedin){
+            print 'Logged In';
+        }else{
+            print 'Not Logged In';
+        }
+                
         return '<div class="container">
                     <div class="row">
                         <div class="col-md-4">
@@ -61,6 +67,7 @@ class FrontPage extends FrontEndUIs {
                         </div>
                     </div>
                 </div>';
+                
     }
     
     private function loginForm($_POST)
