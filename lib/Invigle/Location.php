@@ -10,7 +10,7 @@ use Invigle\Graph;
  */
 class Location
 {
-	private $_lID;
+	private $_locID;
 	private $_name;
 	private $_coordinates;
 	private $_postCode;
@@ -43,28 +43,28 @@ class Location
 
 	/** Function to delete a location node given an ID.
 	 * @access private
-	 * @param lID
+	 * @param locID
 	 * @return boolean
 	 */
-	public function deleteLocation($lID)
+	public function deleteLocation($locID)
 	{
 		$graph = new Graph();
-		$succDelete = $graph->deleteNodeByID($lID);
-		return $succDelete;
+		$succ = $graph->deleteNodeByID($locID);
+		return $succ;
 	}
 
 	/**
 	 * This method edits some of the properties of a location in the GD by updating the current node in 
 	 * the GD with information provided by the lArray which is the input to the editComment method
 	 * @access public
-	 * @param lArray
+	 * @param locArray
 	 * @return boolean
 	 */
-	public function editLocation($lArray)
+	public function editLocation($locArray)
 	{
 		$graph = new Graph();
-		$succEdit = $graph->editNodeProperties($lArray);
-		return $succEdit;
+		$succ = $graph->editNodeProperties($locArray);
+		return $succ;
 	}
 
 	/**
@@ -74,7 +74,7 @@ class Location
 	 */
 	public function getLocationId()
 	{
-		return $this->_lID;
+		return $this->_locID;
 	}
 
 	/**

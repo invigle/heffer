@@ -63,9 +63,38 @@ class Event
 	public function deleteEvent($eID)
 	{
 		$graph = new Graph();
-		$succDelete = $graph->deleteNodeByID($eID);
-		return $succDelete;
+		$succ = $graph->deleteNodeByID($eID);
+		return $succ;
 	}
+
+	/**
+	 * This method takes as inputs a photo ID, the ID of an event and adds the edge to neo4j.
+	 * @access public
+	 * @param phID, eID
+	 * @return boolean
+	 */
+	public function addEventPhoto($phID, $eID)
+	{
+		$graph = new Graph();
+		$connectionType = 'RELATED_TO';
+		$succ = $graph->addConnection($phID, $eID, $connectionType);
+		return $succ;
+	}
+
+	/**
+	 * This method takes as inputs a photo ID, the ID of an event and adds the edge to neo4j.
+	 * @access public
+	 * @param phID, eID
+	 * @return boolean
+	 */
+	public function deleteEventPhoto($phID, $eID)
+	{
+		$graph = new Graph();
+		$connectionType = 'RELATED_TO';
+		$succ = $graph->deleteConnection($phID, $eID, $connectionType);
+		return $succ;
+	}
+
 
 	/**
 	 * This method edits some of the properties of an event in the GD by updating the current node in 
@@ -77,8 +106,8 @@ class Event
 	public function editEvent($eArray)
 	{
 		$graph = new Graph();
-		$succEdit = $graph->editNodeProperties($eArray);
-		return $succEdit;
+		$succ = $graph->editNodeProperties($eArray);
+		return $succ;
 	}
 
 	/**

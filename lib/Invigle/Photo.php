@@ -51,8 +51,8 @@ class Photo {
 	public function deletePhoto($phID)
 	{
 		$graph = new Graph();
-		$succDelete = $graph->deleteNodeByID($phID);
-		return $succDelete;
+		$succ = $graph->deleteNodeByID($phID);
+		return $succ;
 	}
     
     /**
@@ -62,7 +62,7 @@ class Photo {
 	 * @param phID, taggerUID, taggeeUID
 	 * @return boolean, boolean
 	 */
-	public function addTag($phID, $taggerUID, $taggeeUID) 
+	public function addTag($taggeeUID, $phID, $taggerUID) 
 	{
 		$graph = new Graph();
         $connectionType = 'TAGGED_IN';
@@ -80,54 +80,69 @@ class Photo {
 	 * @param phID, taggeeUID
 	 * @return boolean, boolean
 	 */
-	public function deleteTag($phID, $taggeeUID) {
+	public function deleteTag($taggeeUID, $phID) {
 	   	$graph = new Graph();
         $connectionType = 'TAGGED_IN';
-		$succDel = $graph->deleteConnection($taggeeUID, $phID, $connectionType);
+		$succ = $graph->deleteConnection($taggeeUID, $phID, $connectionType);
+        return $succ; 
 	} 
     
     /**
 	 * This method takes as inputs a photo ID, the ID of a location and adds the edge to neo4j.
 	 * @access public
 	 * @param phID, locID
-	 * @return boolean, boolean
+	 * @return boolean
 	 */
 	public function addPhotoLocation($phID, $locID) 
 	{
 		$graph = new Graph();
         $connectionType = 'TAKEN_AT';
-        $tagArray[1] = $taggerUID;
-		$succTag = $graph->addConnection($taggeeUID, $phID, $connectionType);
-        $succEdit = $graph->editConnectionProperties($tagArray);
-        return $succTag;
-        return $succEdit; 
+		$succ = $graph->addConnection($phID, $locID, $connectionType);
+        return $succ;
+	}
+    
+    /**
+	 * This method takes as inputs a photo ID, the ID of a location and adds the edge to neo4j.
+	 * @access public
+	 * @param phID, locID
+	 * @return boolean
+	 */
+	public function deletePhotoLocation($phID, $locID) 
+	{
+		$graph = new Graph();
+        $connectionType = 'TAKEN_AT';
+		$succ = $graph->deleteConnection($phID, $locID, $connectionType);
+        return $succ;
+	}
+    
+    /**
+	 * This method takes as inputs a comment ID and a photo ID and adds the edge to neo4j.
+	 * @access public
+	 * @param cID, phID
+	 * @return boolean
+	 */
+	public function addPhotoComment($cID, $phID) 
+	{
+		$graph = new Graph();
+        $connectionType = 'POSTED_ON';
+		$succ = $graph->addConnection($cID, $phID, $connectionType);
+        return $succ;
 	}
 
-	 /**
-	 * This method takes as inputs a photo ID, the ID of the taggee of a photo and deletes the edge form neo4j.
+    /**
+	 * This method takes as inputs a comment ID and a photo ID and deletes the edge from neo4j.
 	 * @access public
-	 * @param phID, taggeeUID
-	 * @return boolean, boolean
+	 * @param cID, phID
+	 * @return boolean
 	 */
-	public function deleteTag($phID, $taggeeUID) {
-	   	$graph = new Graph();
-        $connectionType = 'TAGGED_IN';
-		$succDel = $graph->deleteConnection($taggeeUID, $phID, $connectionType);
+	public function deletePhotoComment($cID, $phID) 
+	{
+		$graph = new Graph();
+        $connectionType = 'POSTED_ON';
+		$succ = $graph->deleteConnection($cID, $phID, $connectionType);
+        return $succ;
 	}
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+        
     /**
 	 * This method returns the metadata of the photo.
 	 * @access public

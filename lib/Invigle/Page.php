@@ -56,8 +56,8 @@ class Page
 	public function deletePage($pID)
 	{
 		$graph = new Graph();
-		$succDelete = $graph->deleteNodeByID($pID);
-		return $succDelete;
+		$succ = $graph->deleteNodeByID($pID);
+		return $succ;
 	}
 
 	/**
@@ -70,8 +70,8 @@ class Page
 	public function editPage($pArray)
 	{
 		$graph = new Graph();
-		$succEdit = $graph->editNodeProperties($pArray);
-		return $succEdit;
+		$succ = $graph->editNodeProperties($pArray);
+		return $succ;
 	}
 
 	/**

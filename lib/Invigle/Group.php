@@ -60,8 +60,8 @@ class Group
 	public function deleteGroup($gID)
 	{
 		$graph = new Graph();
-		$succDelete = $graph->deleteNodeByID($gID);
-        return $succDelete;
+		$succ = $graph->deleteNodeByID($gID);
+        return $succ;
 	}
     
     /**
@@ -74,8 +74,8 @@ class Group
 	public function editGroup($gArray)
 	{
 		$graph = new Graph();
-		$succEdit = $graph->editNodeProperties($gArray);
-        return $succEdit;
+		$succ = $graph->editNodeProperties($gArray);
+        return $succ;
 	}
 
 	/**
