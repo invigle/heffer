@@ -239,6 +239,19 @@ class User {
             return false;
         }
     }
+    
+    /**
+     * This method will collect users data based on the logged in session id.
+     */
+    public function userDetails()
+    {
+        $graph = new Graph();
+        
+        $usr['query'] = "START n=node($_SESSION[uid]) RETURN n;";
+        $api = $graph->neo4japi('cypher', 'JSONPOST', $usr);
+        
+    return $api['data'][0][0]['data'];
+    }
 
     /**
      * This method will logout the currently logged in user.

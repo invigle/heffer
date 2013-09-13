@@ -86,6 +86,10 @@ class FrontPage extends FrontEndUIs {
             
             if(!$login){
                 $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["login-failed"].'';
+            }else{
+                //Refresh Page.
+                return '<script>location.reload();</script>';
+                
             }
             
         }
