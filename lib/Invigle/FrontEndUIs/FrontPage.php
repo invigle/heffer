@@ -39,8 +39,16 @@ class FrontPage extends FrontEndUIs {
     }
     
     private function registrationForm()
-    {
-        return "This is a reg form ".$_language->_frontPage['register']." anebigsrf";
+    {       
+        return '<h3>'.$this->_language->_fontPage["register"].'</h3>
+                <div class="row">
+                    <div class="col-md-6">
+                        <input type="text" name="firstname" value="" placeholder="'.$this->_language->_frontPage["firstname"].'">
+                    </div>
+                    <div class="col-md-6">
+                        <input type="text" name="lastname" value="" placeholder="'.$this->_language->_frontPage["lastname"].'">
+                    </div>
+                </div>';
     }
     
  }

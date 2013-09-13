@@ -20,7 +20,21 @@ class EN_GB extends Language
     {
         $this->_frontPage = array(
             'pageTitle' => "Invigle - \"Let's Link Up!\"",
-            'register' => "Register"
+            'register' => "Register",
+            'firstname' => "First Name",
+            'lastname' => "Last Name",
+            'emailaddress' => "Email Address",
+            'confirmemailaddress' => "Confirm Email Address",
+            'username' => "Username",
+            'password' => "Password",
+            'birthdate' => "Date of Birth",
+            'gender' => "Gender",
+            'male' => "Male",
+            'female' => "Female",
+            'month' => "Month",
+            'day' => "Day",
+            'year' => "Year",
+            'registerButton' => "Get Started"
         );
     }
 }
