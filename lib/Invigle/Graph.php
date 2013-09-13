@@ -26,13 +26,13 @@ class Graph
 	private $_indexBy;
 
 	/**
- 	@var string neo4j href */
+	 *  *  * @var string neo4j href */
 	private $_neo4jHref;
 	/**
- 	@var string neo4j port */
+	 *  *  * @var string neo4j port */
 	private $_neo4jPort;
 	/**
- 	@var class neo4j connection */
+	 *  *  * @var class neo4j connection */
 	private $_client;
 
 	public function __construct()
@@ -95,6 +95,15 @@ class Graph
 	}
 
 	/**
+	 * Find an edge using cypher indexBy and indexValue
+	 */
+	public function getEdgeId(array $params)
+	{
+		//TBF
+	}
+
+
+	/**
 	 * Function to edit a property in Neo4j from a universal array of $params using indexBy and 
 	 * indexValue to identify the nodes ID#.
 	 * @access public
@@ -134,17 +143,49 @@ class Graph
 		$nodePath = "node/$nodeId/properties";
 		$setApi = $this->neo4japi($nodePath, 'PUT', $newParams);
 	}
-    
-    /**
+
+	/**
 	 * Function to edit a property of an edge in Neo4j <TBF>
 	 * @access public
 	 * @param array of key/value pairs to update properties.
 	 */
 	public function editEdgeProperties(array $params)
 	{
-	   //TBF
+		{
+			//Get the Edge ID#
+			$edgeId = $this->getEdgeId($params);
+
+			//Unset params that we do not want to be saved in the Properties of the edge.
+			unset($params['indexBy'], $params['indexValue']);
+
+			//Copy all existing params into a new array checking recursively for updates in the params argument.
+			//$newParams = $params;
+			foreach ($api['data'][0][0]['data'] as $key => $value)
+			{
+				if (isset($params[$key]))
+				{
+					$newParams[$key] = $params[$key];
+				} else
+				{
+					$newParams[$key] = $value;
+				}
+			}
+
+			//Check for new Params
+			foreach ($params as $key => $value)
+			{
+				if (!isset($params[$key]))
+				{
+					$newParams[$key] = $value;
+				}
+			}
+
+			//Update the nodes Properties
+			$edgePath = "node/$edgeId/properties";
+			$setApi = $this->neo4japi($edgePath, 'PUT', $newParams);
+		}
 	}
-    
+
 
 	/**
 	 * Function to delete node from Neo4j using an array containing 'indexBy' and 'indexValue'
