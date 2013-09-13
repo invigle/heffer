@@ -26,13 +26,13 @@ class Graph
 	private $_indexBy;
 
 	/**
-	 *  *  * @var string neo4j href */
+	 *  *  *  * @var string neo4j href */
 	private $_neo4jHref;
 	/**
-	 *  *  * @var string neo4j port */
+	 *  *  *  * @var string neo4j port */
 	private $_neo4jPort;
 	/**
-	 *  *  * @var class neo4j connection */
+	 *  *  *  * @var class neo4j connection */
 	private $_client;
 
 	public function __construct()
@@ -97,9 +97,18 @@ class Graph
 	/**
 	 * Find an edge using cypher indexBy and indexValue
 	 */
-	public function getEdgeId(array $params)
+	public function getConnectionId(array $params)
 	{
-		//TBF
+		{
+			$path = "cypher";
+			$postfields['query'] = "START n=edge:$params[indexBy]($params[indexBy] = '$params[indexValue]') RETURN n;";
+			$api = $this->neo4japi('cypher', 'JSONPOST', $postfields);
+			if (isset($api['data'][0]))
+			{
+				$connection = explode("/", $api['data']['0']['0']['self']);
+				return end($connection);
+			}
+		}
 	}
 
 
@@ -144,16 +153,18 @@ class Graph
 		$setApi = $this->neo4japi($nodePath, 'PUT', $newParams);
 	}
 
+	// An edge has two properties: type and uID
 	/**
-	 * Function to edit a property of an edge in Neo4j <TBF>
+	 * Function to edit a property of an edge in Neo4j.
 	 * @access public
 	 * @param array of key/value pairs to update properties.
 	 */
-	public function editEdgeProperties(array $params)
+	public function editConnectionProperties(array $params)
 	{
 		{
+		  //params[0]: edge type
 			//Get the Edge ID#
-			$edgeId = $this->getEdgeId($params);
+			$connectionId = $this->getConnectionId($params);
 
 			//Unset params that we do not want to be saved in the Properties of the edge.
 			unset($params['indexBy'], $params['indexValue']);
@@ -180,9 +191,9 @@ class Graph
 				}
 			}
 
-			//Update the nodes Properties
-			$edgePath = "node/$edgeId/properties";
-			$setApi = $this->neo4japi($edgePath, 'PUT', $newParams);
+			//Update the edges Properties
+			$connectionPath = "node/$connectionId/properties";
+			$setApi = $this->neo4japi($connectionPath, 'PUT', $newParams);
 		}
 	}
 
