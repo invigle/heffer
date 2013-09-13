@@ -118,9 +118,7 @@ class FrontPage extends FrontEndUIs {
                 $userArray['dob_year'] = "";
             }
             
-            print '<pre>';
-            print_r($add);
-            print '</pre>';
+            //At this point either an $error will be set or the API Call will have been successful and $add will contain the new users 'Node ID#' from Neo4J.
         }
         
         return '<div class="container">
