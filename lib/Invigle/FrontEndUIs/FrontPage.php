@@ -29,12 +29,18 @@ class FrontPage extends FrontEndUIs {
         echo $this->renderHeader();
         echo $this->renderTopNav();
         echo $this->renderJSLinks();
+        echo $this->registrationForm();
     }
     
     private function renderJSLinks() {
         return '<script src="/assets/bootstrap/js/jquery.js"></script>
                 <script src="http://getbootstrap.com/dist/js/bootstrap.min.js"></script>';
                 //'<script src="/assets/bootstrap/js/collapse.js"></script>';
+    }
+    
+    private function registrationForm()
+    {
+        return "This is a reg form $this->_register";
     }
     
  }
