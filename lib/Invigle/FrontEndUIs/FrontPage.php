@@ -164,7 +164,7 @@ class FrontPage extends FrontEndUIs {
                     <form method="POST" action="'.$_SERVER['PHP_SELF'].'">
                     <input type="hidden" name="regform" value="submit">
                         <h2>'.$this->_language->_frontPage["register"].'</h2>
-                        <div class="row-fluid">                           
+                        <div class="row">                           
                             <div class="col-md-6">
                                 <input type="text" class="form-control col-md-6" name="firstname" value="'.$userArray['firstname'].'" placeholder="'.$this->_language->_frontPage["firstname"].'">
                             </div>
@@ -172,17 +172,17 @@ class FrontPage extends FrontEndUIs {
                                 <input type="text" class="form-control col-md-6" name="lastname" value="'.$userArray['lastname'].'" placeholder="'.$this->_language->_frontPage["lastname"].'">
                             </div>
                         </div>
-                        <div class="row-fluid">
+                        <div class="row">
                             <div class="col-md-12">
                                 <input type="text" class="form-control col-md-12" name="email" value="'.$userArray['email'].'" placeholder="'.$this->_language->_frontPage["emailaddress"].'">
                             </div>
                         </div>
-                        <div class="row-fluid">
+                        <div class="row">
                             <div class="col-md-12">
                                 <input type="text" class="form-control col-md-12" name="confirmemail" value="'.$userArray['confirmemail'].'" placeholder="'.$this->_language->_frontPage["confirmemailaddress"].'">
                             </div>
                         </div>
-                        <div class="row-fluid">
+                        <div class="row">
                             <div class="col-md-6">
                                 <input type="text" class="form-control col-md-6" name="username" value="'.$userArray['username'].'" placeholder="'.$this->_language->_frontPage["username"].'">
                             </div>
@@ -190,10 +190,10 @@ class FrontPage extends FrontEndUIs {
                                 <input type="password" class="form-control col-md-6" name="password" value="'.$userArray['password'].'" placeholder="'.$this->_language->_frontPage["password"].'">
                             </div>
                         </div>
-                        <div class="row-fluid">
+                        <div class="row">
                             <div class="col-md-6">
                                 <h4>'.$this->_language->_frontPage["birthdate"].'</h4>
-                                <div class="row-fluid">
+                                <div class="row">
                                     <div class="col-md-3">
                                         <input type="text" name="dob_day" class="form-control" value="'.$userArray['dob_day'].'" placeholder="'.$this->_language->_frontPage["day"].'">
                                     </div>
@@ -207,7 +207,7 @@ class FrontPage extends FrontEndUIs {
                             </div>
                             <div class="col-md-6">
                                 <h4>'.$this->_language->_frontPage["gender"].'</h4>
-                                <div class="row-fluid">
+                                <div class="row">
                                     <div class="col-md-6">
                                         <div class="radio">
                                           <label>
