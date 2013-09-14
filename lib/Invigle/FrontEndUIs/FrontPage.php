@@ -119,7 +119,7 @@ class FrontPage extends FrontEndUIs {
                 </form>';
     }
     
-    private function registrationForm($_POST)
+    private function registrationForm($userInput)
     {   
         $userArray = array(
                         'username'=>'',
@@ -135,18 +135,18 @@ class FrontPage extends FrontEndUIs {
                         'dob_year' => '',
                           );
         
-        if(isset($_POST['regform'])){
+        if(isset($userInput['regform'])){
             $user = new User();
             
             //$userArray Variables that will be stored in neo4j.
             $userArray = array(
-                            'username'=>$_POST['username'],
-                            'password'=>hash('sha256', CONF_SECURITYSALT.$_POST['password']), //SHA256 Hash the users password with SECURITYSALT from Configuration.php
-                            'firstname'=>$_POST['firstname'],
-                            'lastname'=>$_POST['lastname'],
-                            'email'=>$_POST['email'],
-                            'birthdate'=>"$_POST[dob_day]-$_POST[dob_month]-$_POST[dob_year]",
-                            'gender'=>$_POST['gender'],
+                            'username'=>$userInput['username'],
+                            'password'=>hash('sha256', CONF_SECURITYSALT.$userInput['password']), //SHA256 Hash the users password with SECURITYSALT from Configuration.php
+                            'firstname'=>$userInput['firstname'],
+                            'lastname'=>$userInput['lastname'],
+                            'email'=>$userInput['email'],
+                            'birthdate'=>"$userInput[dob_day]-$userInput[dob_month]-$userInput[dob_year]",
+                            'gender'=>$userInput['gender'],
                             'sessionid'=>'',
                             'ipaddress'=>$_SERVER['REMOTE_ADDR'],
                             'lastAction'=>time(),
@@ -154,29 +154,29 @@ class FrontPage extends FrontEndUIs {
                               );
             
             //Check that the Date of Birth fields are numeric values only.
-            if(!is_numeric($_POST['dob_day']) || !is_numeric($_POST['dob_month']) || !is_numeric($_POST['dob_year'])){
+            if(!is_numeric($userInput['dob_day']) || !is_numeric($userInput['dob_month']) || !is_numeric($userInput['dob_year'])){
                 $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["dob-invalid"].'';
             }
             
             //Check that the users password is more than 6 characters long.
-            if(strlen($_POST['password'] <= "6")){
+            if(strlen($userInput['password'] <= "6")){
                 $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["pw-too-short"].'';
             }
             
             //Check that firstname and lastname are more than 2 characters long and are not numeric.
-            if(strlen($_POST['firstname']) < "2"){
+            if(strlen($userInput['firstname']) < "2"){
                 $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["firstname-too-short"].'';
             }
-            if(is_numeric($_POST['firstname'])){
+            if(is_numeric($userInput['firstname'])){
                 $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["name-is-numeric"].'';
             }
-            if(strlen($_POST['lastname']) < "2"){
+            if(strlen($userInput['lastname']) < "2"){
                 $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["lastname-too-short"].'';
             }
-            if(is_numeric($_POST['lastname'])){
+            if(is_numeric($userInput['lastname'])){
                 $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["name-is-numeric"].'';
             }
-            if($_POST['email'] !== $_POST['confirmemail']){
+            if($userInput['email'] !== $userInput['confirmemail']){
                 $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["emails-dont-match"].'';
             }
             
@@ -198,11 +198,11 @@ class FrontPage extends FrontEndUIs {
             }
             
             if(isset($error)){
-                $userArray['confirmemail'] = $_POST['confirmemail'];
-                $userArray['dob_day'] = $_POST['dob_day'];
-                $userArray['dob_month'] = $_POST['dob_month'];
-                $userArray['dob_year'] = $_POST['dob_year'];
-                $userArray['password'] = $_POST['password'];
+                $userArray['confirmemail'] = $userInput['confirmemail'];
+                $userArray['dob_day'] = $userInput['dob_day'];
+                $userArray['dob_month'] = $userInput['dob_month'];
+                $userArray['dob_year'] = $userInput['dob_year'];
+                $userArray['password'] = $userInput['password'];
             }
             
             //At this point either an $error will be set or the API Call will have been successful and $add will contain the new users 'Node ID#' from Neo4J.
