@@ -87,12 +87,19 @@ class Graph
 	}
 
 	/**
-	 * Find a node using cypher indexBy and indexValue
+	 * Find a node using cypher.
+     * 
+     * Required variables:
+     * nodeType         The type of node for example User, Event, Group, Page, Status
+     * indexBy          The field to index by, for example username, email or sessionid
+     * indexValue       The actual search term i.e. john@smith.com.
+     * 
+     * These values must be passed as an array to the getNodeId Function.
 	 */
 	public function getNodeId(array $params)
 	{
-		$path = "cypher";
-		$postfields['query'] = "START n=node:$params[indexBy]($params[indexBy] = '$params[indexValue]') RETURN n;";
+		$postfields['query'] = "MATCH n:$params[nodeType] WHERE $params[indexBy]='$params[indexValue]' RETURN n;";
+        //$postfields['query'] = "START n=node:$params[indexBy]($params[indexBy] = '$params[indexValue]') RETURN n;";
 		$api = $this->neo4japi('cypher', 'JSONPOST', $postfields);
 		if (isset($api['data'][0]))
 		{
@@ -120,8 +127,13 @@ class Graph
 
 
 	/**
-	 * Function to edit a property in Neo4j from a universal array of $params using indexBy and 
-	 * indexValue to identify the nodes ID#.
+	 * Function to edit a property in Neo4j from a universal array of $params.
+     * 
+     * Required variables:
+     * nodeType         The type of node for example User, Event, Group, Page, Status
+     * indexBy          The field to index by, for example username, email or sessionid
+     * indexValue       The actual search term i.e. john@smith.com.
+     * 
 	 * @access public
 	 * @param array of key/value pairs to update properties.
 	 */
@@ -131,7 +143,7 @@ class Graph
 		$nodeId = $this->getNodeId($params);
 
 		//Unset params that we do not want to be saved in the Properties of the node.
-		unset($params['indexBy'], $params['indexValue']);
+		unset($params['indexBy'], $params['indexValue'], $params['nodeType']);
 
 		//Copy all existing params into a new array checking recursively for updates in the params argument.
 		//$newParams = $params;
@@ -207,6 +219,12 @@ class Graph
 
 	/**
 	 * Function to delete node from Neo4j using an array containing 'indexBy' and 'indexValue'
+     * 
+     * Required variables:
+     * nodeType         The type of node for example User, Event, Group, Page, Status
+     * indexBy          The field to index by, for example username, email or sessionid
+     * indexValue       The actual search term i.e. john@smith.com.
+     * 
 	 * @access public
 	 * @param array
 	 */
