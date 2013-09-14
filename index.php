@@ -37,7 +37,7 @@ function neo4japi($path, $type = 'GET', $postfields = array())
 $testCode = "CREATE n:User; RETURN n;";
 $app = neo4japi('cypher', 'JSONPOST', $testCode);
 
-print '<pre>';
+print 'Test<pre>';
 print_r($app);
 print '</pre>';
 ?>
