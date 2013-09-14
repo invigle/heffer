@@ -75,14 +75,14 @@ class FrontPage extends FrontEndUIs {
                 
     }
     
-    private function loginForm($_POST)
+    private function loginForm($userInput)
     {
-        if(isset($_POST['loginform'])){
+        if(isset($userInput['loginform'])){
             $user = new User();
-            $login = $user->loginUser($_POST);
+            $login = $user->loginUser($userInput);
             
             //If the user wants to be remembered then we should set a cookie.
-            if(isset($_POST['rememberme'])){
+            if(isset($userInput['rememberme'])){
                 //Duplicate the session into a Cookie.
             }
             
