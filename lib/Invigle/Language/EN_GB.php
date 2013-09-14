@@ -48,7 +48,9 @@ class EN_GB extends Language
             'loginHere' => "Login Here",
             'login-now' => "Login Now",
             'login-failed' => "Your username and password did not match any user in our database.",
-            'logged-in-as' => "Logged in as",           
+            'logged-in-as' => "Logged in as",
+            'emails-dont-match' => "The email addresses you entered did not match, please try again."
+                        
         );
     }
 }

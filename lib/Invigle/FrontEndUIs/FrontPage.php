@@ -176,6 +176,9 @@ class FrontPage extends FrontEndUIs {
             if(is_numeric($_POST['lastname'])){
                 $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["name-is-numeric"].'';
             }
+            if($_POST['email'] !== $_POST['confirmemail']){
+                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["emails-dont-match"].'';
+            }
             
             //If no error is set yet
             if(!isset($error)){
