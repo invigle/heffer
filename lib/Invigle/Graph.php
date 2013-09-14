@@ -39,7 +39,7 @@ class Graph
 	public function __construct()
 	{
 	    $this->_neo4jurlprefix = "https";
-		$this->_neo4jHref = "invigle.com";
+		$this->_neo4jHref = "127.0.0.1";
 		$this->_neo4jPort = "8001";
 	}
 
