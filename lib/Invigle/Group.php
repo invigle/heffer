@@ -25,11 +25,26 @@ class Group
 	private $_followerCount;
 	private $_groupType;
 	private $_profilePicID;
-    private $_nodeType;
-    
-    public function __construct()
+	private $_nodeType;
+
+	public function __construct()
 	{
 		$this->_nodeType = 'Group';
+	}
+
+	/**
+	 * Find the ID of a category using cypher indexBy and indexValue
+	 */
+	public function getCategoryId(array $params)
+	{
+		$path = "cypher";
+		$postfields['query'] = "MATCH n:Category WHERE n.$params[indexBy]='$params[indexValue]' RETURN n;";
+		$api = $this->neo4japi('cypher', 'JSONPOST', $postfields);
+		if (isset($api['data'][0]))
+		{
+			$cat = explode("/", $api['data']['0']['0']['self']);
+			return end($catID);
+		}
 	}
 
 	/**
@@ -83,9 +98,41 @@ class Group
 		$succ = $graph->editNodeProperties($gArray);
 		return $succ;
 	}
-
+    
+    /**
+	 * This method takes as inputs a group ID and an array. The latter is used to find 
+     * the ID of the category and then it adds the edge to neo4j.
+	 * @access public
+	 * @param gID, catParams
+	 * @return boolean
+	 */
+	public function addGroupCategory($gID, $catParams)
+	{
+		$graph = new Graph();
+		$connectionType = 'HAS';
+        $catID = getCategoryId($catParams);
+		$succ = $graph->addConnection($gID, $catID, $connectionType);
+		return $succ;
+	}
+    
+    /**
+	 * This method takes as inputs a group ID and an array. The latter is used to find 
+     * the ID of the category and then it deletes the edge from neo4j.
+	 * @access public
+	 * @param gID, catParams
+	 * @return boolean
+	 */
+	public function deleteGroupCategory($gID, $catParams)
+	{
+		$graph = new Graph();
+		$connectionType = 'HAS';
+        $catID = getCategoryId($catParams);
+		$succ = $graph->deleteConnection($gID, $catID, $connectionType);
+		return $succ;
+	}
+        
 	/**
-	 * This method takes as inputs a page ID and a location ID and adds the edge to neo4j.
+	 * This method takes as inputs a group ID and a location ID and adds the edge to neo4j.
 	 * @access public
 	 * @param pID, locID
 	 * @return boolean
@@ -97,7 +144,6 @@ class Group
 		$succ = $graph->addConnection($gID, $locID, $connectionType);
 		return $succ;
 	}
-
 
 	/**
 	 * This method takes as inputs a page ID and a location ID and deletes the edge to neo4j.
@@ -126,8 +172,8 @@ class Group
 		$succ = $graph->addConnection($gID, $eID, $connectionType);
 		return $succ;
 	}
-    
-    /**
+
+	/**
 	 * This method takes as inputs a group ID and a event ID and deltes from neo4j.
 	 * @access public
 	 * @param gID, eID
@@ -140,6 +186,41 @@ class Group
 		$succ = $graph->deleteConnection($gID, $eID, $connectionType);
 		return $succ;
 	}
+
+	/**
+	 * This method takes as inputs a group ID and an array. 
+	 * It then finds the catergory ID from the array paramsCat and adds an edge to  
+	 * neo4j between the group and the category.
+	 * @access public
+	 * @param gID, paramsCat
+	 * @return boolean
+	 */
+	public function addGroupCategory($gID, array $params)
+	{
+		$catID = getCategoryId($params);
+		$graph = new Graph();
+		$connectionType = 'HAS';
+		$succ = $graph->addConnection($gID, $catID, $connectionType);
+		return $succ;
+	}
+
+	/**
+	 * This method takes as inputs a group ID and an array. 
+	 * It then finds the catergory ID from the array paramsCat and deletes the edge 
+     * between the group and the category from neo4j.
+	 * @access public
+	 * @param gID, paramsCat
+	 * @return boolean
+	 */
+	public function deleteGroupCategory($gID, array $params)
+	{
+		$catID = getCategoryId($params);
+		$graph = new Graph();
+		$connectionType = 'HAS';
+		$succ = $graph->deleteConnection($gID, $catID, $connectionType);
+		return $succ;
+	}
+
 
 	/**
 	 * This method returns the name of the group.
