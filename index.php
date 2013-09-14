@@ -45,7 +45,7 @@ print '</pre>';
 
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-curl_setopt($ch, CURLOPT_URL, “http://google.co.uk/&#8221;);
+curl_setopt($ch, CURLOPT_URL, "http://google.co.uk/&#8221;");
 $res= curl_exec($ch);
 curl_close($ch);
 echo $res;
