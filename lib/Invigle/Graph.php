@@ -56,24 +56,29 @@ class Graph
 		$url = "$this->_neo4jurlprefix://$this->_neo4jHref:$this->_neo4jPort/db/data/$path";
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $url);
-		curl_setopt($ch, CURLOPT_TIMEOUT, 100);
-		if ($type === "POST")
-		{
-			curl_setopt($ch, CURLOPT_POST, 1);
+		curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        
+        if ($type === "POST") {
+            curl_setopt($ch, CURLOPT_POST, 1);
 			curl_setopt($ch, CURLOPT_POSTFIELDS, $postfields);
-		} elseif ($type === "JSONPOST")
-		{
-			curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($postfields));
+		
+        } elseif ($type === "JSONPOST") {
+			curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($postfields));
 			curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
-		} elseif ($type === "PUT")
-		{
+		
+        } elseif ($type === "PUT") {
 			curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
 			curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postfields));
-		} elseif ($type === "DELETE")
-		{
+		
+        } elseif ($type === "DELETE") {
 			curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
-		}
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		
+        }
+		
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
 		$data = curl_exec($ch);
 		curl_close($ch);
 

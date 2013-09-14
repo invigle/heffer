@@ -121,6 +121,7 @@ class FrontPage extends FrontEndUIs {
     
     private function registrationForm($userInput)
     {   
+        //Set an empty array so that the form shows blank fields and not missing variable errors.
         $userArray = array(
                         'username'=>'',
                         'password'=>'',
@@ -176,9 +177,10 @@ class FrontPage extends FrontEndUIs {
             if(is_numeric($userInput['lastname'])){
                 $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["name-is-numeric"].'';
             }
+            /*
             if($userInput['email'] !== $userInput['confirmemail']){
                 $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["emails-dont-match"].'';
-            }
+            }*/
             
             //If no error is set yet
             if(!isset($error)){
@@ -206,6 +208,15 @@ class FrontPage extends FrontEndUIs {
             }
             
             //At this point either an $error will be set or the API Call will have been successful and $add will contain the new users 'Node ID#' from Neo4J.
+            
+            if(!isset($error)){
+                //Refresh Page.
+                $alogin['email'] = $userArray['email'];
+                $alogin['password'] = $userInput['password'];
+                $login = $user->loginUser($alogin);
+                return '<script>window.location.href = "?reg=success";</script>';
+            }
+            
         }
         
         //Check if $error is set if not then set an empty one to suppress PHP NOTICE errors.
