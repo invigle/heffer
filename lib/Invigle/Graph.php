@@ -31,13 +31,15 @@ class Graph
 	/**
 	 *  *  *  * @var string neo4j port */
 	private $_neo4jPort;
+    private $_neo4jurlprefix;
 	/**
 	 *  *  *  * @var class neo4j connection */
 	private $_client;
 
 	public function __construct()
 	{
-		$this->_neo4jHref = "boss.invigle.com";
+	    $this->_neo4jurlprefix = "https";
+		$this->_neo4jHref = "127.0.0.1";
 		$this->_neo4jPort = "8001";
 	}
 
@@ -51,27 +53,32 @@ class Graph
 	 */
 	public function neo4japi($path, $type = 'GET', $postfields = array())
 	{
-		$url = "http://$this->_neo4jHref:$this->_neo4jPort/db/data/$path";
+		$url = "$this->_neo4jurlprefix://$this->_neo4jHref:$this->_neo4jPort/db/data/$path";
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $url);
-		curl_setopt($ch, CURLOPT_TIMEOUT, 100);
-		if ($type === "POST")
-		{
-			curl_setopt($ch, CURLOPT_POST, 1);
+		curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        
+        if ($type === "POST") {
+            curl_setopt($ch, CURLOPT_POST, 1);
 			curl_setopt($ch, CURLOPT_POSTFIELDS, $postfields);
-		} elseif ($type === "JSONPOST")
-		{
-			curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($postfields));
+		
+        } elseif ($type === "JSONPOST") {
+			curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($postfields));
 			curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
-		} elseif ($type === "PUT")
-		{
+		
+        } elseif ($type === "PUT") {
 			curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
 			curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postfields));
-		} elseif ($type === "DELETE")
-		{
+		
+        } elseif ($type === "DELETE") {
 			curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
-		}
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		
+        }
+		
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
 		$data = curl_exec($ch);
 		curl_close($ch);
 
