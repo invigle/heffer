@@ -1,5 +1,3 @@
 <?php
-echo "test";
-echo "made a change";
-echo "Boom 123"
+echo 'Curl: ', function_exists('curl_version') ? 'Enabled' : 'Disabled';
 ?>

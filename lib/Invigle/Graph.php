@@ -78,11 +78,6 @@ class Graph
 		curl_close($ch);
 
 		$json = json_decode($data, true);
-
-print '<pre>';
-print_r($json);
-print '</pre>';
-
 		return $json;
 	}
 
