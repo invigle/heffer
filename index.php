@@ -1,4 +1,5 @@
 <?php
+
 function neo4japi($path, $type = 'GET', $postfields = array())
 	{
 	   $_neo4jurlprefix = "https";
@@ -27,6 +28,7 @@ function neo4japi($path, $type = 'GET', $postfields = array())
 		}
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		$data = curl_exec($ch);
+        print_r($data);
 		curl_close($ch);
 
 		$json = json_decode($data, true);
