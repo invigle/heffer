@@ -38,6 +38,7 @@ class User
 	private $_profilePicID;
 	private $_followerCount;
 	private $_friendCount;
+<<<<<<< HEAD
 	private $_url;
 
 	/**
@@ -124,6 +125,83 @@ class User
 			break;
 		}
 	}
+=======
+    private $_url;
+    
+    /**
+     * This method will check the graph database to ensure a username is unique.
+     * @param username
+     * @return boolean (true if Available, false if Taken)
+     */
+    public function validateUsername($username)
+    {
+        $graph = new Graph();
+        $check['query'] = "MATCH n:User WHERE n.username = \"$username\" RETURN count(*);";
+        $api = $graph->neo4japi('cypher', 'JSONPOST', $check);
+        
+        if($api['data'][0][0] >= "1"){
+            return false;
+        }else{
+            return true;
+        }
+    }
+    
+    /**
+     * This method will check the graph database to ensure a email address is unique and valid
+     * @param email
+     * @return boolean (true if Available, false if Taken)
+     */
+    public function validateEmailAddress($email)
+    {
+        $graph = new Graph();
+        
+        $check['query'] = "MATCH n:User WHERE n.email = \"$email\" RETURN count(*);";
+        $api = $graph->neo4japi('cypher', 'JSONPOST', $check);
+        
+        if($api['data'][0][0] >= "1"){
+            return false;
+        }else{
+            return true;
+        }
+    }
+    
+    /**
+     * This method will check that the entered email address is valid.
+     * @param email
+     * @return boolean (true if Valid, false if Not)
+     */
+    public function validateEmailFormatting($email)
+    {
+        if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
+            return false;
+        }else{
+            return true;
+        }
+    }
+    
+    /**
+     * This method will check that the entered username is valid
+     * @param username
+     * @return boolean
+     */
+    public function validateUsernameFormatting($username)
+    {
+        //Rules
+        if(strlen($username) < "2"){
+            return false;
+            break;
+        }elseif(is_numeric($username)){
+            return false;
+            break;
+        }elseif($username === "admin" || $username === "invigle" || $username === "staff"){
+            return false;
+            break;
+        }else{
+            return true;
+            break;
+        }
+    }
+>>>>>>> origin/master
 
 	/**
 	 * This method takes as input an array with all the information of a user and adds this user to the GD as a 'user node'.
@@ -133,6 +211,7 @@ class User
 	 * 
 	 * @ReturnType boolean
 	 */
+<<<<<<< HEAD
 	public function addUser($aUserArray)
 	{
 		if (!$this->validateUsernameFormatting($aUserArray['username']))
@@ -229,6 +308,11 @@ class User
 		} else
 		{
 			return false;
+=======
+	public function addUser($aUserArray) {        
+        if (!$this->validateUsernameFormatting($aUserArray['username'])){
+            return 'username-invalid';
+>>>>>>> origin/master
 		}
 
 
