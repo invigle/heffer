@@ -37,16 +37,9 @@ function neo4japi($path, $type = 'GET', $postfields = array())
     
     
 $testCode = "CREATE n:User; RETURN n;";
-$app = neo4japi('cypher', 'JSONPOST', $testCode);
+$app = neo4japi('https://www.google.co.uk/#q=f', 'GET');
 
 print 'Test<pre>';
 print_r($app);
 print '</pre>';
-
-$ch = curl_init();
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-curl_setopt($ch, CURLOPT_URL, "http://google.co.uk/&#8221;");
-$res= curl_exec($ch);
-curl_close($ch);
-echo $res;
 ?>
