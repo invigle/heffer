@@ -142,7 +142,7 @@ class FrontPage extends FrontEndUIs {
             //$userArray Variables that will be stored in neo4j.
             $userArray = array(
                             'username'=>$userInput['username'],
-                            'password'=>hash('sha256', CONF_SECURITYSALT.$userInput['password']), //SHA256 Hash the users password with SECURITYSALT from Configuration.php
+                            'password'=>hash('sha256', "".CONF_SECURITYSALT."".$userInput['password'].""), //SHA256 Hash the users password with SECURITYSALT from Configuration.php
                             'firstname'=>$userInput['firstname'],
                             'lastname'=>$userInput['lastname'],
                             'email'=>$userInput['email'],
@@ -151,7 +151,17 @@ class FrontPage extends FrontEndUIs {
                             'sessionid'=>'',
                             'ipaddress'=>$_SERVER['REMOTE_ADDR'],
                             'lastAction'=>time(),
-                            'rememberme'=>''
+                            'rememberme'=>'',
+                            'lastupdate'=>'',
+                            'emailvalidated'=>'0',
+                            'invitedby'=>'',
+                            'location'=>'',
+                            'institution'=>'',
+                            'relationshipStatus'=>'',
+                            'sexualPref'=>'',
+                            'profilePicID'=>'',
+                            'followerCount'=>'',
+                            'friendCount'=>'',
                               );
             
             //Check that the Date of Birth fields are numeric values only.
@@ -160,7 +170,7 @@ class FrontPage extends FrontEndUIs {
             }
             
             //Check that the users password is more than 6 characters long.
-            if(strlen($userInput['password'] <= "6")){
+            if(strlen($userInput['password']) < "6"){
                 $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["pw-too-short"].'';
             }
             
