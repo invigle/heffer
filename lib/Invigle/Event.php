@@ -101,7 +101,6 @@ class Event
 		return $succ;
 	}
 
-
 	/**
 	 * This method edits some of the properties of an event in the GD by updating the current node in 
 	 * the GD with information provided by the eArray which is the input to the editEvent method

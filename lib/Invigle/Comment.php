@@ -42,10 +42,10 @@ class Comment
 			$queryString .= "$key : \"$value\", ";
 		}
 		$queryString = substr($queryString, 0, -2);
-		$event['query'] = "CREATE (n:Comment {" . $queryString . "}) RETURN n;";
+		$comment['query'] = "CREATE (n:Comment {" . $queryString . "}) RETURN n;";
 		$apiCall = $graph->neo4japi('cypher', 'JSONPOST', $comment);
 
-		//return the New Event ID.
+		//return the new comment ID.
 		$bit = explode("/", $apiCall['data'][0][0]['self']);
 		$commentId = end($bit);
 		return $commentId;
