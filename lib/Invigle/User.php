@@ -98,7 +98,7 @@ class User {
     public function validateUsernameFormatting($username)
     {
         //Rules
-        if(strlen($username) < "4"){
+        if(strlen($username) < "2"){
             return false;
             break;
         }elseif(is_numeric($username)){
@@ -121,8 +121,8 @@ class User {
 	 * 
 	 * @ReturnType boolean
 	 */
-	public function addUser($aUserArray) {
-		if (!$this->validateUsernameFormatting($aUserArray['username'])){
+	public function addUser($aUserArray) {        
+        if (!$this->validateUsernameFormatting($aUserArray['username'])){
             return 'username-invalid';
 		}
         
