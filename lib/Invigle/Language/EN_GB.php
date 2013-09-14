@@ -20,7 +20,7 @@ class EN_GB extends Language
     {
         $this->_frontPage = array(
             'pageTitle' => "Invigle - \"Let's Link Up!\"",
-            'register' => "Register1234",
+            'register' => "Register",
             'firstname' => "First Name",
             'lastname' => "Last Name",
             'emailaddress' => "Email Address",
@@ -48,8 +48,7 @@ class EN_GB extends Language
             'loginHere' => "Login Here",
             'login-now' => "Login Now",
             'login-failed' => "Your username and password did not match any user in our database.",
-            'logged-in-as' => "Logged in as",
-                        
+            'logged-in-as' => "Logged in as",           
         );
     }
 }
