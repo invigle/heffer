@@ -1,7 +1,11 @@
 <?php
 function neo4japi($path, $type = 'GET', $postfields = array())
 	{
-		$url = "$this->_neo4jurlprefix://$this->_neo4jHref:$this->_neo4jPort/db/data/$path";
+	   $neo4jurlprefix = "https";
+		$neo4jHref = "127.0.0.1";
+		$neo4jPort = "8001";
+       
+		$url = "$_neo4jurlprefix://$_neo4jHref:$_neo4jPort/db/data/$path";
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_TIMEOUT, 100);
