@@ -37,7 +37,7 @@ class Graph
 
 	public function __construct()
 	{
-		$this->_neo4jHref = "boss.invigle.com";
+		$this->_neo4jHref = "invigle.com";
 		$this->_neo4jPort = "8001";
 	}
 
