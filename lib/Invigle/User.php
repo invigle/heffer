@@ -303,11 +303,15 @@ class User {
         $api = $graph->addConnection($follower, $followee, 'followerOf');
         
         //Add an Action node for the action and return the node id.
-        $user['query'] = "CREATE (n:Action { actionType : \"followerOf\", timestamp : \"".time()."\", uid : \"$follower\" }) RETURN n;";   
+        $user['query'] = "CREATE (n:Action { actionType : \"followerOf\", timestamp : \"".time()."\", uid : \"$followee\" }) RETURN n;";   
         $apiCall = $graph->neo4japi('cypher', 'JSONPOST', $user);
         
-        //Add a relationship from follower to action node.
+        //Get NodeID of Action
+        $bit = explode("/", $apiCall['data'][0][0]['self']);
+        $actionId = end($bit);        
         
+        //Add a relationship from follower to action node.
+        $action = $graph->addConnection($follower, $actionId, 'timeline');
         
         //Update the Users lastaction timestamp.
         $this->updateUserTimestamp($follower);
@@ -412,7 +416,6 @@ class User {
 	}
 
 
-
     /**
      * This method will update a Users 'lastaction' field with the current UTC Timestamp.
      * 
@@ -422,11 +425,12 @@ class User {
      */
     public function updateUserTimestamp($userID)
     {
+        $graph = new Graph();
+        
         //Update the n.lastupdate to time().
         $updateDB['query'] = "START n=node($userID) SET n.lastupdate='".time()."' RETURN n;";
         $update = $graph->neo4japi('cypher', 'JSONPOST', $updateDB);
     }
-
 
 }
 
