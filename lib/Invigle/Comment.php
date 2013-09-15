@@ -24,7 +24,7 @@ class Comment
 	{
 		$this->_nodeType = 'Comment';
 	}
-
+ 
 	/**
 	 * This method takes as input an array with all the information of a comment and 
 	 * adds this comment to the GD as a 'comment node'.
@@ -76,196 +76,126 @@ class Comment
 		$succEdit = $graph->editNodeProperties($cArray);
 		return $succEdit;
 	}
-
-	/**
-	 * This method returns a comment
-	 * @access public
-	 * @return string
-	 */
-	public function getComment()
+	
+    public function addCommentStatus($commentID, $statusParams)
 	{
-		return $this->_comment;
+		$graph = new Graph();
+		$connectionType = 'POSTED_ON';
+        $statusID = getStatusId($statusParams);
+		$succ = $graph->addConnection($commentID, $statusID, $connectionType);
+		return $succ;
+	}
+   
+    public function deleteCommentStatus($commentID, $statusParams)
+	{
+		$graph = new Graph();
+		$connectionType = 'POSTED_ON';
+        $statusID = getStatusId($statusParams);
+		$succ = $graph->deleteConnection($commentID, $statusID, $connectionType);
+		return $succ;
+	}
+	
+    public function connectComments($commentID, $commentParams)
+	{
+		$graph = new Graph();
+		$connectionType = 'NEXT';
+        $commentID2 = getCommentId($commentParams);
+		$succ = $graph->addConnection($commentID, $commentID2, $connectionType);
+		return $succ;
 	}
 
-	/**
-	 * This method sets a comment.
-	 * @access public
-	 * @param $comment (string)
-	 * @return boolean
-	 */
-	public function setComment($comment)
+	public function disconnectComments($commentID, $commentParams)
 	{
-		$this->_comment = $comment;
+		$graph = new Graph();
+		$connectionType = 'NEXT';
+         $commentID2 = getCommentId($commentParams);
+		$succ = $graph->deleteConnection($commentID, $commentID2, $connectionType);
+		return $succ;
+	}
+     
+    public function addCommentPost($commentID, $postParams)
+	{
+		$graph = new Graph();
+		$connectionType = 'POSTED_ON';
+        $postID = getPostId($postParams);
+		$succ = $graph->addConnection($commentID, $postID, $connectionType);
+		return $succ;
+	}
+    
+    public function deleteCommentPost($commentID, $postParams)
+	{
+		$graph = new Graph();
+		$connectionType = 'POSTED_ON';
+        $postID = getPostId($postParams);
+		$succ = $graph->deleteConnection($commentID, $postID, $connectionType);
+		return $succ;
+	}
+    
+    public function addPhotoComment($commentID, $postParams)
+	{
+		$graph = new Graph();
+		$connectionType = 'POSTED_ON';
+        $photoID = getPhotoId($postParams);
+		$succ = $graph->addConnection($commentID, $photoID, $connectionType);
+		return $succ;
 	}
 
-	/**
-	 * This method returns the date of the comment
-	 * @access public
-	 * @return timestamp
-	 */
-	public function getCommentDate()
+    public function deletePhotoComment($commentID, $postParams)
 	{
-		return $this->_date;
+		$graph = new Graph();
+		$connectionType = 'POSTED_ON';
+        $photoID = getPhotoId($postParams);
+		$succ = $graph->deleteConnection($commentID, $photoID, $connectionType);
+		return $succ;
 	}
-
-	/**
-	 * This method sets the date of a comment.
-	 * @access public
-	 * @param $date (timestamp)
-	 * @return boolean
-	 */
-	public function setCommentDate($date)
+    
+    public function getStatusId(array $params)
 	{
-		$this->_date = $date;
+		$path = "cypher";
+		$postfields['query'] = "MATCH n:Status WHERE n.$params[indexBy]='$params[indexValue]' RETURN n;";
+		$api = $this->neo4japi('cypher', 'JSONPOST', $postfields);
+		if (isset($api['data'][0]))
+		{
+			$statusID = explode("/", $api['data']['0']['0']['self']);
+			return end($statusID);
+		}
 	}
-
-	/**
-	 * This method returns the ID of the comment.
-	 * @access public
-	 * @return integer
-	 */
-	public function getCommentId()
+    
+	public function getPostId(array $params)
 	{
-		return $this->_cID;
+		$path = "cypher";
+		$postfields['query'] = "MATCH n:Post WHERE n.$params[indexBy]='$params[indexValue]' RETURN n;";
+		$api = $this->neo4japi('cypher', 'JSONPOST', $postfields);
+		if (isset($api['data'][0]))
+		{
+			$postID = explode("/", $api['data']['0']['0']['self']);
+			return end($postID);
+		}
 	}
-
-	/**
-	 * This method sets the ID of the comment.
-	 * @access public
-	 * @param id (integer)
-	 * @return boolean
-	 */
-	public function setCommentId($id)
+    
+    public function getPhotoId(array $params)
 	{
-		$this->_cID = $id;
+		$path = "cypher";
+		$postfields['query'] = "MATCH n:Photo WHERE n.$params[indexBy]='$params[indexValue]' RETURN n;";
+		$api = $this->neo4japi('cypher', 'JSONPOST', $postfields);
+		if (isset($api['data'][0]))
+		{
+			$photoID = explode("/", $api['data']['0']['0']['self']);
+			return end($photoID);
+		}
 	}
-
-	/**
-	 * This method returns the ID of the status the comment was posted on.
-	 * @access public
-	 * @return integer
-	 */
-	public function getCommentStatusId()
+    
+    public function getCommentId(array $params)
 	{
-		return $this->_sID;
+		$path = "cypher";
+		$postfields['query'] = "MATCH n:Comment WHERE n.$params[indexBy]='$params[indexValue]' RETURN n;";
+		$api = $this->neo4japi('cypher', 'JSONPOST', $postfields);
+		if (isset($api['data'][0]))
+		{
+			$commentID = explode("/", $api['data']['0']['0']['self']);
+			return end($commentID);
+		}
 	}
-
-	/**
-	 * This method sets the ID of the status the comment was posted on.
-	 * @access public
-	 * @param id (integer)
-	 * @return boolean
-	 */
-	public function setCommentStatusId($id)
-	{
-		$this->_sID = $id;
-	}
-
-	/**
-	 * This method returns the ID of the photo the comment was posted on.
-	 * @access public
-	 * @return integer
-	 */
-	public function getCommentPhotoId()
-	{
-		return $this->_pHID;
-	}
-
-	/**
-	 * This method sets the ID of the photo the comment was posted on.
-	 * @access public
-	 * @param id (integer)
-	 * @return boolean
-	 */
-	public function setCommentPhotoId($id)
-	{
-		$this->_pHID = $id;
-	}
-
-	/**
-	 * This method returns the ID of the event the comment was posted on its timeline.
-	 * @access public
-	 * @return integer
-	 */
-	public function getCommentEventId()
-	{
-		return $this->_eID;
-	}
-
-	/**
-	 * This method sets the ID of the event the comment was posted on its timeline.
-	 * @access public
-	 * @param id (integer)
-	 * @return boolean
-	 */
-	public function setCommentEventId($id)
-	{
-		$this->_eID = $id;
-	}
-
-	/**
-	 * This method returns the ID of the group the comment was posted on its timeline.
-	 * @access public
-	 * @return integer
-	 */
-	public function getCommentGroupId()
-	{
-		return $this->_gID;
-	}
-
-	/**
-	 * This method sets the ID of the group the comment was posted on its timeline.
-	 * @access public
-	 * @param id (integer)
-	 * @return boolean
-	 */
-	public function setCommentGroupId($id)
-	{
-		$this->_gID = $id;
-	}
-
-	/**
-	 * This method returns the ID of the user who posted the comment.
-	 * @access public
-	 * @return integer
-	 */
-	public function getCommentUserId()
-	{
-		return $this->_uID;
-	}
-
-	/**
-	 * This method sets the ID of the user who posted the comment.
-	 * @access public
-	 * @param id (integer)
-	 * @return boolean
-	 */
-	public function setCommentUserId($id)
-	{
-		$this->_uID = $id;
-	}
-
-	/**
-	 * This method returns the ID of the page who the comment was posted on its timeline.
-	 * @access public
-	 * @return integer
-	 */
-	public function getCommentPageId()
-	{
-		return $this->_pID;
-	}
-
-	/**
-	 * This method sets the ID of the page who the comment was posted on its timeline.
-	 * @access public
-	 * @param id (integer)
-	 * @return boolean
-	 */
-	public function setCommentPageId($id)
-	{
-		$this->_pID = $id;
-	}
-
 }
 
 ?>
