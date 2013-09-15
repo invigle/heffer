@@ -1,3 +1,5 @@
+<?php
+<<<<<<< HEAD
 session_start();
 /**
  * frontpage - The Invigle home page
@@ -22,3 +24,8 @@ $api = $user->followUser($_SESSION['uid'], $_GET['user']);
 
 $language = new EN_GB();
 ?>
+=======
+require_once("rdb/rdb.php");
+echo r\systemInfo();
+?>
+>>>>>>> origin/master
