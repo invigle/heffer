@@ -31,8 +31,6 @@ class Group
 	{
 		$this->_nodeType = 'Group';
 	}
-    
-    //Pull to the master 
 
 	/**
 	 * Find the ID of a category using cypher indexBy and indexValue
@@ -44,8 +42,8 @@ class Group
 		$api = $this->neo4japi('cypher', 'JSONPOST', $postfields);
 		if (isset($api['data'][0]))
 		{
-			$cat = explode("/", $api['data']['0']['0']['self']);
-			return end($catID);
+			$categoryID = explode("/", $api['data']['0']['0']['self']);
+			return end($categoryID);
 		}
 	}
 
