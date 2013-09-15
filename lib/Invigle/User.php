@@ -37,7 +37,7 @@ class User {
 	private $_profilePicID;
 	private $_followerCount;
 	private $_friendCount;
-    private $_url;
+	private $_url;
     
     /**
      * This method will check the graph database to ensure a username is unique.
@@ -160,10 +160,10 @@ class User {
   
     return $userId;
 	}
-    
-    /**
-     * This method takes input as an array from $_POST and logs in a user.
-     */
+
+	/**
+	 * This method takes input as an array from $_POST and logs in a user.
+	 */
     public function loginUser(array $userInput)
     {
         $graph = new Graph();        
@@ -211,7 +211,7 @@ class User {
     
     return false;        
     }
-    
+
     /**
      * This method checks the currently set $_SESSION data against the neo4j database and returns a boolean for true or false responses.
      */
@@ -287,5 +287,145 @@ class User {
 	public function editUser($aUserArray) {
 		// Not yet implemented
 	}
+    
+    /**
+     * Follow Somebody
+     * 
+     * Requires Variables:
+     * UID (User ID Follwer)
+     * UID2 (User ID of the Followee)
+     */ 
+    public function followUser($follower, $followee)
+    {
+        $graph = new Graph();
+        
+        //Add the relationship between follower and followee.
+        $api = $graph->addConnection($follower, $followee, 'followerOf');
+        
+        //Add an Action node for the action and return the node id.
+        $user['query'] = "CREATE (n:Action { actionType : \"followerOf\", timestamp : \"".time()."\", uid : \"$follower\" }) RETURN n;";   
+        $apiCall = $graph->neo4japi('cypher', 'JSONPOST', $user);
+        
+        //Add a relationship from follower to action node.
+        
+        
+        //Update the Users lastaction timestamp.
+        $this->updateUserTimestamp($follower);
+    }
+
+	/**
+	 * This method takes as inputs a user ID and a group ID and adds a FOLLOWER_OF edge to neo4j.
+	 * @access public
+	 * @param uID, gID
+	 * @return boolean
+	 */
+	public function addGroupFollower($uID, $gID)
+	{
+		$graph = new Graph();
+		$connectionType = 'FOLLOWER_OF';
+		$succ = $graph->addConnection($uID, $gID, $connectionType);
+		return $succ;
+	}
+
+	/**
+	 * This method takes as inputs a user ID and a group ID and adds a ADMIN_OF edge to neo4j.
+	 * @access public
+	 * @param uID, gID
+	 * @return boolean
+	 */
+	public function addGroupAdmin($uID, $gID)
+	{
+		$graph = new Graph();
+		$connectionType = 'ADMIN_OF';
+		$succ = $graph->addConnection($uID, $gID, $connectionType);
+		return $succ;
+	}
+
+	/**
+	 * This method takes as inputs a user ID and a group ID and adds a MEMBER_OF edge to neo4j.
+	 * @access public
+	 * @param uID, gID
+	 * @return boolean
+	 */
+	public function addGroupMember($uID, $gID)
+	{
+		$graph = new Graph();
+		$connectionType = 'MEMBER_OF';
+		$succ = $graph->addConnection($uID, $gID, $connectionType);
+		return $succ;
+	}
+    
+    /**
+	 * This method takes as inputs a user ID and a group ID and adds a INVITED_TO edge to neo4j.
+	 * @access public
+	 * @param uID, gID
+	 * @return boolean
+	 */
+	public function addUserGroupInvitation($uID, $gID)
+	{
+		$graph = new Graph();
+		$connectionType = 'INVITED_TO';
+		$succ = $graph->addConnection($uID, $gID, $connectionType);
+		return $succ;
+	}
+    
+    /**
+	 * This method takes as inputs a user ID and a event ID and adds a FOLLOWER_OF edge to neo4j.
+	 * @access public
+	 * @param uID, eID
+	 * @return boolean
+	 */
+	public function addEventFollower($uID, $eID)
+	{
+		$graph = new Graph();
+		$connectionType = 'FOLLOWER_OF';
+		$succ = $graph->addConnection($uID, $eID, $connectionType);
+		return $succ;
+	}
+    
+    /**
+	 * This method takes as inputs a user ID and a event ID and adds a ORGANISER_OF edge to neo4j.
+	 * @access public
+	 * @param uID, eID
+	 * @return boolean
+	 */
+	public function addEventOrganiser($uID, $eID)
+	{
+		$graph = new Graph();
+		$connectionType = 'ORGANISER_OF';
+		$succ = $graph->addConnection($uID, $eID, $connectionType);
+		return $succ;
+	}
+    
+    /**
+	 * This method takes as inputs a user ID and a event ID and adds a ATTENDEE_OF edge to neo4j.
+	 * @access public
+	 * @param uID, eID
+	 * @return boolean
+	 */
+	public function addEventAttendee($uID, $eID)
+	{
+		$graph = new Graph();
+		$connectionType = 'ATTENDEE_OF';
+		$succ = $graph->addConnection($uID, $eID, $connectionType);
+		return $succ;
+	}
+
+
+    /**
+     * This method will update a Users 'lastaction' field with the current UTC Timestamp.
+     * 
+     * @access public
+     * @param userID
+     * @return none
+     */
+    public function updateUserTimestamp($userID)
+    {
+        //Update the n.lastupdate to time().
+        $updateDB['query'] = "START n=node($userID) SET n.lastupdate='".time()."' RETURN n;";
+        $update = $graph->neo4japi('cypher', 'JSONPOST', $updateDB);
+    }
+
 }
+
 ?>
