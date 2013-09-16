@@ -17,9 +17,12 @@ use Invigle\FrontEndUIs\FrontPage,
 
 require_once("bootstrap.php");
 
-$user = new User();
-$api = $user->followUser($_SESSION['uid'], $_GET['user']);
-//print_r($_SESSION);
+if(isset($_GET['logout'])){
+    $user = new User();
+    $user->userLogout();
+}
 
 $language = new EN_GB();
+$frontPage = new FrontPage($language);
+
 ?>
