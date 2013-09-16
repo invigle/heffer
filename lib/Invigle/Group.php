@@ -46,7 +46,7 @@ class Group
 			return end($categoryID);
 		}
 	}
-
+    
 	/**
 	 * This method takes as input an array with all the information of a group and 
 	 * adds this group to the GD as an 'group node'.
@@ -106,11 +106,10 @@ class Group
 	 * @param gID, catParams
 	 * @return boolean
 	 */
-	public function addGroupCategory($gID, $catParams)
+	public function addGroupCategory($gID, $catID)
 	{
 		$graph = new Graph();
 		$connectionType = 'HAS';
-        $catID = getCategoryId($catParams);
 		$succ = $graph->addConnection($gID, $catID, $connectionType);
 		return $succ;
 	}
@@ -122,11 +121,10 @@ class Group
 	 * @param gID, catParams
 	 * @return boolean
 	 */
-	public function deleteGroupCategory($gID, $catParams)
+	public function deleteGroupCategory($gID, $catID)
 	{
 		$graph = new Graph();
 		$connectionType = 'HAS';
-        $catID = getCategoryId($catParams);
 		$succ = $graph->deleteConnection($gID, $catID, $connectionType);
 		return $succ;
 	}
@@ -186,42 +184,6 @@ class Group
 		$succ = $graph->deleteConnection($gID, $eID, $connectionType);
 		return $succ;
 	}
-
-	/**
-	 * This method takes as inputs a group ID and an array. 
-	 * It then finds the catergory ID from the array paramsCat and adds an edge to  
-	 * neo4j between the group and the category.
-	 * @access public
-	 * @param gID, paramsCat
-	 * @return boolean
-	 */
-	public function addGroupCategory($gID, array $params)
-	{
-		$catID = getCategoryId($params);
-		$graph = new Graph();
-		$connectionType = 'HAS';
-		$succ = $graph->addConnection($gID, $catID, $connectionType);
-		return $succ;
-	}
-
-	/**
-	 * This method takes as inputs a group ID and an array. 
-	 * It then finds the catergory ID from the array paramsCat and deletes the edge 
-     * between the group and the category from neo4j.
-	 * @access public
-	 * @param gID, paramsCat
-	 * @return boolean
-	 */
-	public function deleteGroupCategory($gID, array $params)
-	{
-		$catID = getCategoryId($params);
-		$graph = new Graph();
-		$connectionType = 'HAS';
-		$succ = $graph->deleteConnection($gID, $catID, $connectionType);
-		return $succ;
-	}
-
-
 	/**
 	 * This method returns the name of the group.
 	 * @access public

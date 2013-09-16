@@ -74,6 +74,20 @@ class Event
 	}
 
 	/**
+	 * This method edits some of the properties of an event in the GD by updating the current node in 
+	 * the GD with information provided by the eArray which is the input to the editEvent method
+	 * @access public
+	 * @param eArray
+	 * @return boolean
+	 */
+	public function editEvent($eArray)
+	{
+		$graph = new Graph();
+		$succ = $graph->editNodeProperties($eArray);
+		return $succ;
+	}
+    
+    /**
 	 * This method takes as inputs a photo ID, the ID of an event and adds the edge to neo4j.
 	 * @access public
 	 * @param phID, eID
@@ -98,20 +112,6 @@ class Event
 		$graph = new Graph();
 		$connectionType = 'RELATED_TO';
 		$succ = $graph->deleteConnection($phID, $eID, $connectionType);
-		return $succ;
-	}
-
-	/**
-	 * This method edits some of the properties of an event in the GD by updating the current node in 
-	 * the GD with information provided by the eArray which is the input to the editEvent method
-	 * @access public
-	 * @param eArray
-	 * @return boolean
-	 */
-	public function editEvent($eArray)
-	{
-		$graph = new Graph();
-		$succ = $graph->editNodeProperties($eArray);
 		return $succ;
 	}
 
