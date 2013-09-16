@@ -315,6 +315,8 @@ class User {
         
         //Update the Users lastaction timestamp.
         $this->updateUserTimestamp($follower);
+        
+        //TODO: Update follower count of $followee
     }
 
 	/**
