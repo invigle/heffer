@@ -77,65 +77,65 @@ class Comment
 		return $succEdit;
 	}
 	
-    public function addCommentStatus($commentID, $statusParams)
+    public function addCommentStatus($commentID, $statusID)
 	{
 		$graph = new Graph();
 		$connectionType = 'POSTED_ON';
-        $statusID = getStatusId($statusParams);
+        //$statusID = getStatusId($statusParams);
 		$succ = $graph->addConnection($commentID, $statusID, $connectionType);
 		return $succ;
 	}
    
-    public function deleteCommentStatus($commentID, $statusParams)
+    public function deleteCommentStatus($commentID, $statusID)
 	{
 		$graph = new Graph();
 		$connectionType = 'POSTED_ON';
-        $statusID = getStatusId($statusParams);
+        //$statusID = getStatusId($statusParams);
 		$succ = $graph->deleteConnection($commentID, $statusID, $connectionType);
 		return $succ;
 	}
 	
-    public function connectComments($commentID, $commentParams)
+    public function connectComments($commentID, $commentID2)
 	{
 		$graph = new Graph();
 		$connectionType = 'NEXT';
-        $commentID2 = getCommentId($commentParams);
+        //$commentID2 = getCommentId($commentParams);
 		$succ = $graph->addConnection($commentID, $commentID2, $connectionType);
 		return $succ;
 	}
 
-	public function disconnectComments($commentID, $commentParams)
+	public function disconnectComments($commentID, $commentID2)
 	{
 		$graph = new Graph();
 		$connectionType = 'NEXT';
-         $commentID2 = getCommentId($commentParams);
+        //$commentID2 = getCommentId($commentParams);
 		$succ = $graph->deleteConnection($commentID, $commentID2, $connectionType);
 		return $succ;
 	}
      
-    public function addCommentPost($commentID, $postParams)
+    public function addCommentPost($commentID, $postID)
 	{
 		$graph = new Graph();
 		$connectionType = 'POSTED_ON';
-        $postID = getPostId($postParams);
+        //$postID = getPostId($postParams);
 		$succ = $graph->addConnection($commentID, $postID, $connectionType);
 		return $succ;
 	}
     
-    public function deleteCommentPost($commentID, $postParams)
+    public function deleteCommentPost($commentID, $postID)
 	{
 		$graph = new Graph();
 		$connectionType = 'POSTED_ON';
-        $postID = getPostId($postParams);
+        //$postID = getPostId($postParams);
 		$succ = $graph->deleteConnection($commentID, $postID, $connectionType);
 		return $succ;
 	}
     
-    public function addPhotoComment($commentID, $postParams)
+    public function addPhotoComment($commentID, $photoID)
 	{
 		$graph = new Graph();
 		$connectionType = 'POSTED_ON';
-        $photoID = getPhotoId($postParams);
+        //$photoID = getPhotoId($postParams);
 		$succ = $graph->addConnection($commentID, $photoID, $connectionType);
 		return $succ;
 	}
@@ -149,7 +149,7 @@ class Comment
 		return $succ;
 	}
     
-    public function getStatusId(array $params)
+    /*--public function getStatusId(array $params)
 	{
 		$path = "cypher";
 		$postfields['query'] = "MATCH n:Status WHERE n.$params[indexBy]='$params[indexValue]' RETURN n;";
@@ -159,9 +159,9 @@ class Comment
 			$statusID = explode("/", $api['data']['0']['0']['self']);
 			return end($statusID);
 		}
-	}
+	}*/
     
-	public function getPostId(array $params)
+	/*public function getPostId(array $params)
 	{
 		$path = "cypher";
 		$postfields['query'] = "MATCH n:Post WHERE n.$params[indexBy]='$params[indexValue]' RETURN n;";
@@ -171,9 +171,9 @@ class Comment
 			$postID = explode("/", $api['data']['0']['0']['self']);
 			return end($postID);
 		}
-	}
+	}*/
     
-    public function getPhotoId(array $params)
+    /*public function getPhotoId(array $params)
 	{
 		$path = "cypher";
 		$postfields['query'] = "MATCH n:Photo WHERE n.$params[indexBy]='$params[indexValue]' RETURN n;";
@@ -183,9 +183,9 @@ class Comment
 			$photoID = explode("/", $api['data']['0']['0']['self']);
 			return end($photoID);
 		}
-	}
+	}*/
     
-    public function getCommentId(array $params)
+    /*public function getCommentId(array $params)
 	{
 		$path = "cypher";
 		$postfields['query'] = "MATCH n:Comment WHERE n.$params[indexBy]='$params[indexValue]' RETURN n;";
@@ -195,7 +195,7 @@ class Comment
 			$commentID = explode("/", $api['data']['0']['0']['self']);
 			return end($commentID);
 		}
-	}
+	}*/
 }
 
 ?>
