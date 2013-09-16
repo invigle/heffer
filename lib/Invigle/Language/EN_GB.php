@@ -55,7 +55,16 @@ class EN_GB extends Language
         
         $this->_accountdetails = array(
             'pageTitle' => "Invigle - My Details",
-            'test' => 'yo, Wot up world!',
+            'oldpw' => "Existing Password",
+            'newpw' => "New Password",
+            'confirmpw' => "Confirm new Password",
+            'changepw' => "Change Password",
+            'error' => "Error",
+            'pw-dont-match' => "The new password and confirm password fields did not match, please try again.",
+            'pw-too-short' => "Your new password must be at least 6 characters long, please try again",
+            'pw-is-numeric' => "Your new password must not be entirely numeric, please try again",
+            'old-pw-wrong' => "The existing password you have entered did not match our records, please try again.",
+            'pw-changed' => "Your password has been changed successfully",
         );
     }
 }
