@@ -41,6 +41,9 @@ class FrontPage extends FrontEndUIs {
         echo '<body>';
         echo $this->renderTopNav();
         echo $this->authenticationLayer();
+        //if(isset($_GET['user'])){
+        //    echo $user->showUserProfile();
+        //}
         echo $this->renderJSLinks();
         echo '</body>';
     }
@@ -58,7 +61,7 @@ class FrontPage extends FrontEndUIs {
             $userInfo = $user->userDetails();
             
             return '<div class="container">
-                        <b>'.$this->_language->_frontPage["logged-in-as"].' '.$userInfo['firstname'].' '.$userInfo['lastname'].'</b> (<a href="?logout=true">Logout</a>)
+                        <b>'.$this->_language->_frontPage["logged-in-as"].' '.$userInfo['firstname'].' '.$userInfo['lastname'].'</b> (<a href="accountdetails.php">'.$this->_language->_frontPage["my-details"].'</a> | <a href="?logout=true">Logout</a>)
                     </div>';
         }else{
             return '<div class="container">
@@ -90,8 +93,13 @@ class FrontPage extends FrontEndUIs {
             if(!$login){
                 $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["login-failed"].'';
             }else{
-                //Refresh Page.
-                return '<script>location.reload();</script>';
+                //Refresh Page or redirect to wherever this person was heading before being asked to login.
+                if(isset($_SESSION['ROUTE'])){
+                    echo '<script>window.location.href = "'.$_SESSION['ROUTE'].'";</script>';
+                    unset($_SESSION['ROUTE']);
+                }else{
+                    return '<script>location.reload();</script>';
+                }
                 
             }
             
@@ -99,7 +107,7 @@ class FrontPage extends FrontEndUIs {
         if(!isset($error)){
             $error = "";
         }
-        
+
         return ''.$error.'
                 <form method="POST" action="'.$_SERVER['PHP_SELF'].'">
                     <input type="hidden" name="loginform" value="submit">
