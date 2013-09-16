@@ -59,7 +59,9 @@ abstract class FrontEndUIs
                                 <span class="icon-bar"></span>
                                 <span class="icon-bar"></span>
                             </button>
+                            <a href="index.php">
                             '.$this->UITools->renderSmallLogo().'
+                            </a>
                         </div>
                         <div class="collapse navbar-collapse">
                             <form class="navbar-form navbar-right">
