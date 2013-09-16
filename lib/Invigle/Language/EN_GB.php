@@ -49,8 +49,13 @@ class EN_GB extends Language
             'login-now' => "Login Now",
             'login-failed' => "Your username and password did not match any user in our database.",
             'logged-in-as' => "Logged in as",
-            'emails-dont-match' => "The email addresses you entered did not match, please try again."
-                        
+            'emails-dont-match' => "The email addresses you entered did not match, please try again.",
+            'my-details' => "My Details",              
+        );
+        
+        $this->_accountdetails = array(
+            'pageTitle' => "Invigle - My Details",
+            'test' => 'yo, Wot up world!',
         );
     }
 }

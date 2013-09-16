@@ -11,18 +11,14 @@ session_start();
  */
 require_once("configuration.php");
  
-use Invigle\FrontEndUIs\FrontPage,
-    Invigle\Language\EN_GB,
-    Invigle\User;
+use    Invigle\FrontEndUIs\accountDetails,
+       Invigle\Language\EN_GB,
+       Invigle\User;
 
 require_once("bootstrap.php");
 
-if(isset($_GET['logout'])){
-    $user = new User();
-    $user->userLogout();
-}
 
 $language = new EN_GB();
-$frontPage = new FrontPage($language);
+$accountDetails = new accountDetails($language);
 
 ?>
