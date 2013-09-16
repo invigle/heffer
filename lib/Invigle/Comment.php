@@ -148,54 +148,6 @@ class Comment
 		$succ = $graph->deleteConnection($commentID, $photoID, $connectionType);
 		return $succ;
 	}
-    
-    /*--public function getStatusId(array $params)
-	{
-		$path = "cypher";
-		$postfields['query'] = "MATCH n:Status WHERE n.$params[indexBy]='$params[indexValue]' RETURN n;";
-		$api = $this->neo4japi('cypher', 'JSONPOST', $postfields);
-		if (isset($api['data'][0]))
-		{
-			$statusID = explode("/", $api['data']['0']['0']['self']);
-			return end($statusID);
-		}
-	}*/
-    
-	/*public function getPostId(array $params)
-	{
-		$path = "cypher";
-		$postfields['query'] = "MATCH n:Post WHERE n.$params[indexBy]='$params[indexValue]' RETURN n;";
-		$api = $this->neo4japi('cypher', 'JSONPOST', $postfields);
-		if (isset($api['data'][0]))
-		{
-			$postID = explode("/", $api['data']['0']['0']['self']);
-			return end($postID);
-		}
-	}*/
-    
-    /*public function getPhotoId(array $params)
-	{
-		$path = "cypher";
-		$postfields['query'] = "MATCH n:Photo WHERE n.$params[indexBy]='$params[indexValue]' RETURN n;";
-		$api = $this->neo4japi('cypher', 'JSONPOST', $postfields);
-		if (isset($api['data'][0]))
-		{
-			$photoID = explode("/", $api['data']['0']['0']['self']);
-			return end($photoID);
-		}
-	}*/
-    
-    /*public function getCommentId(array $params)
-	{
-		$path = "cypher";
-		$postfields['query'] = "MATCH n:Comment WHERE n.$params[indexBy]='$params[indexValue]' RETURN n;";
-		$api = $this->neo4japi('cypher', 'JSONPOST', $postfields);
-		if (isset($api['data'][0]))
-		{
-			$commentID = explode("/", $api['data']['0']['0']['self']);
-			return end($commentID);
-		}
-	}*/
 }
 
 ?>
