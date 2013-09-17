@@ -55,7 +55,37 @@ class userProfile extends FrontEndUIs {
      */
     public function showUserProfile($username)
     {
-        return "Showing profile for: $username";
+        $userModule = new User();
+        $graphModule = new Graph();
+        
+        $val['query'] = "MATCH n:User WHERE n.username='".$username."' RETURN n;";
+		$api = $graphModule->neo4japi('cypher', 'JSONPOST', $val);
+        
+        if(!isset($api['data'][0])){
+            return $this->_language->_userProfile['user-not-found'];
+        }else{            
+            $usr = explode("/", $api['data'][0][0]['self']);
+            $userId = end($usr);
+            $userInfo = $api['data'][0][0]['data'];
+            
+            if(isset($_GET['a'])){
+                if($_GET['a'] === "follow"){
+                    $userModule->followUser($_SESSION['uid'], $userId);
+                    $html = ''.$this->_language->_userProfile['nowfollowing'].' '.$userInfo['firstname'].' '.$userInfo['lastname'].'.';
+                }
+            }
+            
+            $html = '<h1>'.$userInfo['firstname'].' '.$userInfo['lastname'].'</h1>';
+            if(!empty($userInfo['relationshipStatus'])){
+                $html.= 'Relationship Status: '.$userInfo['relationshipStatus'].'<br />';
+            }
+            
+            $html.= '<a href="user.php?username='.$username.'&a=follow">'.$this->_language->_userProfile['follow'].' '.$userInfo['firstname'].'</a> | 
+                     <a href="user.php?username='.$username.'&a=befriend">'.$this->_language->_userProfile['addfriend'].'</a>';
+            
+        
+        return $html;
+        }
     }
     
     private function renderJSLinks() {
