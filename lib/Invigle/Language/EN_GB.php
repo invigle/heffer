@@ -90,6 +90,14 @@ class EN_GB extends Language
             'dob-month-invalid' => "The month of your Date of Birth must be between 1 and 12.",
             'dob_year_invalid' => "Your year of birth must be within the last 100 years excluding the last 13.",
         );
+        
+        $this->_userProfile = array(
+            'user-not-found' => "We were unable to locate that user, please try again.",
+            'relationshipstatus' => "Relationship status",
+            'follow' => "Follow",
+            'addfriend' => "Add Friend",
+            'nowfollowing' => "You are now following",
+        );
     }
 }
 
