@@ -14,65 +14,17 @@ class Location
 	private $_name;
 	private $_coordinates;
 	private $_postCode;
-    private $_nodeType;
-    
-    public function __construct()
+	private $_nodeType;
+
+	/* The Class Constructor*/
+	public function __construct()
 	{
 		$this->_nodeType = 'Location';
 	}
 
-	/**
-	 * This method takes as input an array with all the information of a location and 
-	 * adds this location to the GD as a 'location node'.
-	 * @access public
-	 * @param lArray
-	 * @return integer
-	 */
-	public function addLocation($lArray)
-	{
-		//Create the new location in neo4j
-		$graph = new Graph();
-		$queryString = "";
-		foreach ($lArray as $key => $value)
-		{
-			$queryString .= "$key: \"$value\", ";
-		}
-		$queryString = substr($queryString, 0, -2);
-		$location['query'] = "CREATE (n:Location {" . $queryString . "}) RETURN n;";
-		$apiCall = $graph->neo4japi('cypher', 'JSONPOST', $location);
-
-		//return the new location ID.
-		$bit = explode("/", $apiCall['data'][0][0]['self']);
-		$locationId = end($bit);
-		return $locationId;
-	}
-
-	/** Function to delete a location node given an ID.
-	 * @access private
-	 * @param locID
-	 * @return boolean
-	 */
-	public function deleteLocation($locID)
-	{
-		$graph = new Graph();
-		$succ = $graph->deleteNodeByID($locID);
-		return $succ;
-	}
-
-	/**
-	 * This method edits some of the properties of a location in the GD by updating the current node in 
-	 * the GD with information provided by the lArray which is the input to the editComment method
-	 * @access public
-	 * @param locArray
-	 * @return boolean
-	 */
-	public function editLocation($locArray)
-	{
-		$graph = new Graph();
-		$succ = $graph->editNodeProperties($locArray);
-		return $succ;
-	}
-
+	/**********************************************************/
+	/** BEGGINING OF SETERS and GETERS 
+	/**********************************************************/
 	/**
 	 * This method returns the ID of the location.
 	 * @access public
@@ -136,7 +88,7 @@ class Location
 		$this->_coordinates = $degrees;
 	}
 
-    /**
+	/**
 	 * This method returns the postcode of the location.
 	 * @access public
 	 * @return string
@@ -156,6 +108,63 @@ class Location
 	{
 		$this->_postCode = $postcode;
 	}
+	/**********************************************************/
+	/** END OF SETERS and GETERS 
+	/**********************************************************/
+
+	/**
+	 * This method takes as input an array with all the information of a location and 
+	 * adds this location to the GD as a 'location node'.
+	 * @access public
+	 * @param lArray
+	 * @return integer
+	 */
+	public function addLocation($lArray)
+	{
+		//Create the new location in neo4j
+		$graph = new Graph();
+		$queryString = "";
+		foreach ($lArray as $key => $value)
+		{
+			$queryString .= "$key: \"$value\", ";
+		}
+		$queryString = substr($queryString, 0, -2);
+		$location['query'] = "CREATE (n:Location {" . $queryString . "}) RETURN n;";
+		$apiCall = $graph->neo4japi('cypher', 'JSONPOST', $location);
+
+		//return the new location ID.
+		$bit = explode("/", $apiCall['data'][0][0]['self']);
+		$locationId = end($bit);
+		return $locationId;
+	}
+
+	/** Function to delete a location node given an ID.
+	 * @access private
+	 * @param locID
+	 * @return boolean
+	 */
+	public function deleteLocation($locID)
+	{
+		$graph = new Graph();
+		$succ = $graph->deleteNodeByID($locID);
+		return $succ;
+	}
+
+	/**
+	 * This method edits some of the properties of a location in the GD by updating the current node in 
+	 * the GD with information provided by the lArray which is the input to the editComment method
+	 * @access public
+	 * @param locArray
+	 * @return boolean
+	 */
+	public function editLocation($locArray)
+	{
+		$graph = new Graph();
+		$succ = $graph->editNodeProperties($locArray);
+		return $succ;
+	}
+
+
 }
 
 ?>

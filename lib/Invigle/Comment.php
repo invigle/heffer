@@ -20,11 +20,12 @@ class Comment
 	private $_pID;
 	private $_nodeType;
 
+/* The Class Constructor*/
 	public function __construct()
 	{
 		$this->_nodeType = 'Comment';
 	}
- 
+
 	/**
 	 * This method takes as input an array with all the information of a comment and 
 	 * adds this comment to the GD as a 'comment node'.
