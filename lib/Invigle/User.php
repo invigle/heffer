@@ -318,6 +318,27 @@ class User
 	}
 
 	/**
+	 * This method will update a Users 'lastaction' field with the current UTC Timestamp.
+	 * 
+	 * @access public
+	 * @param userID
+	 * @return none
+	 */
+	public function updateUserTimestamp($userID)
+	{
+		$graph = new Graph();
+
+		//Update the n.lastupdate to time().
+		$updateDB['query'] = "START n=node($userID) SET n.lastupdate='" . time() .
+			"' RETURN n;";
+		$update = $graph->neo4japi('cypher', 'JSONPOST', $updateDB);
+	}
+
+
+	/*********************************************************/
+	/** USER-USER RELATED
+	 * /**********************************************************/
+	/**
 	 * Follow Somebody
 	 * 
 	 * Requires Variables:
@@ -347,26 +368,59 @@ class User
 		$this->updateUserTimestamp($follower);
 
 		//Update Number of Followers
-        $this->increaseFollowersCount($followee);
+		$this->increaseFollowersCount($followee);
 	}
-    
+
 	public function getNumberOfFollowers()
 	{
 		return $this->_followerCount;
 	}
-    
-   	public function setNumberOfFollowers($count)
+
+	public function setNumberOfFollowers($count)
 	{
 		$this->_followerCount = $count;
 	}
 
-    
-    public function increaseFollowersCount($uID)
-    {
-        $followers = $uID->getNumberOfFollowers() + 1;
-        $uID->setNumberOfFollowers($followers);
-    }
 
+	public function increaseFollowersCount($uID)
+	{
+		$followers = $uID->getNumberOfFollowers() + 1;
+		$uID->setNumberOfFollowers($followers);
+	}
+
+	public function unfollowUser($follower, $followee)
+	{
+		// to be implemented
+	}
+
+	/**
+	 * This method takes as inputs a two users' IDs and adds a FRIEND_OF edge to neo4j.
+	 * @access public
+	 * @param uID, uID2
+	 * @return boolean
+	 */
+	public function addFriend($uID, $uID2)
+	{
+		$graph = new Graph();
+		$connectionType = 'FRIEND_OF';
+		$succ = $graph->addConnection($uID, $uID2, $connectionType);
+		return $succ;
+	}
+
+	public function deleteFriend($uID, $uID2)
+	{
+		$graph = new Graph();
+		$connectionType = 'FRIEND_OF';
+		$succ = $graph->deleteConnection($uID, $uID2, $connectionType);
+		return $succ;
+	}
+	/*********************************************************/
+	/**********************************************************/
+
+
+	/*********************************************************/
+	/** USER-GROUP RELATED
+	 * /**********************************************************/
 	/**
 	 * This method takes as inputs a user ID and a group ID and adds a FOLLOWER_OF edge to neo4j.
 	 * @access public
@@ -378,6 +432,14 @@ class User
 		$graph = new Graph();
 		$connectionType = 'FOLLOWER_OF';
 		$succ = $graph->addConnection($uID, $gID, $connectionType);
+		return $succ;
+	}
+
+	public function deleteGroupFollower($uID, $gID)
+	{
+		$graph = new Graph();
+		$connectionType = 'FOLLOWER_OF';
+		$succ = $graph->deleteConnection($uID, $gID, $connectionType);
 		return $succ;
 	}
 
@@ -395,6 +457,14 @@ class User
 		return $succ;
 	}
 
+	public function deleteGroupAdmin($uID, $gID)
+	{
+		$graph = new Graph();
+		$connectionType = 'ADMIN_OF';
+		$succ = $graph->deeleteConnection($uID, $gID, $connectionType);
+		return $succ;
+	}
+
 	/**
 	 * This method takes as inputs a user ID and a group ID and adds a MEMBER_OF edge to neo4j.
 	 * @access public
@@ -406,6 +476,14 @@ class User
 		$graph = new Graph();
 		$connectionType = 'MEMBER_OF';
 		$succ = $graph->addConnection($uID, $gID, $connectionType);
+		return $succ;
+	}
+
+	public function deleteGroupMember($uID, $gID)
+	{
+		$graph = new Graph();
+		$connectionType = 'MEMBER_OF';
+		$succ = $graph->deleteConnection($uID, $gID, $connectionType);
 		return $succ;
 	}
 
@@ -423,6 +501,12 @@ class User
 		return $succ;
 	}
 
+	/*********************************************************/
+	/**********************************************************/
+
+	/*********************************************************/
+	/** USER-EVENT RELATED
+	 * /**********************************************************/
 	/**
 	 * This method takes as inputs a user ID and a event ID and adds a FOLLOWER_OF edge to neo4j.
 	 * @access public
@@ -434,6 +518,14 @@ class User
 		$graph = new Graph();
 		$connectionType = 'FOLLOWER_OF';
 		$succ = $graph->addConnection($uID, $eID, $connectionType);
+		return $succ;
+	}
+
+	public function deleteEventFollower($uID, $eID)
+	{
+		$graph = new Graph();
+		$connectionType = 'FOLLOWER_OF';
+		$succ = $graph->deleteConnection($uID, $eID, $connectionType);
 		return $succ;
 	}
 
@@ -451,6 +543,22 @@ class User
 		return $succ;
 	}
 
+	public function deleteEventOrganiser($uID, $eID)
+	{
+		$graph = new Graph();
+		$connectionType = 'ORGANISER_OF';
+		$succ = $graph->deleteConnection($uID, $eID, $connectionType);
+		return $succ;
+	}
+
+	public function changeEventOrganiser($uID, $uID2, $pID)
+	{
+		$graph = new Graph();
+		$succ = $this->deleteEventOrganiser($uID, $pID);
+		if ($succ == 1)
+			$succ2 = $this->addEventOrganiser($uID2, $pID);
+	}
+
 	/**
 	 * This method takes as inputs a user ID and a event ID and adds a ATTENDEE_OF edge to neo4j.
 	 * @access public
@@ -465,34 +573,11 @@ class User
 		return $succ;
 	}
 
-	/**
-	 * This method will update a Users 'lastaction' field with the current UTC Timestamp.
-	 * 
-	 * @access public
-	 * @param userID
-	 * @return none
-	 */
-	public function updateUserTimestamp($userID)
+	public function deleteEventAttendee($uID, $eID)
 	{
 		$graph = new Graph();
-
-		//Update the n.lastupdate to time().
-		$updateDB['query'] = "START n=node($userID) SET n.lastupdate='" . time() .
-			"' RETURN n;";
-		$update = $graph->neo4japi('cypher', 'JSONPOST', $updateDB);
-	}
-
-	/**
-	 * This method takes as inputs a two users' IDs and adds a FRIEND_OF edge to neo4j.
-	 * @access public
-	 * @param uID, uID2
-	 * @return boolean
-	 */
-	public function addFriend($uID, $uID2)
-	{
-		$graph = new Graph();
-		$connectionType = 'FRIEND_OF';
-		$succ = $graph->addConnection($uID, $uID2, $connectionType);
+		$connectionType = 'ATTENDEE_OF';
+		$succ = $graph->deleteConnection($uID, $eID, $connectionType);
 		return $succ;
 	}
 
@@ -509,8 +594,15 @@ class User
 		$succ = $graph->addConnection($uID, $eID, $connectionType);
 		return $succ;
 	}
+	/*********************************************************/
+	/**********************************************************/
 
+	/*********************************************************/
+	/** USER-PAGE RELATED
+	 * /**********************************************************/
 	/**
+
+	 * /**
 	 * This method takes as inputs a user ID and a page ID and adds a FOLLOWER_OF edge to neo4j.
 	 * @access public
 	 * @param uID, pID
@@ -521,6 +613,14 @@ class User
 		$graph = new Graph();
 		$connectionType = 'FOLLOWER_OF';
 		$succ = $graph->addConnection($uID, $pID, $connectionType);
+		return $succ;
+	}
+
+	public function deletePageFollower($uID, $pID)
+	{
+		$graph = new Graph();
+		$connectionType = 'FOLLOWER_OF';
+		$succ = $graph->deleteConnection($uID, $pID, $connectionType);
 		return $succ;
 	}
 
@@ -537,8 +637,24 @@ class User
 		$succ = $graph->addConnection($uID, $pID, $connectionType);
 		return $succ;
 	}
-    
-    	/**
+
+	public function deletePageAdmin($uID, $pID)
+	{
+		$graph = new Graph();
+		$connectionType = 'ADMIN_OF';
+		$succ = $graph->deleteConnection($uID, $pID, $connectionType);
+		return $succ;
+	}
+
+	public function changePageAdmin($uID, $uID2, $pID)
+	{
+		$graph = new Graph();
+		$succ = $this->deletePageAdmin($uID, $pID);
+		if ($succ == 1)
+			$succ2 = $this->addPageAdmin($uID2, $pID);
+	}
+
+	/**
 	 * This method takes as inputs a user ID and an institution ID and adds a ATTENDEE_OF edge to neo4j.
 	 * @access public
 	 * @param uID, iID
@@ -552,7 +668,13 @@ class User
 		return $succ;
 	}
 
-
+	public function deleteInstitutionAttendee($uID, $iID)
+	{
+		$graph = new Graph();
+		$connectionType = 'ATTENDEE_OF';
+		$succ = $graph->deleteConnection($uID, $iID, $connectionType);
+		return $succ;
+	}
 }
 
 ?>
