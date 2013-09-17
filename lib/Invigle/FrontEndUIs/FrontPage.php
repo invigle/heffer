@@ -3,7 +3,8 @@ namespace Invigle\FrontEndUIs;
  
 use Invigle\FrontEndUIs,
     Invigle\Language,
-    Invigle\User;
+    Invigle\User,
+    Invigle\Validation;
 
  
 /**
@@ -172,33 +173,41 @@ class FrontPage extends FrontEndUIs {
                             'friendCount'=>'',
                               );
             
-            //Check that the Date of Birth fields are numeric values only.
-            if(!is_numeric($userInput['dob_day']) || !is_numeric($userInput['dob_month']) || !is_numeric($userInput['dob_year'])){
-                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["dob-invalid"].'';
+            $validationModule = new Validation();
+            
+            //Check the users date of birth is valid.
+            $dobCheck = $validationModule->validateDateOfBirth($_POST['dob_day'], $_POST['dob_month'], $_POST['dob_month']);
+            if(!$dobCheck['status']){
+                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage[$dobCheck['error']].'';
             }
             
-            //Check that the users password is more than 6 characters long.
-            if(strlen($userInput['password']) < "6"){
-                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["pw-too-short"].'';
+            //Check that the users password is valid
+            $pwCheck = $validationModule->validatePassword(($_POST['password']), $_POST['password']); //Were using $_POST['password'] twice here because we dont have a confirm field on initial signup.
+            if(!$pwCheck['status']){
+                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage[$pwCheck['error']].'';
             }
             
-            //Check that firstname and lastname are more than 2 characters long and are not numeric.
-            if(strlen($userInput['firstname']) < "2"){
-                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["firstname-too-short"].'';
+            //Check that firstname is longer than 2 characters and not numeric.
+            $fnameCheck = $validationModule->validateFirstName($_POST['firstname']);
+            if(!$fnameCheck['status']){
+                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage[$fnameCheck['error']].'';
             }
-            if(is_numeric($userInput['firstname'])){
-                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["name-is-numeric"].'';
+            
+            //Check that lastname is longer than 2 characters and not numeric.
+            $lnameCheck = $validationModule->validateLastName($_POST['lastname']);
+            if(!$lnameCheck['status']){
+                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage[$lnameCheck['error']].'';
             }
-            if(strlen($userInput['lastname']) < "2"){
-                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["lastname-too-short"].'';
+            
+            $unCheck = $validationModule->validateUsername($_POST['username']);
+            if(!$unCheck['status']){
+                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage[$unCheck['error']].'';
             }
-            if(is_numeric($userInput['lastname'])){
-                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["name-is-numeric"].'';
+            
+            $emailCheck = $validationModule->validateEmailAddress($_POST['email'], $_POST['confirmemail']);
+            if(!$emailCheck['status']){
+                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage[$emailCheck['error']].'';
             }
-            /*
-            if($userInput['email'] !== $userInput['confirmemail']){
-                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["emails-dont-match"].'';
-            }*/
             
             //If no error is set yet
             if(!isset($error)){
@@ -211,10 +220,6 @@ class FrontPage extends FrontEndUIs {
                 $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["email-taken"].'';
             }elseif($add === "username-taken"){
                 $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["username-taken"].'';
-            }elseif($add === "username-invalid"){
-                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["username-invalid"].'';
-            }elseif($add === "email-invalid"){
-                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["email-invalid"].'';
             }
             
             if(isset($error)){

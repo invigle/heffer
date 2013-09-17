@@ -41,7 +41,9 @@ class EN_GB extends Language
             'email-taken' => "The email address you have entered is already in use. Please click Forgot Password to recover your password.",
             'email-invalid' => "The email address you have entered is invalid, please try again.",
             'dob-invalid' => "The date of birth you have entered is invalid, please ensure Day, Month and Year are Numeric entries.",
-            'pw-too-short' => "The password you have entered is too short, you must use a minimum of 6 characters.",
+            'pw-dont-match' => "The new password and confirm password fields did not match, please try again.",
+            'pw-too-short' => "Your new password must be at least 6 characters long, please try again",
+            'pw-is-numeric' => "Your new password must not be entirely numeric, please try again",
             'firstname-too-short' => "Your First name must be at least 2 characters long.",
             'lasrname-too-short' => "Your Last name must be at least 2 characters long.",
             'name-is-numeric' => "First and Last names cannot be numeric.",
@@ -50,7 +52,7 @@ class EN_GB extends Language
             'login-failed' => "Your username and password did not match any user in our database.",
             'logged-in-as' => "Logged in as",
             'emails-dont-match' => "The email addresses you entered did not match, please try again.",
-            'my-details' => "My Details",              
+            'my-details' => "My Details",            
         );
         
         $this->_accountdetails = array(
@@ -65,6 +67,21 @@ class EN_GB extends Language
             'pw-is-numeric' => "Your new password must not be entirely numeric, please try again",
             'old-pw-wrong' => "The existing password you have entered did not match our records, please try again.",
             'pw-changed' => "Your password has been changed successfully",
+            'setup-profile' => "Setup Profile",
+            'save-profile' => "Save Profile",
+            'firstname' => "First Name",
+            'lastname' => "Last Name",
+            'emailaddress' => "Email Address",
+            'username' => "Username",
+            'password' => "Password",
+            'birthdate' => "Date of Birth",
+            'gender' => "Gender",
+            'male' => "Male",
+            'female' => "Female",
+            'relationshipstatus' => "Relationship Status",
+            'sexualpref' => "Sexual Preference",
+            'location' => "Location",
+            'institution'=> "Institution",
         );
     }
 }
