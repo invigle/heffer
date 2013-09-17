@@ -82,50 +82,6 @@ class User
 	}
 
 	/**
-	 * This method will check that the entered email address is valid.
-	 * @param email
-	 * @return boolean (true if Valid, false if Not)
-	 */
-	public function validateEmailFormatting($email)
-	{
-		if (!filter_var($email, FILTER_VALIDATE_EMAIL))
-		{
-			return false;
-		} else
-		{
-			return true;
-		}
-	}
-
-	/**
-	 * This method will check that the entered username is valid
-	 * @param username
-	 * @return boolean
-	 */
-	public function validateUsernameFormatting($username)
-	{
-		//Rules
-		if (strlen($username) < "2")
-		{
-			return false;
-			break;
-		} elseif (is_numeric($username))
-		{
-			return false;
-			break;
-		} elseif ($username === "admin" || $username === "invigle" || $username ===
-		"staff")
-		{
-			return false;
-			break;
-		} else
-		{
-			return true;
-			break;
-		}
-	}
-
-	/**
 	 * This method takes as input an array with all the information of a user and adds this user to the GD as a 'user node'.
 	 * @access public
 	 * @param aUserArray
@@ -135,19 +91,9 @@ class User
 	 */
 	public function addUser($aUserArray)
 	{
-		if (!$this->validateUsernameFormatting($aUserArray['username']))
-		{
-			return 'username-invalid';
-		}
-
 		if (!$this->validateUsername($aUserArray['username']))
 		{
 			return 'username-taken';
-		}
-
-		if (!$this->validateEmailFormatting($aUserArray['email']))
-		{
-			return 'email-invalid';
 		}
 
 		if (!$this->validateEmailAddress($aUserArray['email']))
