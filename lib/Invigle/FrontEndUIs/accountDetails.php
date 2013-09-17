@@ -122,12 +122,68 @@ class accountDetails extends FrontEndUIs {
     
     public function setupProfile()
     {
+        //Initiate an instance of Validation()
+        $validationModule = new Validation();
+        
+        if(isset($_POST['setprofile'])){
+            //Check the users date of birth is valid.
+            $dobCheck = $validationModule->validateDateOfBirth($_POST['dob_day'], $_POST['dob_month'], $_POST['dob_year']);
+            if(!$dobCheck['status']){
+                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_inputValidation[$dobCheck['error']].'';
+            }
+            
+            //Check that firstname is longer than 2 characters and not numeric.
+            $fnameCheck = $validationModule->validateFirstName($_POST['firstname']);
+            if(!$fnameCheck['status']){
+                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_inputValidation[$fnameCheck['error']].'';
+            }
+            
+            //Check that lastname is longer than 2 characters and not numeric.
+            $lnameCheck = $validationModule->validateLastName($_POST['lastname']);
+            if(!$lnameCheck['status']){
+                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_inputValidation[$lnameCheck['error']].'';
+            }
+            
+            $emailCheck = $validationModule->validateEmailAddress($_POST['email'], $_POST['email']);
+            if(!$emailCheck['status']){
+                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_inputValidation[$emailCheck['error']].'';
+            }
+            
+            //Construct the dob string.
+            $dateofbirth = "$_POST[dob_day]-$_POST[dob_month]-$_POST[dob_year]";
+            
+            //If no errors are set we can proceed to update our database.
+            if(!isset($error)){
+                
+                $setString = "SET n.firstname='".$_POST['firstname']."' ";
+                $setString.= "SET n.lastname='".$_POST['lastname']."' ";
+                $setString.= "SET n.email='".$_POST['email']."' ";
+                $setString.= "SET n.birthdate='".$dateofbirth."' ";
+                $setString.= "SET n.gender='".$_POST['gender']."' ";
+                $setString.= "SET n.relationshipStatus='".$_POST['relationshipstatus']."' ";
+                $setString.= "SET n.sexualPref='".$_POST['sexualpref']."' ";
+                $setString.= "SET n.location='".$_POST['location']."' ";
+                $setString.= "SET n.institution='".$_POST['institution']."' ";
+                
+                $graphModule = new Graph();
+        
+                $updateDB['query'] = "START n=node($_SESSION[uid]) $setString RETURN n;";
+                $update = $graphModule->neo4japi('cypher', 'JSONPOST', $updateDB);
+                
+            
+            $error = $this->_language->_accountdetails["profileupdated"];
+            }
+            
+        }
+        
         if(!isset($error)){
             $error = '';
         }
         
         $userModule = new User;
         $user = $userModule->userDetails();
+        
+        $dob = explode("-", $user['birthdate']);
         
         $html = ''.$error.'
                 <form method="POST" action="'.$_SERVER['PHP_SELF'].'">
@@ -149,8 +205,18 @@ class accountDetails extends FrontEndUIs {
                             <input type="text" class="form-control col-md-6" id="email" name="email" value="'.$user['email'].'" placeholder="'.$this->_language->_accountdetails["emailaddress"].'">
                         </div>
                         <div class="col-md-6">
-                            <label for="birthdate">'.$this->_language->_accountdetails["birthdate"].'</label>
-                            <input type="text" class="form-control col-md-6" id="birthdate" name="birthdate" value="'.$user['birthdate'].'" placeholder="'.$this->_language->_accountdetails["birthdate"].'">
+                            <label for="dob_day">'.$this->_language->_accountdetails["birthdate"].'</label>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <input type="text" id="dob_day" name="dob_day" class="form-control" value="'.$dob[0].'" placeholder="'.$this->_language->_frontPage["day"].'">
+                                </div>
+                                <div class="col-md-3">
+                                    <input type="text" id="dob_month" name="dob_month" class="form-control" value="'.$dob[1].'" placeholder="'.$this->_language->_frontPage["month"].'">
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="text" id="dob_year" name="dob_year" class="form-control" value="'.$dob[2].'" placeholder="'.$this->_language->_frontPage["year"].'">
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="row">                           
@@ -192,7 +258,33 @@ class accountDetails extends FrontEndUIs {
                         </div>
                         <div class="col-md-6">
                             <label for="sexualpref">'.$this->_language->_accountdetails["sexualpref"].'</label>
-                            <input type="text" class="form-control col-md-6" id="sexualpref" name="sexualpref" value="'.$user['sexualPref'].'" placeholder="'.$this->_language->_accountdetails["sexualpref"].'">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="radio">
+                                      <label>
+                                          <input ';
+                                          
+        if($user['sexualPref'] === "male"){
+            $html.= " checked ";
+        }                                     
+        $html.= 'type="radio" name="sexualpref" id="pref_male" value="male">
+                                          '.$this->_language->_frontPage["male"].'
+                                      </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="radio">
+                                        <label>
+                                            <input ';
+        if($user['sexualPref'] === "female"){
+            $html.= " checked ";
+        }
+        $html.= 'type="radio" name="sexualpref" id="pref_female" value="female">
+                                            '.$this->_language->_frontPage["female"].'
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="row">                           

@@ -123,10 +123,42 @@ class Validation {
      */
     public function validateDateOfBirth($dob_day, $dob_month, $dob_year)
     {
-        if(!is_numeric($userInput['dob_day']) || !is_numeric($userInput['dob_month']) || !is_numeric($userInput['dob_year'])){
+        //Confirm that all dob inputs are numeric.
+        if(!is_numeric($dob_day) || !is_numeric($dob_month) || !is_numeric($dob_year)){
             $rtn = array(
                         'status'=>false,
                         'error'=>"dob-invalid"
+                    );
+                    
+            return $rtn;
+        }
+        
+        //Check that the day input is no higher than 31
+        if($dob_day > "31"){
+            $rtn = array(
+                        'status'=>false,
+                        'error'=>"dob-day-invalid"
+                    );
+                    
+            return $rtn;
+        }
+        
+        //Check that the month input is no higher than 12
+        if($dob_month > "12"){
+            $rtn = array(
+                        'status'=>false,
+                        'error'=>"dob-month-invalid"
+                    );
+                    
+            return $rtn;
+        }
+        
+        
+        //Check that the user is older than 13 (or close enough)
+        if($dob_year > date('Y') - 13){
+            $rtn = array(
+                        'status'=>false,
+                        'error'=>"dob_year_invalid"
                     );
                     
             return $rtn;
@@ -143,7 +175,7 @@ class Validation {
      * @return array (status = true/false, error = if an error is present then the 'language' representation key is passed.)
      */
     public function validateFirstName($firstname){
-        if(strlen($userInput['firstname']) < "2"){
+        if(strlen($firstname) < "2"){
             $rtn = array(
                     'status'=>false,
                     'error'=>"firstname-too-short"
@@ -151,7 +183,7 @@ class Validation {
                 
             return $rtn;
         }
-        if(is_numeric($userInput['firstname'])){
+        if(is_numeric($firstname)){
             $rtn = array(
                         'status'=>false,
                         'error'=>"name-is-numeric"
