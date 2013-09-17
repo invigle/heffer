@@ -318,21 +318,28 @@ class User
 		$this->increaseFollowersCount($followee);
 	}
 
-	public function getNumberOfFollowers()
+	public function getNumberOfFollowers($uID)
 	{
-		return $this->_followerCount;
+        $graph = new Graph();
+		$api['query'] = "START n=node($uID) RETURN n;";
+        $apiCall = $graph->neo4japi('cypher', 'JSONPOST', $api);
+        $user = $apiCall['data'][0][0]['data'];
+        
+    return $user['followerCount'];
 	}
 
-	public function setNumberOfFollowers($count)
+	public function setNumberOfFollowers($uID, $count)
 	{
-		$this->_followerCount = $count;
+		$graph = new Graph();
+        $this->_followerCount = $count;
+        $api['query'] = "START n=node($uID) SET n.followerCount='$count' RETURN n;";
+        $apiCall = $graph->neo4japi('cypher', 'JSONPOST', $api);
 	}
-
 
 	public function increaseFollowersCount($uID)
 	{
-		$followers = $uID->getNumberOfFollowers() + 1;
-		$uID->setNumberOfFollowers($followers);
+		$followers = $this->getNumberOfFollowers($uID) + 1;
+		$this->setNumberOfFollowers($uID, $followers);
 	}
 
 	public function unfollowUser($follower, $followee)
