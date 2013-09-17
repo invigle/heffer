@@ -62,7 +62,9 @@ class FrontPage extends FrontEndUIs {
             $userInfo = $user->userDetails();
             
             return '<div class="container">
-                        <b>'.$this->_language->_frontPage["logged-in-as"].' '.$userInfo['firstname'].' '.$userInfo['lastname'].'</b> (<a href="accountdetails.php">'.$this->_language->_frontPage["my-details"].'</a> | <a href="?logout=true">Logout</a>)
+                        <b>'.$this->_language->_frontPage["logged-in-as"].' '.$userInfo['firstname'].' '.$userInfo['lastname'].'</b> (<a href="accountdetails.php">'.$this->_language->_frontPage["my-details"].'</a> | <a href="?logout=true">Logout</a>)<br />
+                        '.$this->_language->_frontPage["followers"].': '.$userInfo['followerCount'].'<br>
+                        '.$this->_language->_frontPage["friends"].': '.$userInfo['friendCount'].'<br />
                     </div>';
         }else{
             return '<div class="container">
@@ -169,8 +171,8 @@ class FrontPage extends FrontEndUIs {
                             'relationshipStatus'=>'',
                             'sexualPref'=>'',
                             'profilePicID'=>'',
-                            'followerCount'=>'',
-                            'friendCount'=>'',
+                            'followerCount'=>'0',
+                            'friendCount'=>'0',
                               );
             
             $validationModule = new Validation();
@@ -178,35 +180,35 @@ class FrontPage extends FrontEndUIs {
             //Check the users date of birth is valid.
             $dobCheck = $validationModule->validateDateOfBirth($_POST['dob_day'], $_POST['dob_month'], $_POST['dob_month']);
             if(!$dobCheck['status']){
-                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage[$dobCheck['error']].'';
+                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_inputValidation[$dobCheck['error']].'';
             }
             
             //Check that the users password is valid
             $pwCheck = $validationModule->validatePassword(($_POST['password']), $_POST['password']); //Were using $_POST['password'] twice here because we dont have a confirm field on initial signup.
             if(!$pwCheck['status']){
-                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage[$pwCheck['error']].'';
+                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_inputValidation[$pwCheck['error']].'';
             }
             
             //Check that firstname is longer than 2 characters and not numeric.
             $fnameCheck = $validationModule->validateFirstName($_POST['firstname']);
             if(!$fnameCheck['status']){
-                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage[$fnameCheck['error']].'';
+                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_inputValidation[$fnameCheck['error']].'';
             }
             
             //Check that lastname is longer than 2 characters and not numeric.
             $lnameCheck = $validationModule->validateLastName($_POST['lastname']);
             if(!$lnameCheck['status']){
-                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage[$lnameCheck['error']].'';
+                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_inputValidation[$lnameCheck['error']].'';
             }
             
             $unCheck = $validationModule->validateUsername($_POST['username']);
             if(!$unCheck['status']){
-                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage[$unCheck['error']].'';
+                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_inputValidation[$unCheck['error']].'';
             }
             
             $emailCheck = $validationModule->validateEmailAddress($_POST['email'], $_POST['confirmemail']);
             if(!$emailCheck['status']){
-                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage[$emailCheck['error']].'';
+                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_inputValidation[$emailCheck['error']].'';
             }
             
             //If no error is set yet
@@ -217,9 +219,9 @@ class FrontPage extends FrontEndUIs {
             
             //Check for errors in the addUser() function.
             if($add === "email-taken"){
-                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["email-taken"].'';
+                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_inputValidation["email-taken"].'';
             }elseif($add === "username-taken"){
-                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["username-taken"].'';
+                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_inputValidation["username-taken"].'';
             }
             
             if(isset($error)){
