@@ -11,7 +11,7 @@ session_start();
  */
 require_once("configuration.php");
  
-use    Invigle\FrontEndUIs\accountDetails,
+use    Invigle\FrontEndUIs\userProfile,
        Invigle\Language\EN_GB,
        Invigle\User;
 
