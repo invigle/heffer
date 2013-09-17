@@ -4,7 +4,8 @@ namespace Invigle\FrontEndUIs;
 use Invigle\FrontEndUIs,
     Invigle\Language,
     Invigle\User,
-    Invigle\Graph;
+    Invigle\Graph,
+    Invigle\Validation;
 
  
 /**
@@ -54,22 +55,19 @@ class accountDetails extends FrontEndUIs {
     public function userDetails() {
         return '<div class="container">
                     '.$this->changePassword().'
+                    '.$this->setupProfile().'
                 </div>';
     }
     
     public function changePassword() {
         if(isset($_POST['changepass'])){
-            //Form was submitted, lets do some checks...
-            if($_POST['newpw'] !== $_POST['confirmpw']){
-                $error = '<b>'.$this->_language->_accountdetails["error"].'</b> '.$this->_language->_accountdetails["pw-dont-match"].'';
+            //Form was submitted, lets do some checks...            
+            $validation = new Validation();
+            $validatepw = $validation->validatePassword($_POST['newpw'], $_POST['confirmpw']);
+            if(!$validatepw['status']){
+                $error = '<b>'.$this->_language->_accountdetails["error"].'</b> '.$this->_language->_accountdetails[$validatepw['error']].'';
             }
             
-            if(strlen($_POST['newpw']) < "6"){
-                $error = '<b>'.$this->_language->_accountdetails["error"].'</b> '.$this->_language->_accountdetails["pw-too-short"].'';
-            }
-            if(is_numeric($_POST['newpw'])){
-                $error = '<b>'.$this->_language->_accountdetails["error"].'</b> '.$this->_language->_accountdetails["pw-is-numeric"].'';
-            }
             
             $userModule = new User();
             $user = $userModule->userDetails();
@@ -120,6 +118,97 @@ class accountDetails extends FrontEndUIs {
                     </div>
                     <input type="submit" name="changepw" value="'.$this->_language->_accountdetails["changepw"].'">
                 </form>';
+    }
+    
+    public function setupProfile()
+    {
+        if(!isset($error)){
+            $error = '';
+        }
+        
+        $userModule = new User;
+        $user = $userModule->userDetails();
+        
+        $html = ''.$error.'
+                <form method="POST" action="'.$_SERVER['PHP_SELF'].'">
+                    <input type="hidden" name="setprofile" value="true">
+                    <h2>'.$this->_language->_accountdetails["setup-profile"].'</h2>
+                    <div class="row">                           
+                        <div class="col-md-6">
+                            <label for="firstname">'.$this->_language->_accountdetails["firstname"].'</label>
+                            <input type="text" class="form-control col-md-6" id="firstname" name="firstname" value="'.$user['firstname'].'" placeholder="'.$this->_language->_accountdetails["firstname"].'">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="lastname">'.$this->_language->_accountdetails["lastname"].'</label>
+                            <input type="text" class="form-control col-md-6" id="lastname" name="lastname" value="'.$user['lastname'].'" placeholder="'.$this->_language->_accountdetails["lastname"].'">
+                        </div>
+                    </div>
+                    <div class="row">                           
+                        <div class="col-md-6">
+                            <label for="email">'.$this->_language->_accountdetails["emailaddress"].'</label>
+                            <input type="text" class="form-control col-md-6" id="email" name="email" value="'.$user['email'].'" placeholder="'.$this->_language->_accountdetails["emailaddress"].'">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="birthdate">'.$this->_language->_accountdetails["birthdate"].'</label>
+                            <input type="text" class="form-control col-md-6" id="birthdate" name="birthdate" value="'.$user['birthdate'].'" placeholder="'.$this->_language->_accountdetails["birthdate"].'">
+                        </div>
+                    </div>
+                    <div class="row">                           
+                        <div class="col-md-6">
+                            <label for="gender">'.$this->_language->_accountdetails["gender"].'</label>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="radio">
+                                      <label>
+                                          <input ';
+                                          
+        if($user['gender'] === "male"){
+            $html.= " checked ";
+        }                                     
+        $html.= 'type="radio" name="gender" id="gender_male" value="male">
+                                          '.$this->_language->_frontPage["male"].'
+                                      </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="radio">
+                                        <label>
+                                            <input ';
+        if($user['gender'] === "female"){
+            $html.= " checked ";
+        }
+        $html.= 'type="radio" name="gender" id="gender_female" value="female">
+                                            '.$this->_language->_frontPage["female"].'
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">                           
+                        <div class="col-md-6">
+                            <label for="relationshipstatus">'.$this->_language->_accountdetails["relationshipstatus"].'</label>
+                            <input type="text" class="form-control col-md-6" id="relationshipstatus" name="relationshipstatus" value="'.$user['relationshipStatus'].'" placeholder="'.$this->_language->_accountdetails["relationshipstatus"].'">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="sexualpref">'.$this->_language->_accountdetails["sexualpref"].'</label>
+                            <input type="text" class="form-control col-md-6" id="sexualpref" name="sexualpref" value="'.$user['sexualPref'].'" placeholder="'.$this->_language->_accountdetails["sexualpref"].'">
+                        </div>
+                    </div>
+                    <div class="row">                           
+                        <div class="col-md-6">
+                            <label for="location">'.$this->_language->_accountdetails["location"].'</label>
+                            <input type="text" class="form-control col-md-6" id="location" name="location" value="'.$user['location'].'" placeholder="'.$this->_language->_accountdetails["location"].'">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="institution">'.$this->_language->_accountdetails["institution"].'</label>
+                            <input type="text" class="form-control col-md-6" id="institution" name="institution" value="'.$user['institution'].'" placeholder="'.$this->_language->_accountdetails["institution"].'">
+                        </div>
+                    </div>
+                    <input type="submit" name="changepw" value="'.$this->_language->_accountdetails["save-profile"].'">
+                </form>';
+                
+        return $html;
     }
     
     private function renderJSLinks() {
