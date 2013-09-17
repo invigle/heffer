@@ -343,11 +343,29 @@ class User
 		//Add a relationship from follower to action node.
 		$action = $graph->addConnection($follower, $actionId, 'timeline');
 
-		//Update the Users lastaction timestamp.
+		//Update the Users last action timestamp.
 		$this->updateUserTimestamp($follower);
 
-		//TODO: Update follower count of $followee
+		//Update Number of Followers
+        $this->increaseFollowersCount($followee);
 	}
+    
+	public function getNumberOfFollowers()
+	{
+		return $this->_followerCount;
+	}
+    
+   	public function setNumberOfFollowers($count)
+	{
+		$this->_followerCount = $count;
+	}
+
+    
+    public function increaseFollowersCount($uID)
+    {
+        $followers = $uID->getNumberOfFollowers() + 1;
+        $uID->setNumberOfFollowers($followers);
+    }
 
 	/**
 	 * This method takes as inputs a user ID and a group ID and adds a FOLLOWER_OF edge to neo4j.
