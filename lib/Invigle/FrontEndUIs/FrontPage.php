@@ -42,9 +42,6 @@ class FrontPage extends FrontEndUIs {
         echo '<body>';
         echo $this->renderTopNav();
         echo $this->authenticationLayer();
-        //if(isset($_GET['user'])){
-        //    echo $user->showUserProfile();
-        //}
         echo $this->renderJSLinks();
         echo '</body>';
     }
@@ -58,14 +55,7 @@ class FrontPage extends FrontEndUIs {
     private function authenticationLayer()
     {
         if($this->_loggedin){
-            $user = new User();
-            $userInfo = $user->userDetails();
-            
-            return '<div class="container">
-                        <b>'.$this->_language->_frontPage["logged-in-as"].' '.$userInfo['firstname'].' '.$userInfo['lastname'].'</b> (<a href="accountdetails.php">'.$this->_language->_frontPage["my-details"].'</a> | <a href="?logout=true">Logout</a>)<br />
-                        '.$this->_language->_frontPage["followers"].': '.$userInfo['followerCount'].'<br>
-                        '.$this->_language->_frontPage["friends"].': '.$userInfo['friendCount'].'<br />
-                    </div>';
+            return $this->renderUserHomepage();
         }else{
             return '<div class="container">
                         <div class="row">
@@ -79,6 +69,31 @@ class FrontPage extends FrontEndUIs {
                     </div>';
         }
                 
+    }
+    
+    private function renderUserHomepage()
+    {
+        $userModule = new User();
+        $userInfo = $userModule->userDetails();
+        
+        $friendReqHTML = "";
+        $friendRequests = $userModule->userFriendRequests($_SESSION['uid']);
+        if(isset($friendRequests)){
+            foreach($friendRequests as $req){
+                $friendReqHTML.= '<a href="user.php?username='.$req['username'].'">'.$req['firstname'].' '.$req['lastname'].'</a> [<a href="user.php?username='.$req['username'].'&a=acceptfriend">Accept</a>]<br />';
+            }
+        }else{
+            $friendReqHTML = "none";
+        }
+        
+        return '<div class="container">
+                    <b>'.$this->_language->_frontPage["logged-in-as"].' '.$userInfo['firstname'].' '.$userInfo['lastname'].'</b> (<a href="user.php?username='.$userInfo['username'].'">'.$this->_language->_frontPage["my-profile"].'</a> | <a href="accountdetails.php">'.$this->_language->_frontPage["my-details"].'</a> | <a href="?logout=true">Logout</a>)<br />
+                    '.$this->_language->_frontPage["followers"].': '.$userInfo['followerCount'].'<br>
+                    '.$this->_language->_frontPage["friends"].': '.$userInfo['friendCount'].'<br />
+                    <hr>
+                    <b>Friend Requests ('.count($friendRequests).')</b><br />
+                    '.$friendReqHTML.'
+                </div>';
     }
     
     private function loginForm($userInput)
@@ -173,6 +188,7 @@ class FrontPage extends FrontEndUIs {
                             'profilePicID'=>'',
                             'followerCount'=>'0',
                             'friendCount'=>'0',
+                            'privateProfile'=>'no',
                               );
             
             $validationModule = new Validation();

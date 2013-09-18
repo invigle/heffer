@@ -42,7 +42,8 @@ class EN_GB extends Language
             'logged-in-as' => "Logged in as",
             'my-details' => "My Details",
             'followers' => "Followers",
-            'friends' => "Friends",        
+            'friends' => "Friends",
+            'my-profile' => "My Profile",   
         );
         
         $this->_accountdetails = array(
@@ -97,6 +98,15 @@ class EN_GB extends Language
             'follow' => "Follow",
             'addfriend' => "Add Friend",
             'nowfollowing' => "You are now following",
+            'being-followed-by' => "is being followed by",
+            'nobody' => "Nobody",
+            'is-following' => "is following",
+            'already-following' => "Already following",
+            'error-cannot-follow' => "You are not able to follow somebody more than once.",
+            'friend-request-sent' => "Friend request sent successfully.",
+            'you-are-now-friends-with' => "You are now friends with",
+            'already-friends' => "Already Friends",
+            'is-friends-with' => "is friends with",
         );
     }
 }

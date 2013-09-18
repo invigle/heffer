@@ -59,31 +59,110 @@ class userProfile extends FrontEndUIs {
         $graphModule = new Graph();
         
         $val['query'] = "MATCH n:User WHERE n.username='".$username."' RETURN n;";
-		$api = $graphModule->neo4japi('cypher', 'JSONPOST', $val);
+		$api = $graphModule->neo4japi('cypher', 'JSONPOST', $val);       
         
         if(!isset($api['data'][0])){
             return $this->_language->_userProfile['user-not-found'];
         }else{            
+            $html = "";
+            
             $usr = explode("/", $api['data'][0][0]['self']);
             $userId = end($usr);
             $userInfo = $api['data'][0][0]['data'];
             
             if(isset($_GET['a'])){
                 if($_GET['a'] === "follow"){
-                    $userModule->followUser($_SESSION['uid'], $userId);
-                    $html = ''.$this->_language->_userProfile['nowfollowing'].' '.$userInfo['firstname'].' '.$userInfo['lastname'].'.';
+                    if(!$userModule->checkFollowStatus($_SESSION['uid'], $userId)){
+                        $userModule->followUser($_SESSION['uid'], $userId);
+                        $html.= ''.$this->_language->_userProfile['nowfollowing'].' '.$userInfo['firstname'].' '.$userInfo['lastname'].'.';
+                    }else{
+                        $html.= $this->_language->_userProfile['error-cannot-follow'];
+                    }
+                
+                }elseif($_GET['a'] === "befriend"){
+                    $userModule->addFriend($_SESSION['uid'], $userId);
+                    $html.= $this->_language->_userProfile['friend-request-sent'];
+                
+                }elseif($_GET['a'] === "acceptfriend"){
+                    $userModule->acceptFriend($_SESSION['uid'], $userId);
+                    $html.= ''.$this->_language->_userProfile['you-are-now-friends-with'].' '.$userInfo['firstname'].'';
                 }
             }
             
-            $html = '<h1>'.$userInfo['firstname'].' '.$userInfo['lastname'].'</h1>';
+            $html.= '<h1>'.$userInfo['firstname'].' '.$userInfo['lastname'].'</h1>';
             if(!empty($userInfo['relationshipStatus'])){
                 $html.= 'Relationship Status: '.$userInfo['relationshipStatus'].'<br />';
             }
             
-            $html.= '<a href="user.php?username='.$username.'&a=follow">'.$this->_language->_userProfile['follow'].' '.$userInfo['firstname'].'</a> | 
-                     <a href="user.php?username='.$username.'&a=befriend">'.$this->_language->_userProfile['addfriend'].'</a>';
+            if($this->_loggedin){
+                if($userId !== $_SESSION['uid']){
+                    if(!$userModule->checkFollowStatus($_SESSION['uid'], $userId)){
+                        $html.= '<a href="user.php?username='.$username.'&a=follow">'.$this->_language->_userProfile['follow'].' '.$userInfo['firstname'].'</a> | ';
+                    }else{
+                        $html.= ''.$this->_language->_userProfile['already-following'].' | ';
+                    }
+                    if(!$userModule->checkFriendStatus($_SESSION['uid'], $userId)){
+                        $html.= '<a href="user.php?username='.$username.'&a=befriend">'.$this->_language->_userProfile['addfriend'].'</a>';
+                    }else{
+                        $html.= ''.$this->_language->_userProfile['already-friends'].'';
+                    }
+                }
+            }
             
-        
+            //Handle the users followers
+            $followers = $userModule->userFollowersList($userId);
+            $followersHtml = "";
+            if(isset($followers)){
+                foreach($followers as $follower){
+                    $followersHtml.= '<a href="user.php?username='.$follower['username'].'">'.$follower['firstname'].' '.$follower['lastname'].'</a><br />';
+                }
+            }else{
+                $followersHtml.= $this->_language->_userProfile['nobody'];
+            }
+            
+            //Handle the users followees
+            $followees = $userModule->userFollowingList($userId);
+            $followeesHtml = "";
+            if(isset($followees)){
+                foreach($followees as $followee){
+                    $followeesHtml.= '<a href="user.php?username='.$followee['username'].'">'.$followee['firstname'].' '.$followee['lastname'].'</a><br />';
+                }
+            }else{
+                $followeesHtml.= $this->_language->_userProfile['nobody'];
+            }
+            
+            //Handle the users friends list
+            $friends = $userModule->getFriendsList($userId);
+            $friendsHtml = "";
+            if(isset($friends)){
+                foreach($friends as $friend){
+                    $friendsHtml.= '<a href="user.php?username='.$friend['username'].'">'.$friend['firstname'].' '.$friend['lastname'].'</a><br />';
+                }
+            }
+            
+            $html.= '<br /><br />
+                     <div class="row">
+                        <div class="col-md-3">
+                            <b>'.$userInfo['firstname'].' '.$this->_language->_userProfile['being-followed-by'].' ('.count($followers).')</b><br />
+                            '.$followersHtml.'
+                        </div>
+                        <div class="col-md-3">
+                            <b>'.$userInfo['firstname'].' '.$this->_language->_userProfile['is-following'].' ('.count($followees).')</b><br />
+                            '.$followeesHtml.'
+                        </div>
+                     </div>
+                     <br />
+                     <div class="row">
+                        <div class="col-md-3">
+                            <b>'.$userInfo['firstname'].' '.$this->_language->_userProfile['is-friends-with'].' ('.count($friends).')</b><br />
+                            '.$friendsHtml.'
+                        </div>
+                        <div class="col-md-3">
+                            
+                        </div>
+                     </div>';
+            
+
         return $html;
         }
     }
