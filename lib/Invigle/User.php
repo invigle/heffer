@@ -491,21 +491,36 @@ class User
         $graphModule = new Graph();
         $graphModule->deleteConnection($uID1, $uID2, 'friendRequest');
         $graphModule->addConnection($uID1, $uID2, 'friendOf');
+        $graphModule->addConnection($uID2, $uID1, 'friendOf');
         
         //Add an Action node for the action and return the node id.
+        //Add the actionNode from Requester to Destination
 		$user['query'] = "CREATE (n:Action { actionType : \"friendOf\", timestamp : \"" .
 			time() . "\", uid : \"$uID2\" }) RETURN n;";
 		$apiCall = $graphModule->neo4japi('cypher', 'JSONPOST', $user);
-
-		//Get NodeID of Action
+        
+        //Now add it the other way around.
+        $dest['query'] = "CREATE (n:Action { actionType : \"friendOf\", timestamp : \"" .
+			time() . "\", uid : \"$uID1\" }) RETURN n;";
+        $apiCallD = $graphModule->neo4japi('cypher', 'JSONPOST', $dest);
+        
+		//Get NodeID of Action (User -> Friend)
 		$bit = explode("/", $apiCall['data'][0][0]['self']);
 		$actionId = end($bit);
+        
+        //Get NodeID of Action (Friend -> User)
+		$bot = explode("/", $apiCallD['data'][0][0]['self']);
+		$actionIdD = end($bot);
 
 		//Add a relationship from follower to action node.
-		$action = $graphModule->addConnection($uID1, $actionId, 'timeline');
+		$graphModule->addConnection($uID1, $actionId, 'timeline');
+        
+        //Add a relationship from friend->user to action node.
+		$graphModule->addConnection($uID2, $actionIdD, 'timeline');       
 
 		//Update the Users last action timestamp.
 		$this->updateUserTimestamp($uID1);
+        $this->updateUserTimestamp($uID2);
         
         //Update both users friend count.
         $this->increaseFriendsCount($uID1);
@@ -574,7 +589,7 @@ class User
     public function getFriendsList($uID)
     {
         $graphModule = new Graph();
-        $rels = $graphModule->neo4japi('node/'.$uID.'/relationships/all/friendOf', 'GET');
+        $rels = $graphModule->neo4japi('node/'.$uID.'/relationships/in/friendOf', 'GET');
                 
         $i = 0;
         foreach($rels as $follower){
