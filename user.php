@@ -13,6 +13,7 @@ require_once("configuration.php");
  
 use    Invigle\FrontEndUIs\userProfile,
        Invigle\Language\EN_GB,
+       Invigle\Graph,
        Invigle\User;
 
 require_once("bootstrap.php");
