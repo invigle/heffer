@@ -4,6 +4,7 @@ namespace Invigle\FrontEndUIs;
 use Invigle\FrontEndUIs,
     Invigle\Language,
     Invigle\User,
+    Invigle\Timeline,
     Invigle\Graph,
     Invigle\Validation;
 
@@ -57,6 +58,7 @@ class userProfile extends FrontEndUIs {
     {
         $userModule = new User();
         $graphModule = new Graph();
+        $timelineModule = new Timeline();
         
         $val['query'] = "MATCH n:User WHERE n.username='".$username."' RETURN n;";
 		$api = $graphModule->neo4japi('cypher', 'JSONPOST', $val);       
@@ -80,8 +82,12 @@ class userProfile extends FrontEndUIs {
                     }
                 
                 }elseif($_GET['a'] === "befriend"){
-                    $userModule->addFriend($_SESSION['uid'], $userId);
-                    $html.= $this->_language->_userProfile['friend-request-sent'];
+                    if(!$userModule->checkFriendStatus($_SESSION['uid'], $userId)){
+                        $userModule->addFriend($_SESSION['uid'], $userId);
+                        $html.= $this->_language->_userProfile['friend-request-sent'];
+                    }else{
+                        $html.= $this->_language->_userProfile['cannot-befriend'];
+                    }
                 
                 }elseif($_GET['a'] === "acceptfriend"){
                     $userModule->acceptFriend($_SESSION['uid'], $userId);
@@ -140,25 +146,23 @@ class userProfile extends FrontEndUIs {
                 }
             }
             
+            $timeline = $timelineModule->createTimeline($userId);
+            
             $html.= '<br /><br />
-                     <div class="row">
-                        <div class="col-md-3">
-                            <b>'.$userInfo['firstname'].' '.$this->_language->_userProfile['being-followed-by'].' ('.count($followers).')</b><br />
-                            '.$followersHtml.'
-                        </div>
-                        <div class="col-md-3">
-                            <b>'.$userInfo['firstname'].' '.$this->_language->_userProfile['is-following'].' ('.count($followees).')</b><br />
-                            '.$followeesHtml.'
-                        </div>
-                     </div>
-                     <br />
                      <div class="row">
                         <div class="col-md-3">
                             <b>'.$userInfo['firstname'].' '.$this->_language->_userProfile['is-friends-with'].' ('.count($friends).')</b><br />
                             '.$friendsHtml.'
+                            <br /><br />
+                            <b>'.$userInfo['firstname'].' '.$this->_language->_userProfile['being-followed-by'].' ('.count($followers).')</b><br />
+                            '.$followersHtml.'
+                            <br /><br />
+                            <b>'.$userInfo['firstname'].' '.$this->_language->_userProfile['is-following'].' ('.count($followees).')</b><br />
+                            '.$followeesHtml.'
                         </div>
-                        <div class="col-md-3">
-                            
+                        <div class="col-md-9">
+                            <b>'.$this->_language->_timeline['timeline'].'</b><br />
+                            '.$timeline.'
                         </div>
                      </div>';
             

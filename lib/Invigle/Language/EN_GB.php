@@ -107,6 +107,13 @@ class EN_GB extends Language
             'you-are-now-friends-with' => "You are now friends with",
             'already-friends' => "Already Friends",
             'is-friends-with' => "is friends with",
+            'cannot-befriend' => "You are already friends, Cannot continue.",
+        );
+        
+        $this->_timeline = array(
+            'timeline' => "Timeline",
+            'is-friends-with' => "Is now friends with",
+            'started-following' => "Started following",
         );
     }
 }
