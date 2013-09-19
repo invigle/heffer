@@ -5,12 +5,6 @@ namespace Invigle;
 /**
  * The conversation node will be connected to the participants via the conversation edges.
  * The actual message node will have an edge from the conversation node to the message node daisy-chained in a chronological order.
- * Each time a new message is added to a conversation the message order path will be updated by:
- * 1) deleting all incoming and outgoing edges from/to the updated conversation node and other conversation nodes only
- * 2) deleting the old 'latest edge'
- * 3) creating the new 'latest edge' to the conversation node which is the parent of the updated message
- * 4) creating an edge with priority 'latest edge - 1' between the old 'latest conversation node' and the current 'latest conversation node'
- * 5) merging the previous and next conversation nodes along the path where the current 'latest conversation node' has created a 'gap'
  * @access public
  * @author Grant
  */
@@ -23,15 +17,23 @@ class Messaging
 	public $_participants;
 
 	/**
-	 * This will be an array of 3 fields timestamp, message and userID (originator of the message)
+	 * This will be an array of 4 fields timestamp, message, userID (originator of the message) and messageID
 	 */
 	public $_messageArray;
-
+    
+   	/**
+	 * This will be the chain/list of messages in chronological order starting with the latest
+	 */
+	public $_messages;
+    
+    public $_flag;
+    
 	/* The Class Constructor*/
 	public function __construct()
 	{
 		$this->_participants = null;
 		$this->_messageArray = null;
+        $this->_messages = null;
 	}
 
 	public function getParticipants()
@@ -107,10 +109,27 @@ class Messaging
 
 	public function addMessageToConversation($messageID, $convID)
 	{
-		$graph = new Graph();
-		$connectionType = 'PART_OF';
-		$succ = $graph->addConnection($messageID, $convID, $connectionType);
-		return $succ;
+		foreach ($this->_messageArray as $value)
+        {
+            if ($this->_messageArray[3] > $messageID) // When a message ID is higher than other message ID means that the former was a successor of the second
+            {
+                   $flag = 1;
+                   break; 
+            }
+        
+        }
+        if ($flag = 1){
+            break;
+            }
+        else 
+        {
+            $graph = new Graph();
+            $connectionType = 'PART_OF';
+            $graph->deleteConnection($this->_messages[0][3], $convID, $connectionType);
+            $succ = $graph->addConnection($messageID, $convID, $connectionType);
+            $messageID2 = $messageToMessage($messageID, $this->_messages[0][3]);      
+        }
+        
 	}
 
 	public function messageToMessage($messageID, $messageID2)
@@ -130,19 +149,7 @@ class Messaging
             $graph->deleteConnection($value, $convID, $connectionType);
         }
 	}
-/*
-	public function updateConversation($convID)
-	{
-		
-		2) deleting the old 'latest edge'
-		3) creating the new 'latest edge' to the conversation node which is the parent of the updated message
-		4) creating an edge with priority 'latest edge - 1' between the old 'latest conversation node' 
-		and the current 'latest conversation node'
-		5) merging the previous and next conversation nodes along the path where the current 
-		'latest conversation node' has created a 'gap' 
-		
-	}
-*/
+    
 	public function createLatestEdge($convID)
 	{
 		// not yet implemented
