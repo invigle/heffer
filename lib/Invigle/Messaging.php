@@ -25,5 +25,12 @@ class Messaging {
 	 * This will be an array of 3 fields timestamp, message and userID (originator of the message)
 	 */
 	public $_messagesArray;
+    
+   	public function createLatestEdge($conversId) {
+   	    // not yet implemented
+   	    }
+   	public function deleteConversEdges($conversId) {
+   	   // not yet implemented
+   	    }
 }
 ?>
