@@ -17,23 +17,19 @@ class Messaging
 	public $_participants;
 
 	/**
-	 * This will be an array of 4 fields timestamp, message, userID (originator of the message) and messageID
+	 * This will be an array of 4 fields timestamp, message, userID (originator of the message)
 	 */
 	public $_messageArray;
-    
-   	/**
-	 * This will be the chain/list of messages in chronological order starting with the latest
-	 */
-	public $_messages;
-    
-    public $_flag;
-    
+
+	// The ID of the latest message added to the conversation
+	public $latestMsgID;
+
 	/* The Class Constructor*/
 	public function __construct()
 	{
 		$this->_participants = null;
 		$this->_messageArray = null;
-        $this->_messages = null;
+		$this->_messages = null;
 	}
 
 	public function getParticipants()
@@ -107,29 +103,25 @@ class Messaging
 		return $succ;
 	}
 
-	public function addMessageToConversation($messageID, $convID)
+	public function bindMsgToConv($messageID, $convID)
 	{
-		foreach ($this->_messageArray as $value)
-        {
-            if ($this->_messageArray[3] > $messageID) // When a message ID is higher than other message ID means that the former was a successor of the second
-            {
-                   $flag = 1;
-                   break; 
-            }
-        
-        }
-        if ($flag = 1){
-            break;
-            }
-        else 
-        {
-            $graph = new Graph();
-            $connectionType = 'PART_OF';
-            $graph->deleteConnection($this->_messages[0][3], $convID, $connectionType);
-            $succ = $graph->addConnection($messageID, $convID, $connectionType);
-            $messageID2 = $messageToMessage($messageID, $this->_messages[0][3]);      
-        }
-        
+		$graph = new Graph();
+		$connectionType = 'PART_OF';
+		$succ = $graph->addConnection($messageID, $convID, $connectionType);
+		return $succ;
+	}
+
+	public function deleteMsgFromConv($messageID, $convID)
+	{
+		$graph = new Graph();
+		$connectionType = 'PART_OF';
+		$succ = $graph->deleteConnection($messageID, $convID, $connectionType);
+		return $succ;
+	}
+
+	public function getLatestMessage()
+	{
+		return $this->$latestMsgID;
 	}
 
 	public function messageToMessage($messageID, $messageID2)
@@ -140,23 +132,36 @@ class Messaging
 		return $succ;
 	}
 
+	public function addMessageToConversation($messageArray, $convID)
+	{
+		$newMsgId = $this->createMessage($messageArray);
+		$currLatestId = $this->getLatestMessage();
+		$succ = $this->deleteMsgFromConv($currLatestId, $convID);
+		if (!$succ)
+		{
+			throw new Exception('Latest message could not be deleted.');
+		}
+		$succ = $this->bindMsgToConv($newMsgId, $convID);
+		if (!$succ)
+		{
+			throw new Exception('New message could not be added to the conversation.');
+		}
+        $succ = $this->messageToMessage($newMsgId, $currLatestId);
+       	if (!$succ)
+		{
+			throw new Exception('New message could not be connected to the previous latest message.');
+		}
+        $this->latestMsgID = $newMsgId;
+	}
+    
 	public function deleteConversationUsersEdges($uID, $convID)
 	{
 		$graph = new Graph();
-        $connectionType = 'PARTICIPATES_IN';
+		$connectionType = 'PARTICIPATES_IN';
 		foreach ($this->_participants as $value)
-        {
-            $graph->deleteConnection($value, $convID, $connectionType);
-        }
-	}
-    
-	public function createLatestEdge($convID)
-	{
-		// not yet implemented
-	}
-	public function deleteConversEdges($convID)
-	{
-		// not yet implemented
+		{
+			$graph->deleteConnection($value, $convID, $connectionType);
+		}
 	}
 }
 
