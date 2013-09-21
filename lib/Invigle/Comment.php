@@ -26,7 +26,16 @@ class Comment
 	/* The Class Constructor*/
 	public function __construct()
 	{
-		$this->_nodeType = 'Comment';
+		$this->_comment = null;
+        date_default_timezone_set('Europe/London');
+        $this->_date = date('m/d/Y h:i:s a', time());
+        $this->_sID = null;
+        $this->_pHID = null;
+        $this->_eID = null;
+        $this->_gID = null;
+        $this->_uID = null;
+        $this->_pID = null;
+        $this->_nodeType = 'Comment';
 	}
 
 	/**
@@ -52,6 +61,7 @@ class Comment
 		//return the new comment ID.
 		$bit = explode("/", $apiCall['data'][0][0]['self']);
 		$commentId = end($bit);
+        $this->_cID = $commentId;
 		return $commentId;
 	}
 
@@ -86,6 +96,11 @@ class Comment
 		$graph = new Graph();
 		$connectionType = 'POSTED_ON';
 		$succ = $graph->addConnection($commentID, $statusID, $connectionType);
+        if (!$succ)
+			{
+				throw new Exception("New comment on status $statusID could not be added.");
+			}
+        $this->_sID = $statusID;
 		return $succ;
 	}
 
@@ -94,6 +109,10 @@ class Comment
 		$graph = new Graph();
 		$connectionType = 'POSTED_ON';
 		$succ = $graph->deleteConnection($commentID, $statusID, $connectionType);
+        if (!$succ)
+			{
+				throw new Exception("Latest comment on status $statusID could not be deleted.");
+			}
 		return $succ;
 	}
 
@@ -172,15 +191,8 @@ class Comment
 		{
 			$statusID = $nodeID;
 			$succ = $this->deleteCommentStatus($currLatestId, $statusID);
-			if (!$succ)
-			{
-				throw new Exception("Latest comment on status $statusID could not be deleted.");
-			}
-			$succ = $this->addStatusComment($newCommId, $statusID);
-			if (!$succ)
-			{
-				throw new Exception("New comment on status $statusID could not be added.");
-			}
+			
+			
 		}
 		if ($nodeType == 'post')
 		{
