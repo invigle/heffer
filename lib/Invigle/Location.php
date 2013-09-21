@@ -19,6 +19,10 @@ class Location
 	/* The Class Constructor*/
 	public function __construct()
 	{
+		$this->_locID = null;
+		$this->_name = null;
+		$this->_coordinates = null;
+		$this->_postCode = null;
 		$this->_nodeType = 'Location';
 	}
 
@@ -75,8 +79,8 @@ class Location
 	}
 
 	/**********************************************************/
-	/** BEGGINING OF SETERS and GETERS
-    /**********************************************************/
+	/** SETS and GETS
+	 * /**********************************************************/
 	/**
 	 * This method returns the ID of the location.
 	 * @access public
@@ -160,9 +164,6 @@ class Location
 	{
 		$this->_postCode = $postcode;
 	}
-	/**********************************************************/
-	/** END OF SETERS and GETERS
-    /**********************************************************/
 }
 
 ?>
