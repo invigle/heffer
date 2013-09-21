@@ -251,14 +251,17 @@ class Group
 	 * This method takes as inputs a user ID and a group ID and adds a FOLLOWER_OF edge to neo4j.
 	 * @access public
 	 * @param uID, gID
-	 * @return boolean
 	 */
 	public function addGroupFollower($uID, $gID)
 	{
 		$graph = new Graph();
 		$connectionType = 'FOLLOWER_OF';
 		$succ = $graph->addConnection($uID, $gID, $connectionType);
-		return $succ;
+		if (!$succ)
+		{
+			throw new Exception("User $uID could not be added to the followers of $gID.");
+		}
+		$this->_followerCount += 1;
 	}
 
 	public function deleteGroupFollower($uID, $gID)
@@ -266,21 +269,27 @@ class Group
 		$graph = new Graph();
 		$connectionType = 'FOLLOWER_OF';
 		$succ = $graph->deleteConnection($uID, $gID, $connectionType);
-		return $succ;
+		if (!$succ)
+		{
+			throw new Exception("User $uID could not be deleted from the followers of $gID.");
+		}
+		$this->_followerCount -= 1;
 	}
 
 	/**
 	 * This method takes as inputs a user ID and a group ID and adds a ADMIN_OF edge to neo4j.
 	 * @access public
 	 * @param uID, gID
-	 * @return boolean
 	 */
 	public function addGroupAdmin($uID, $gID)
 	{
 		$graph = new Graph();
 		$connectionType = 'ADMIN_OF';
 		$succ = $graph->addConnection($uID, $gID, $connectionType);
-		return $succ;
+		if (!$succ)
+		{
+			throw new Exception("User $uID could not be added as admin of group $gID.");
+		}
 	}
 
 	public function deleteGroupAdmin($uID, $gID)
@@ -288,21 +297,27 @@ class Group
 		$graph = new Graph();
 		$connectionType = 'ADMIN_OF';
 		$succ = $graph->deeleteConnection($uID, $gID, $connectionType);
-		return $succ;
+		if (!$succ)
+		{
+			throw new Exception("User $uID could not be removed as admin of group $gID.");
+		}
 	}
 
 	/**
 	 * This method takes as inputs a user ID and a group ID and adds a MEMBER_OF edge to neo4j.
 	 * @access public
 	 * @param uID, gID
-	 * @return boolean
 	 */
 	public function addGroupMember($uID, $gID)
 	{
 		$graph = new Graph();
 		$connectionType = 'MEMBER_OF';
 		$succ = $graph->addConnection($uID, $gID, $connectionType);
-		return $succ;
+		if (!$succ)
+		{
+			throw new Exception("User $uID could not be added as member of group $gID.");
+		}
+		$this->_memberCount += 1;
 	}
 
 	public function deleteGroupMember($uID, $gID)
@@ -310,7 +325,11 @@ class Group
 		$graph = new Graph();
 		$connectionType = 'MEMBER_OF';
 		$succ = $graph->deleteConnection($uID, $gID, $connectionType);
-		return $succ;
+		if (!$succ)
+		{
+			throw new Exception("User $uID could not be deleted from the members of group $gID.");
+		}
+		$this->_memberCount -= 1;
 	}
 
 	/**
