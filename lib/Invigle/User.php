@@ -225,12 +225,12 @@ class User
 
 		return $api['data'][0][0]['data'];
 	}
-    
-    /**
+
+	/**
 	 * This method will collect users data based on the provided userID
-     * 
-     * @param $userID
-     * @return array
+	 * 
+	 * @param $userID
+	 * @return array
 	 */
 	public function userDetailsById($uID)
 	{
@@ -298,85 +298,94 @@ class User
 
 
 	/*********************************************************
-     * USER-USER RELATED
-     *********************************************************/
-    
-    /**
-     * Check if somebody is already following somebody
-     * 
-     * @params $follower, $followee
-     * @return boolean
-     */
-    public function checkFollowStatus($follower, $followee)
-    {
-        $graphModule = new Graph();
-        $rels = $graphModule->neo4japi('node/'.$follower.'/relationships/out/followerOf', 'GET');
-        foreach($rels as $rel){
-            $en = explode("/", $rel['end']);
-            if(end($en) === $followee){
-                return true;
-                break;
-            }
-        }
-        return false;
-    }
-    
-    /**
-     * List all followers of userid
-     * 
-     * @param $username
-     * @return array
-     */
-    public function userFollowersList($uID)
-    {
-        $graphModule = new Graph();
-        $rels = $graphModule->neo4japi('node/'.$uID.'/relationships/in/followerOf', 'GET');
-                
-        $i = 0;
-        foreach($rels as $follower){
-            $st = explode('/', $follower['start']);
-            $user = $this->userDetailsById(end($st));
-            
-            $rtn[$i]['userid'] = end($st);
-            $rtn[$i]['username'] = $user['username'];
-            $rtn[$i]['firstname'] = $user['firstname'];
-            $rtn[$i]['lastname'] = $user['lastname'];
-        $i++;
-        }
-    
-        if(isset($rtn)){
-            return $rtn;
-        }
-    }
-    
-    /**
-     * List all users being followed by userid
-     * 
-     * @param $username
-     * @return array
-     */
-    public function userFollowingList($uID)
-    {
-        $graphModule = new Graph();
-        $rels = $graphModule->neo4japi('node/'.$uID.'/relationships/out/followerOf', 'GET');
-                
-        $i = 0;
-        foreach($rels as $follower){
-            $st = explode('/', $follower['end']);
-            $user = $this->userDetailsById(end($st));
-            
-            $rtn[$i]['userid'] = end($st);
-            $rtn[$i]['username'] = $user['username'];
-            $rtn[$i]['firstname'] = $user['firstname'];
-            $rtn[$i]['lastname'] = $user['lastname'];
-        $i++;
-        }
-    
-        if(isset($rtn)){
-            return $rtn;
-        }
-    }
-    
+	* USER-USER RELATED
+	*********************************************************/
+
+	/**
+	 * Check if somebody is already following somebody
+	 * 
+	 * @params $follower, $followee
+	 * @return boolean
+	 */
+	public function checkFollowStatus($follower, $followee)
+	{
+		$graphModule = new Graph();
+		$rels = $graphModule->neo4japi('node/' . $follower .
+			'/relationships/out/followerOf', 'GET');
+		foreach ($rels as $rel)
+		{
+			$en = explode("/", $rel['end']);
+			if (end($en) === $followee)
+			{
+				return true;
+				break;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * List all followers of userid
+	 * 
+	 * @param $username
+	 * @return array
+	 */
+	public function userFollowersList($uID)
+	{
+		$graphModule = new Graph();
+		$rels = $graphModule->neo4japi('node/' . $uID . '/relationships/in/followerOf',
+			'GET');
+
+		$i = 0;
+		foreach ($rels as $follower)
+		{
+			$st = explode('/', $follower['start']);
+			$user = $this->userDetailsById(end($st));
+
+			$rtn[$i]['userid'] = end($st);
+			$rtn[$i]['username'] = $user['username'];
+			$rtn[$i]['firstname'] = $user['firstname'];
+			$rtn[$i]['lastname'] = $user['lastname'];
+			$i++;
+		}
+
+		if (isset($rtn))
+		{
+			return $rtn;
+		}
+	}
+
+	/**
+	 * List all users being followed by userid
+	 * 
+	 * @param $username
+	 * @return array
+	 */
+	public function userFollowingList($uID)
+	{
+		$graphModule = new Graph();
+		$rels = $graphModule->neo4japi('node/' . $uID . '/relationships/out/followerOf',
+			'GET');
+
+		$i = 0;
+		foreach ($rels as $follower)
+		{
+			$st = explode('/', $follower['end']);
+			$user = $this->userDetailsById(end($st));
+
+			$rtn[$i]['userid'] = end($st);
+			$rtn[$i]['username'] = $user['username'];
+			$rtn[$i]['firstname'] = $user['firstname'];
+			$rtn[$i]['lastname'] = $user['lastname'];
+			$i++;
+		}
+
+		if (isset($rtn))
+		{
+			return $rtn;
+		}
+	}
+
 	/**
 	 * Follow Somebody
 	 * 
@@ -412,20 +421,20 @@ class User
 
 	public function getNumberOfFollowers($uID)
 	{
-        $graph = new Graph();
+		$graph = new Graph();
 		$api['query'] = "START n=node($uID) RETURN n;";
-        $apiCall = $graph->neo4japi('cypher', 'JSONPOST', $api);
-        $user = $apiCall['data'][0][0]['data'];
-        
-    return $user['followerCount'];
+		$apiCall = $graph->neo4japi('cypher', 'JSONPOST', $api);
+		$user = $apiCall['data'][0][0]['data'];
+
+		return $user['followerCount'];
 	}
 
 	public function setNumberOfFollowers($uID, $count)
 	{
 		$graph = new Graph();
-        $this->_followerCount = $count;
-        $api['query'] = "START n=node($uID) SET n.followerCount='$count' RETURN n;";
-        $apiCall = $graph->neo4japi('cypher', 'JSONPOST', $api);
+		$this->_followerCount = $count;
+		$api['query'] = "START n=node($uID) SET n.followerCount='$count' RETURN n;";
+		$apiCall = $graph->neo4japi('cypher', 'JSONPOST', $api);
 	}
 
 	public function increaseFollowersCount($uID)
@@ -439,35 +448,41 @@ class User
 		// to be implemented
 	}
 
-    /**
-     * Check if somebody is already friends with somebody
-     * 
-     * @params $follower, $followee
-     * @return boolean
-     */
-    public function checkFriendStatus($follower, $followee)
-    {
-        $graphModule = new Graph();
-        $friends = $graphModule->neo4japi('node/'.$follower.'/relationships/all/friendOf', 'GET');
-        foreach($friends as $rel){
-            $en = explode("/", $rel['end']);
-            if(end($en) === $followee){
-                return true;
-                break;
-            }
-        }
-        
-        $frReqs = $graphModule->neo4japi('node/'.$follower.'/relationships/all/friendRequest', 'GET');
-        foreach($frReqs as $rel){
-            $en = explode("/", $rel['end']);
-            if(end($en) === $followee){
-                return true;
-                break;
-            }
-        }
-        
-        return false;
-    }
+	/**
+	 * Check if somebody is already friends with somebody
+	 * 
+	 * @params $follower, $followee
+	 * @return boolean
+	 */
+	public function checkFriendStatus($follower, $followee)
+	{
+		$graphModule = new Graph();
+		$friends = $graphModule->neo4japi('node/' . $follower .
+			'/relationships/all/friendOf', 'GET');
+		foreach ($friends as $rel)
+		{
+			$en = explode("/", $rel['end']);
+			if (end($en) === $followee)
+			{
+				return true;
+				break;
+			}
+		}
+
+		$frReqs = $graphModule->neo4japi('node/' . $follower .
+			'/relationships/all/friendRequest', 'GET');
+		foreach ($frReqs as $rel)
+		{
+			$en = explode("/", $rel['end']);
+			if (end($en) === $followee)
+			{
+				return true;
+				break;
+			}
+		}
+
+		return false;
+	}
 
 	/**
 	 * This method takes as inputs a two users' IDs and adds a FRIEND_OF edge to neo4j.
@@ -478,72 +493,72 @@ class User
 	public function addFriend($uID, $uID2)
 	{
 		$graphModule = new Graph();
-        $action = $graphModule->addConnection($uID, $uID2, 'friendRequest');
+		$action = $graphModule->addConnection($uID, $uID2, 'friendRequest');
 	}
-    
-    /**
-     * This method will accept a friends request.
-     * @params userid, friendid, friendOf.
-     * @return none
-     */
-    public function acceptFriend($uID1, $uID2)
-    {
-        $graphModule = new Graph();
-        $graphModule->deleteConnection($uID1, $uID2, 'friendRequest');
-        $graphModule->addConnection($uID1, $uID2, 'friendOf');
-        $graphModule->addConnection($uID2, $uID1, 'friendOf');
-        
-        //Add an Action node for the action and return the node id.
-        //Add the actionNode from Requester to Destination
+
+	/**
+	 * This method will accept a friends request.
+	 * @params userid, friendid, friendOf.
+	 * @return none
+	 */
+	public function acceptFriend($uID1, $uID2)
+	{
+		$graphModule = new Graph();
+		$graphModule->deleteConnection($uID1, $uID2, 'friendRequest');
+		$graphModule->addConnection($uID1, $uID2, 'friendOf');
+		$graphModule->addConnection($uID2, $uID1, 'friendOf');
+
+		//Add an Action node for the action and return the node id.
+		//Add the actionNode from Requester to Destination
 		$user['query'] = "CREATE (n:Action { actionType : \"friendOf\", timestamp : \"" .
 			time() . "\", uid : \"$uID2\" }) RETURN n;";
 		$apiCall = $graphModule->neo4japi('cypher', 'JSONPOST', $user);
-        
-        //Now add it the other way around.
-        $dest['query'] = "CREATE (n:Action { actionType : \"friendOf\", timestamp : \"" .
+
+		//Now add it the other way around.
+		$dest['query'] = "CREATE (n:Action { actionType : \"friendOf\", timestamp : \"" .
 			time() . "\", uid : \"$uID1\" }) RETURN n;";
-        $apiCallD = $graphModule->neo4japi('cypher', 'JSONPOST', $dest);
-        
+		$apiCallD = $graphModule->neo4japi('cypher', 'JSONPOST', $dest);
+
 		//Get NodeID of Action (User -> Friend)
 		$bit = explode("/", $apiCall['data'][0][0]['self']);
 		$actionId = end($bit);
-        
-        //Get NodeID of Action (Friend -> User)
+
+		//Get NodeID of Action (Friend -> User)
 		$bot = explode("/", $apiCallD['data'][0][0]['self']);
 		$actionIdD = end($bot);
 
 		//Add a relationship from follower to action node.
 		$graphModule->addConnection($uID1, $actionId, 'timeline');
-        
-        //Add a relationship from friend->user to action node.
-		$graphModule->addConnection($uID2, $actionIdD, 'timeline');       
+
+		//Add a relationship from friend->user to action node.
+		$graphModule->addConnection($uID2, $actionIdD, 'timeline');
 
 		//Update the Users last action timestamp.
 		$this->updateUserTimestamp($uID1);
-        $this->updateUserTimestamp($uID2);
-        
-        //Update both users friend count.
-        $this->increaseFriendsCount($uID1);
-        $this->increaseFriendsCount($uID2);
-        
-    }
-    
+		$this->updateUserTimestamp($uID2);
+
+		//Update both users friend count.
+		$this->increaseFriendsCount($uID1);
+		$this->increaseFriendsCount($uID2);
+
+	}
+
 	public function getNumberOfFriends($uID)
 	{
-        $graph = new Graph();
+		$graph = new Graph();
 		$api['query'] = "START n=node($uID) RETURN n;";
-        $apiCall = $graph->neo4japi('cypher', 'JSONPOST', $api);
-        $user = $apiCall['data'][0][0]['data'];
-        
-    return $user['friendCount'];
+		$apiCall = $graph->neo4japi('cypher', 'JSONPOST', $api);
+		$user = $apiCall['data'][0][0]['data'];
+
+		return $user['friendCount'];
 	}
 
 	public function setNumberOfFriends($uID, $count)
 	{
 		$graph = new Graph();
-        $this->_friendCount = $count;
-        $api['query'] = "START n=node($uID) SET n.friendCount='$count' RETURN n;";
-        $apiCall = $graph->neo4japi('cypher', 'JSONPOST', $api);
+		$this->_friendCount = $count;
+		$api['query'] = "START n=node($uID) SET n.friendCount='$count' RETURN n;";
+		$apiCall = $graph->neo4japi('cypher', 'JSONPOST', $api);
 	}
 
 	public function increaseFriendsCount($uID)
@@ -552,301 +567,70 @@ class User
 		$this->setNumberOfFriends($uID, $friends);
 	}
 
-    /**
-     * List all friend requests
-     * 
-     * @param $userid
-     * @return array
-     */
-    public function userFriendRequests($uID)
-    {
-        $graphModule = new Graph();
-        $rels = $graphModule->neo4japi('node/'.$uID.'/relationships/in/friendRequest', 'GET');
-                
-        $i = 0;
-        foreach($rels as $follower){
-            $st = explode('/', $follower['start']);
-            $user = $this->userDetailsById(end($st));
-            
-            $rtn[$i]['userid'] = end($st);
-            $rtn[$i]['username'] = $user['username'];
-            $rtn[$i]['firstname'] = $user['firstname'];
-            $rtn[$i]['lastname'] = $user['lastname'];
-        $i++;
-        }
-    
-        if(isset($rtn)){
-            return $rtn;
-        }
-    }
-    
-    /**
-     * List all friends of user.
-     * 
-     * @param $userid
-     * @return array
-     */
-    public function getFriendsList($uID)
-    {
-        $graphModule = new Graph();
-        $rels = $graphModule->neo4japi('node/'.$uID.'/relationships/in/friendOf', 'GET');
-                
-        $i = 0;
-        foreach($rels as $follower){
-            $st = explode('/', $follower['end']);
-            $user = $this->userDetailsById(end($st));
-            if(end($st) === $uID){
-                $st = explode("/", $follower['start']);
-                $user = $this->userDetailsById(end($st));
-            }
-            $rtn[$i]['userid'] = end($st);
-            $rtn[$i]['username'] = $user['username'];
-            $rtn[$i]['firstname'] = $user['firstname'];
-            $rtn[$i]['lastname'] = $user['lastname'];
-        $i++;
-        }
-    
-        if(isset($rtn)){
-            return $rtn;
-        }
-    }
-
-	/*********************************************************/
-	/** USER-GROUP RELATED
-    /**********************************************************/
-    
-    
 	/**
-	 * This method takes as inputs a user ID and a group ID and adds a FOLLOWER_OF edge to neo4j.
-	 * @access public
-	 * @param uID, gID
-	 * @return boolean
+	 * List all friend requests
+	 * 
+	 * @param $userid
+	 * @return array
 	 */
-	public function addGroupFollower($uID, $gID)
+	public function userFriendRequests($uID)
 	{
-		$graph = new Graph();
-		$connectionType = 'FOLLOWER_OF';
-		$succ = $graph->addConnection($uID, $gID, $connectionType);
-		return $succ;
-	}
+		$graphModule = new Graph();
+		$rels = $graphModule->neo4japi('node/' . $uID .
+			'/relationships/in/friendRequest', 'GET');
 
-	public function deleteGroupFollower($uID, $gID)
-	{
-		$graph = new Graph();
-		$connectionType = 'FOLLOWER_OF';
-		$succ = $graph->deleteConnection($uID, $gID, $connectionType);
-		return $succ;
+		$i = 0;
+		foreach ($rels as $follower)
+		{
+			$st = explode('/', $follower['start']);
+			$user = $this->userDetailsById(end($st));
+
+			$rtn[$i]['userid'] = end($st);
+			$rtn[$i]['username'] = $user['username'];
+			$rtn[$i]['firstname'] = $user['firstname'];
+			$rtn[$i]['lastname'] = $user['lastname'];
+			$i++;
+		}
+
+		if (isset($rtn))
+		{
+			return $rtn;
+		}
 	}
 
 	/**
-	 * This method takes as inputs a user ID and a group ID and adds a ADMIN_OF edge to neo4j.
-	 * @access public
-	 * @param uID, gID
-	 * @return boolean
+	 * List all friends of user.
+	 * 
+	 * @param $userid
+	 * @return array
 	 */
-	public function addGroupAdmin($uID, $gID)
+	public function getFriendsList($uID)
 	{
-		$graph = new Graph();
-		$connectionType = 'ADMIN_OF';
-		$succ = $graph->addConnection($uID, $gID, $connectionType);
-		return $succ;
-	}
+		$graphModule = new Graph();
+		$rels = $graphModule->neo4japi('node/' . $uID . '/relationships/in/friendOf',
+			'GET');
 
-	public function deleteGroupAdmin($uID, $gID)
-	{
-		$graph = new Graph();
-		$connectionType = 'ADMIN_OF';
-		$succ = $graph->deeleteConnection($uID, $gID, $connectionType);
-		return $succ;
-	}
+		$i = 0;
+		foreach ($rels as $follower)
+		{
+			$st = explode('/', $follower['end']);
+			$user = $this->userDetailsById(end($st));
+			if (end($st) === $uID)
+			{
+				$st = explode("/", $follower['start']);
+				$user = $this->userDetailsById(end($st));
+			}
+			$rtn[$i]['userid'] = end($st);
+			$rtn[$i]['username'] = $user['username'];
+			$rtn[$i]['firstname'] = $user['firstname'];
+			$rtn[$i]['lastname'] = $user['lastname'];
+			$i++;
+		}
 
-	/**
-	 * This method takes as inputs a user ID and a group ID and adds a MEMBER_OF edge to neo4j.
-	 * @access public
-	 * @param uID, gID
-	 * @return boolean
-	 */
-	public function addGroupMember($uID, $gID)
-	{
-		$graph = new Graph();
-		$connectionType = 'MEMBER_OF';
-		$succ = $graph->addConnection($uID, $gID, $connectionType);
-		return $succ;
-	}
-
-	public function deleteGroupMember($uID, $gID)
-	{
-		$graph = new Graph();
-		$connectionType = 'MEMBER_OF';
-		$succ = $graph->deleteConnection($uID, $gID, $connectionType);
-		return $succ;
-	}
-
-	/**
-	 * This method takes as inputs a user ID and a group ID and adds a INVITED_TO edge to neo4j.
-	 * @access public
-	 * @param uID, gID
-	 * @return boolean
-	 */
-	public function addUserGroupInvitation($uID, $gID)
-	{
-		$graph = new Graph();
-		$connectionType = 'INVITED_TO';
-		$succ = $graph->addConnection($uID, $gID, $connectionType);
-		return $succ;
-	}
-
-	/*********************************************************/
-	/**********************************************************/
-
-	/*********************************************************/
-	/** USER-EVENT RELATED
-	 * /**********************************************************/
-	/**
-	 * This method takes as inputs a user ID and a event ID and adds a FOLLOWER_OF edge to neo4j.
-	 * @access public
-	 * @param uID, eID
-	 * @return boolean
-	 */
-	public function addEventFollower($uID, $eID)
-	{
-		$graph = new Graph();
-		$connectionType = 'FOLLOWER_OF';
-		$succ = $graph->addConnection($uID, $eID, $connectionType);
-		return $succ;
-	}
-
-	public function deleteEventFollower($uID, $eID)
-	{
-		$graph = new Graph();
-		$connectionType = 'FOLLOWER_OF';
-		$succ = $graph->deleteConnection($uID, $eID, $connectionType);
-		return $succ;
-	}
-
-	/**
-	 * This method takes as inputs a user ID and a event ID and adds a ORGANISER_OF edge to neo4j.
-	 * @access public
-	 * @param uID, eID
-	 * @return boolean
-	 */
-	public function addEventOrganiser($uID, $eID)
-	{
-		$graph = new Graph();
-		$connectionType = 'ORGANISER_OF';
-		$succ = $graph->addConnection($uID, $eID, $connectionType);
-		return $succ;
-	}
-
-	public function deleteEventOrganiser($uID, $eID)
-	{
-		$graph = new Graph();
-		$connectionType = 'ORGANISER_OF';
-		$succ = $graph->deleteConnection($uID, $eID, $connectionType);
-		return $succ;
-	}
-
-	public function changeEventOrganiser($uID, $uID2, $pID)
-	{
-		$graph = new Graph();
-		$succ = $this->deleteEventOrganiser($uID, $pID);
-		if ($succ == 1)
-			$succ2 = $this->addEventOrganiser($uID2, $pID);
-	}
-
-	/**
-	 * This method takes as inputs a user ID and a event ID and adds a ATTENDEE_OF edge to neo4j.
-	 * @access public
-	 * @param uID, eID
-	 * @return boolean
-	 */
-	public function addEventAttendee($uID, $eID)
-	{
-		$graph = new Graph();
-		$connectionType = 'ATTENDEE_OF';
-		$succ = $graph->addConnection($uID, $eID, $connectionType);
-		return $succ;
-	}
-
-	public function deleteEventAttendee($uID, $eID)
-	{
-		$graph = new Graph();
-		$connectionType = 'ATTENDEE_OF';
-		$succ = $graph->deleteConnection($uID, $eID, $connectionType);
-		return $succ;
-	}
-
-	/**
-	 * This method takes as inputs a user ID and an event ID and adds an INVITED_TO edge to neo4j.
-	 * @access public
-	 * @param uID, eID
-	 * @return boolean
-	 */
-	public function addUserEventInvitation($uID, $eID)
-	{
-		$graph = new Graph();
-		$connectionType = 'INVITED_TO';
-		$succ = $graph->addConnection($uID, $eID, $connectionType);
-		return $succ;
-	}
-	/*********************************************************/
-	/**********************************************************/
-
-	/*********************************************************/
-	/** USER-PAGE RELATED
-	 * /**********************************************************/
-	/**
-
-	 * /**
-	 * This method takes as inputs a user ID and a page ID and adds a FOLLOWER_OF edge to neo4j.
-	 * @access public
-	 * @param uID, pID
-	 * @return boolean
-	 */
-	public function addPageFollower($uID, $pID)
-	{
-		$graph = new Graph();
-		$connectionType = 'FOLLOWER_OF';
-		$succ = $graph->addConnection($uID, $pID, $connectionType);
-		return $succ;
-	}
-
-	public function deletePageFollower($uID, $pID)
-	{
-		$graph = new Graph();
-		$connectionType = 'FOLLOWER_OF';
-		$succ = $graph->deleteConnection($uID, $pID, $connectionType);
-		return $succ;
-	}
-
-	/**
-	 * This method takes as inputs a user ID and a page ID and adds a ADMIN_OF edge to neo4j.
-	 * @access public
-	 * @param uID, pID
-	 * @return boolean
-	 */
-	public function addPageAdmin($uID, $pID)
-	{
-		$graph = new Graph();
-		$connectionType = 'ADMIN_OF';
-		$succ = $graph->addConnection($uID, $pID, $connectionType);
-		return $succ;
-	}
-
-	public function deletePageAdmin($uID, $pID)
-	{
-		$graph = new Graph();
-		$connectionType = 'ADMIN_OF';
-		$succ = $graph->deleteConnection($uID, $pID, $connectionType);
-		return $succ;
-	}
-
-	public function changePageAdmin($uID, $uID2, $pID)
-	{
-		$graph = new Graph();
-		$succ = $this->deletePageAdmin($uID, $pID);
-		if ($succ == 1)
-			$succ2 = $this->addPageAdmin($uID2, $pID);
+		if (isset($rtn))
+		{
+			return $rtn;
+		}
 	}
 
 	/**
