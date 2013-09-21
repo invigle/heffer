@@ -108,7 +108,10 @@ class Messaging
 		$graph = new Graph();
 		$connectionType = 'PART_OF';
 		$succ = $graph->addConnection($messageID, $convID, $connectionType);
-		return $succ;
+		if (!$succ)
+		{
+			throw new Exception("New message $messageID could not be added to the conversation $convID.");
+		}
 	}
 
 	public function deleteMsgFromConv($messageID, $convID)
@@ -116,7 +119,10 @@ class Messaging
 		$graph = new Graph();
 		$connectionType = 'PART_OF';
 		$succ = $graph->deleteConnection($messageID, $convID, $connectionType);
-		return $succ;
+		if (!$succ)
+		{
+			throw new Exception("Latest message $messageID on the conversation $convID could not be deleted.");
+		}
 	}
 
 	public function getLatestMessage()
@@ -129,28 +135,19 @@ class Messaging
 		$graph = new Graph();
 		$connectionType = 'NEXT';
 		$succ = $graph->addConnection($messageID, $messageID2, $connectionType);
-		return $succ;
+		if (!$succ)
+		{
+			throw new Exception("New message $messageID could not be connected to the previous latest message $messageID2.");
+		}
 	}
 
 	public function addMessageToConversation($messageArray, $convID)
 	{
 		$newMsgId = $this->createMessage($messageArray);
 		$currLatestId = $this->getLatestMessage();
-		$succ = $this->deleteMsgFromConv($currLatestId, $convID);
-		if (!$succ)
-		{
-			throw new Exception('Latest message could not be deleted.');
-		}
-		$succ = $this->bindMsgToConv($newMsgId, $convID);
-		if (!$succ)
-		{
-			throw new Exception('New message could not be added to the conversation.');
-		}
-		$succ = $this->messageToMessage($newMsgId, $currLatestId);
-		if (!$succ)
-		{
-			throw new Exception('New message could not be connected to the previous latest message.');
-		}
+		$this->deleteMsgFromConv($currLatestId, $convID);
+		$this->bindMsgToConv($newMsgId, $convID);
+		$this->messageToMessage($newMsgId, $currLatestId);
 		$this->_latestMsgID = $newMsgId;
 	}
 
