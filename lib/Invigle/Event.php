@@ -25,7 +25,7 @@ class Event
 	private $_invitedCount;
 	private $_followerCount;
 	private $_eventType;
-	private $_pID;
+    private $_pHID;
 	private $_profilePicID;
 	private $_timestamp;
 	private $_nodeType;
@@ -33,8 +33,176 @@ class Event
 	/* The Class Constructor*/
 	public function __construct()
 	{
+		$this->_name = NULL;
+		$this->_date = NULL;
+        $this->_category = NULL;
+        $this->_description = NULL;
+        $this->_privacy = NULL;
+        $this->_eID = NULL;
+        $this->_institution = NULL;
+        $this->_uID = NULL;
+        $this->_gID = NULL;
+        $this->_isPaid = NULL;
+        $this->_paymentType = NULL;
+        $this->_location = NULL;
+        $this->_attendeeCount = NULL;
+        $this->_invitedCount = NULL;
+        $this->_followerCount = NULL;
+        $this->_eventType = NULL;
+        $this->_pHID = NULL;
+        $this->_profilePicID = NULL;
+        date_default_timezone_set('Europe/London'); 
+		$this->_timestamp = date('m/d/Y h:i:s a', time());;
 		$this->_nodeType = 'Event';
 	}
+
+	/**
+	 * This method takes as input an array with all the information of an event and 
+	 * adds this event to the GD as an 'event node'.
+	 * @access public
+	 * @param eArray
+	 * @return integer
+	 */
+	public function addEvent($eArray)
+	{
+		//Create the new event in neo4j
+		$graph = new Graph();
+		$queryString = "";
+		foreach ($eArray as $key => $value)
+		{
+			$queryString .= "$key : \"$value\", ";
+		}
+		$queryString = substr($queryString, 0, -2);
+		$event['query'] = "CREATE (n:Event {" . $queryString . "}) RETURN n;";
+		$apiCall = $graph->neo4japi('cypher', 'JSONPOST', $event);
+
+		//return the New Event ID.
+		$bit = explode("/", $apiCall['data'][0][0]['self']);
+		$eventId = end($bit);
+        $this->_eID = $eventId;
+		return $eventId;
+	}
+
+	/** Function to delete an event node given an ID.
+	 * @access private
+	 * @param eID
+	 * @return boolean
+	 */
+	public function deleteEvent($eID)
+	{
+		$graph = new Graph();
+		$succ = $graph->deleteNodeByID($eID);
+        $this->_eID = NULL;
+		return $succ;
+	}
+
+	/**
+	 * This method edits some of the properties of an event in the GD by updating the current node in 
+	 * the GD with information provided by the eArray which is the input to the editEvent method
+	 * @access public
+	 * @param eArray
+	 * @return boolean
+	 */
+	public function editEvent($eArray)
+	{
+		$graph = new Graph();
+		$succ = $graph->editNodeProperties($eArray);
+		return $succ;
+	}
+
+	/**
+	 * This method takes as inputs a photo ID, the ID of an event and adds a RELATED_TO edge to neo4j.
+	 * @access public
+	 * @param phID, eID
+	 * @return boolean
+	 */
+	public function addEventPhoto($phID, $eID)
+	{
+		$graph = new Graph();
+		$connectionType = 'RELATED_TO';
+		$succ = $graph->addConnection($phID, $eID, $connectionType);
+        if (!$succ)
+		{
+			throw new Exception("New photo $phID could not be added to event $eID.");
+		}
+        $this->_pHID = $phID;
+	}
+
+	/**
+	 * This method takes as inputs a photo ID, the ID of an event and deletes a RELATED_TO edge from neo4j.
+	 * @access public
+	 * @param phID, eID
+	 * @return boolean
+	 */
+	public function deleteEventPhoto($phID, $eID)
+	{
+		$graph = new Graph();
+		$connectionType = 'RELATED_TO';
+		$succ = $graph->deleteConnection($phID, $eID, $connectionType);
+		if (!$succ)
+		{
+			throw new Exception("Photo $phID could not be deleted from event $phID.");
+		}
+        $this->_phID = NULL;
+	}
+
+	/**
+	 * This method takes as inputs a event ID and a location ID and adds a LOCATED_AT edge to neo4j.
+	 * @access public
+	 * @param eID, locID
+	 * @return boolean
+	 */
+	public function addEventLocation($eID, $locID)
+	{
+		$graph = new Graph();
+		$connectionType = 'LOCATED_AT';
+		$succ = $graph->addConnection($eID, $locID, $connectionType);
+		if (!$succ)
+		{
+			throw new Exception("Location $locID could not be added to event $eID.");
+		}
+        $this->_location = $locID;
+	}
+
+	/**
+	 * This method takes as inputs an event ID and a location ID and deletes a LOCATED_AT edge from neo4j.
+	 * @access public
+	 * @param eID, locID
+	 * @return boolean
+	 */
+	public function deleteEventLocation($eID, $locID)
+	{
+		$graph = new Graph();
+		$connectionType = 'LOCATED_AT';
+		$succ = $graph->deleteConnection($eID, $locID, $connectionType);
+		if (!$succ)
+		{
+			throw new Exception("Location $locID could not be deleted from event $phID.");
+		}
+        $this->_location = NULL; 
+	}
+
+	/**
+	 * This method takes as input the date of the event and returns the forecasted weather for that day.
+	 * @access public
+	 * @param aDate
+	 */
+	public function getWeather($aDate)
+	{
+		// Not yet implemented
+	}
+
+	/**
+	 * This method gets the user current location and the location of the event and return a route to the event from the current location by using an google maps API.
+	 * @access public
+	 * @param aFromLocation
+	 * @param aToLocation
+	 */
+	public function getDirections($aFromLocation, $aToLocation)
+	{
+		// Not yet implemented
+	}
+
 
 	/**********************************************************/
 	/** BEGGINING OF SETERS and GETERS *****************************/
@@ -440,135 +608,6 @@ class Event
 	/**********************************************************/
 	/** END OF SETERS and GETERS *****************************/
 	/**********************************************************/
-
-	/**
-	 * This method takes as input an array with all the information of an event and 
-	 * adds this event to the GD as an 'event node'.
-	 * @access public
-	 * @param eArray
-	 * @return integer
-	 */
-	public function addEvent($eArray)
-	{
-		//Create the new event in neo4j
-		$graph = new Graph();
-		$queryString = "";
-		foreach ($eArray as $key => $value)
-		{
-			$queryString .= "$key : \"$value\", ";
-		}
-		$queryString = substr($queryString, 0, -2);
-		$event['query'] = "CREATE (n:Event {" . $queryString . "}) RETURN n;";
-		$apiCall = $graph->neo4japi('cypher', 'JSONPOST', $event);
-
-		//return the New Event ID.
-		$bit = explode("/", $apiCall['data'][0][0]['self']);
-		$eventId = end($bit);
-		return $eventId;
-	}
-
-	/** Function to delete an event node given an ID.
-	 * @access private
-	 * @param eID
-	 * @return boolean
-	 */
-	public function deleteEvent($eID)
-	{
-		$graph = new Graph();
-		$succ = $graph->deleteNodeByID($eID);
-		return $succ;
-	}
-
-	/**
-	 * This method edits some of the properties of an event in the GD by updating the current node in 
-	 * the GD with information provided by the eArray which is the input to the editEvent method
-	 * @access public
-	 * @param eArray
-	 * @return boolean
-	 */
-	public function editEvent($eArray)
-	{
-		$graph = new Graph();
-		$succ = $graph->editNodeProperties($eArray);
-		return $succ;
-	}
-
-	/**
-	 * This method takes as inputs a photo ID, the ID of an event and adds a RELATED_TO edge to neo4j.
-	 * @access public
-	 * @param phID, eID
-	 * @return boolean
-	 */
-	public function addEventPhoto($phID, $eID)
-	{
-		$graph = new Graph();
-		$connectionType = 'RELATED_TO';
-		$succ = $graph->addConnection($phID, $eID, $connectionType);
-		return $succ;
-	}
-
-	/**
-	 * This method takes as inputs a photo ID, the ID of an event and deletes a RELATED_TO edge from neo4j.
-	 * @access public
-	 * @param phID, eID
-	 * @return boolean
-	 */
-	public function deleteEventPhoto($phID, $eID)
-	{
-		$graph = new Graph();
-		$connectionType = 'RELATED_TO';
-		$succ = $graph->deleteConnection($phID, $eID, $connectionType);
-		return $succ;
-	}
-
-	/**
-	 * This method takes as inputs a event ID and a location ID and adds a LOCATED_AT edge to neo4j.
-	 * @access public
-	 * @param eID, locID
-	 * @return boolean
-	 */
-	public function addEventLocation($eID, $locID)
-	{
-		$graph = new Graph();
-		$connectionType = 'LOCATED_AT';
-		$succ = $graph->addConnection($eID, $locID, $connectionType);
-		return $succ;
-	}
-
-	/**
-	 * This method takes as inputs an event ID and a location ID and deletes a LOCATED_AT edge from neo4j.
-	 * @access public
-	 * @param eID, locID
-	 * @return boolean
-	 */
-	public function deleteEventLocation($eID, $locID)
-	{
-		$graph = new Graph();
-		$connectionType = 'LOCATED_AT';
-		$succ = $graph->deleteConnection($eID, $locID, $connectionType);
-		return $succ;
-	}
-
-	/**
-	 * This method takes as input the date of the event and returns the forecasted weather for that day.
-	 * @access public
-	 * @param aDate
-	 */
-	public function getWeather($aDate)
-	{
-		// Not yet implemented
-	}
-
-	/**
-	 * This method gets the user current location and the location of the event and return a route to the event from the current location by using an google maps API.
-	 * @access public
-	 * @param aFromLocation
-	 * @param aToLocation
-	 */
-	public function getDirections($aFromLocation, $aToLocation)
-	{
-		// Not yet implemented
-	}
 }
 
 ?>
