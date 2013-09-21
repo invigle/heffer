@@ -20,7 +20,10 @@ class Comment
 	private $_pID;
 	private $_nodeType;
 
-/* The Class Constructor*/
+	// The ID of the latest comment added to the post/photo/status
+	public $_latestCommID;
+
+	/* The Class Constructor*/
 	public function __construct()
 	{
 		$this->_nodeType = 'Comment';
@@ -77,30 +80,59 @@ class Comment
 		$succEdit = $graph->editNodeProperties($cArray);
 		return $succEdit;
 	}
-	
-    public function addCommentStatus($commentID, $statusID)
+
+	public function addCommentStatus($commentID, $statusID)
 	{
 		$graph = new Graph();
 		$connectionType = 'POSTED_ON';
-        //$statusID = getStatusId($statusParams);
 		$succ = $graph->addConnection($commentID, $statusID, $connectionType);
 		return $succ;
 	}
-   
-    public function deleteCommentStatus($commentID, $statusID)
+
+	public function deleteCommentStatus($commentID, $statusID)
 	{
 		$graph = new Graph();
 		$connectionType = 'POSTED_ON';
-        //$statusID = getStatusId($statusParams);
 		$succ = $graph->deleteConnection($commentID, $statusID, $connectionType);
 		return $succ;
 	}
-	
-    public function connectComments($commentID, $commentID2)
+
+	public function addCommentPost($commentID, $postID)
+	{
+		$graph = new Graph();
+		$connectionType = 'POSTED_ON';
+		$succ = $graph->addConnection($commentID, $postID, $connectionType);
+		return $succ;
+	}
+
+	public function deleteCommentPost($commentID, $postID)
+	{
+		$graph = new Graph();
+		$connectionType = 'POSTED_ON';
+		$succ = $graph->deleteConnection($commentID, $postID, $connectionType);
+		return $succ;
+	}
+
+	public function addPhotoComment($commentID, $photoID)
+	{
+		$graph = new Graph();
+		$connectionType = 'POSTED_ON';
+		$succ = $graph->addConnection($commentID, $photoID, $connectionType);
+		return $succ;
+	}
+
+	public function deletePhotoComment($commentID, $photoID)
+	{
+		$graph = new Graph();
+		$connectionType = 'POSTED_ON';
+		$succ = $graph->deleteConnection($commentID, $photoID, $connectionType);
+		return $succ;
+	}
+
+	public function connectComments($commentID, $commentID2)
 	{
 		$graph = new Graph();
 		$connectionType = 'NEXT';
-        //$commentID2 = getCommentId($commentParams);
 		$succ = $graph->addConnection($commentID, $commentID2, $connectionType);
 		return $succ;
 	}
@@ -109,45 +141,67 @@ class Comment
 	{
 		$graph = new Graph();
 		$connectionType = 'NEXT';
-        //$commentID2 = getCommentId($commentParams);
 		$succ = $graph->deleteConnection($commentID, $commentID2, $connectionType);
 		return $succ;
 	}
-     
-    public function addCommentPost($commentID, $postID)
+
+	public function getLatestComment()
 	{
-		$graph = new Graph();
-		$connectionType = 'POSTED_ON';
-        //$postID = getPostId($postParams);
-		$succ = $graph->addConnection($commentID, $postID, $connectionType);
-		return $succ;
-	}
-    
-    public function deleteCommentPost($commentID, $postID)
-	{
-		$graph = new Graph();
-		$connectionType = 'POSTED_ON';
-        //$postID = getPostId($postParams);
-		$succ = $graph->deleteConnection($commentID, $postID, $connectionType);
-		return $succ;
-	}
-    
-    public function addPhotoComment($commentID, $photoID)
-	{
-		$graph = new Graph();
-		$connectionType = 'POSTED_ON';
-        //$photoID = getPhotoId($postParams);
-		$succ = $graph->addConnection($commentID, $photoID, $connectionType);
-		return $succ;
+		return $this->_latestCommID;
 	}
 
-    public function deletePhotoComment($commentID, $postParams)
+	public function updateLatestComment($cArray, $commentID, $nodeID, $nodeType)
 	{
-		$graph = new Graph();
-		$connectionType = 'POSTED_ON';
-        $photoID = getPhotoId($postParams);
-		$succ = $graph->deleteConnection($commentID, $photoID, $connectionType);
-		return $succ;
+		$newCommId = $this->createComment($cArray);
+		$currLatestId = $this->getLatestComment();
+		if ($nodeType == 'photo')
+		{
+			$photoID = $nodeID;
+			$succ = $this->deletePhotoComment($currLatestId, $photoID);
+			if (!$succ)
+			{
+				throw new Exception("Latest comment on photo $photoID could not be deleted.");
+			}
+			$succ = $this->addPhotoComment($newCommId, $photoID);
+			if (!$succ)
+			{
+				throw new Exception("New comment on photo $photoID could not be added.");
+			}
+		}
+		if ($nodeType == 'status')
+		{
+			$statusID = $nodeID;
+			$succ = $this->deleteCommentStatus($currLatestId, $statusID);
+			if (!$succ)
+			{
+				throw new Exception("Latest comment on status $statusID could not be deleted.");
+			}
+			$succ = $this->addStatusComment($newCommId, $statusID);
+			if (!$succ)
+			{
+				throw new Exception("New comment on status $statusID could not be added.");
+			}
+		}
+		if ($nodeType == 'post')
+		{
+			$postID = $nodeID;
+			$succ = $this->deleteCommentPost($currLatestId, $postID);
+			if (!$succ)
+			{
+				throw new Exception("Latest comment on post $postID could not be deleted.");
+			}
+			$succ = $this->addPostComment($newCommId, $postID);
+			if (!$succ)
+			{
+				throw new Exception("New comment on post $postID could not be added.");
+			}
+		}
+		$succ = $this->connectComments($newCommId, $currLatestId);
+		if (!$succ)
+		{
+			throw new Exception("New comment $newCommId could not be connected to the previous latest message $currentId.");
+		}
+		$this->_latestCommID = $newCommId;
 	}
 }
 
