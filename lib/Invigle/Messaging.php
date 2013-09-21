@@ -22,7 +22,7 @@ class Messaging
 	public $_messageArray;
 
 	// The ID of the latest message added to the conversation
-	public $latestMsgID;
+	public $_latestMsgID;
 
 	/* The Class Constructor*/
 	public function __construct()
@@ -121,7 +121,7 @@ class Messaging
 
 	public function getLatestMessage()
 	{
-		return $this->$latestMsgID;
+		return $this->$_latestMsgID;
 	}
 
 	public function messageToMessage($messageID, $messageID2)
@@ -146,14 +146,14 @@ class Messaging
 		{
 			throw new Exception('New message could not be added to the conversation.');
 		}
-        $succ = $this->messageToMessage($newMsgId, $currLatestId);
-       	if (!$succ)
+		$succ = $this->messageToMessage($newMsgId, $currLatestId);
+		if (!$succ)
 		{
 			throw new Exception('New message could not be connected to the previous latest message.');
 		}
-        $this->latestMsgID = $newMsgId;
+		$this->_latestMsgID = $newMsgId;
 	}
-    
+
 	public function deleteConversationUsersEdges($uID, $convID)
 	{
 		$graph = new Graph();
