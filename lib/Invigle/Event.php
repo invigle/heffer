@@ -14,10 +14,7 @@ class Event
 	private $_category;
 	private $_description;
 	private $_privacy;
-	private $_eID;
 	private $_institution;
-	private $_uID;
-	private $_gID;
 	private $_isPaid;
 	private $_paymentType;
 	private $_location;
@@ -25,35 +22,39 @@ class Event
 	private $_invitedCount;
 	private $_followerCount;
 	private $_eventType;
-    private $_pHID;
+	private $_pHID;
 	private $_profilePicID;
 	private $_timestamp;
 	private $_nodeType;
+	private $_eID;
+	private $_uID;
+	private $_gID;
 
 	/* The Class Constructor*/
 	public function __construct()
 	{
-		$this->_name = NULL;
-		$this->_date = NULL;
-        $this->_category = NULL;
-        $this->_description = NULL;
-        $this->_privacy = NULL;
-        $this->_eID = NULL;
-        $this->_institution = NULL;
-        $this->_uID = NULL;
-        $this->_gID = NULL;
-        $this->_isPaid = NULL;
-        $this->_paymentType = NULL;
-        $this->_location = NULL;
-        $this->_attendeeCount = NULL;
-        $this->_invitedCount = NULL;
-        $this->_followerCount = NULL;
-        $this->_eventType = NULL;
-        $this->_pHID = NULL;
-        $this->_profilePicID = NULL;
-        date_default_timezone_set('Europe/London'); 
-		$this->_timestamp = date('m/d/Y h:i:s a', time());;
+		$this->_name = null;
+		$this->_date = null;
+		$this->_category = null;
+		$this->_description = null;
+		$this->_privacy = null;
+		$this->_institution = null;
+		$this->_isPaid = null;
+		$this->_paymentType = null;
+		$this->_location = null;
+		$this->_attendeeCount = null;
+		$this->_invitedCount = null;
+		$this->_followerCount = null;
+		$this->_eventType = null;
+		$this->_pHID = null;
+		$this->_profilePicID = null;
+		date_default_timezone_set('Europe/London');
+		$this->_timestamp = date('m/d/Y h:i:s a', time());
+		;
 		$this->_nodeType = 'Event';
+		$this->_eID = null;
+		$this->_uID = null;
+		$this->_gID = null;
 	}
 
 	/**
@@ -79,21 +80,23 @@ class Event
 		//return the New Event ID.
 		$bit = explode("/", $apiCall['data'][0][0]['self']);
 		$eventId = end($bit);
-        $this->_eID = $eventId;
+		$this->_eID = $eventId;
 		return $eventId;
 	}
 
 	/** Function to delete an event node given an ID.
 	 * @access private
 	 * @param eID
-	 * @return boolean
 	 */
 	public function deleteEvent($eID)
 	{
 		$graph = new Graph();
 		$succ = $graph->deleteNodeByID($eID);
-        $this->_eID = NULL;
-		return $succ;
+		if (!$succ)
+		{
+			throw new Exception("Event $eID could not be deleted.");
+		}
+		$this->_eID = null;
 	}
 
 	/**
@@ -114,25 +117,23 @@ class Event
 	 * This method takes as inputs a photo ID, the ID of an event and adds a RELATED_TO edge to neo4j.
 	 * @access public
 	 * @param phID, eID
-	 * @return boolean
 	 */
 	public function addEventPhoto($phID, $eID)
 	{
 		$graph = new Graph();
 		$connectionType = 'RELATED_TO';
 		$succ = $graph->addConnection($phID, $eID, $connectionType);
-        if (!$succ)
+		if (!$succ)
 		{
 			throw new Exception("New photo $phID could not be added to event $eID.");
 		}
-        $this->_pHID = $phID;
+		$this->_pHID = $phID;
 	}
 
 	/**
 	 * This method takes as inputs a photo ID, the ID of an event and deletes a RELATED_TO edge from neo4j.
 	 * @access public
 	 * @param phID, eID
-	 * @return boolean
 	 */
 	public function deleteEventPhoto($phID, $eID)
 	{
@@ -143,14 +144,13 @@ class Event
 		{
 			throw new Exception("Photo $phID could not be deleted from event $phID.");
 		}
-        $this->_phID = NULL;
+		$this->_phID = null;
 	}
 
 	/**
 	 * This method takes as inputs a event ID and a location ID and adds a LOCATED_AT edge to neo4j.
 	 * @access public
 	 * @param eID, locID
-	 * @return boolean
 	 */
 	public function addEventLocation($eID, $locID)
 	{
@@ -161,14 +161,13 @@ class Event
 		{
 			throw new Exception("Location $locID could not be added to event $eID.");
 		}
-        $this->_location = $locID;
+		$this->_location = $locID;
 	}
 
 	/**
 	 * This method takes as inputs an event ID and a location ID and deletes a LOCATED_AT edge from neo4j.
 	 * @access public
 	 * @param eID, locID
-	 * @return boolean
 	 */
 	public function deleteEventLocation($eID, $locID)
 	{
@@ -179,7 +178,7 @@ class Event
 		{
 			throw new Exception("Location $locID could not be deleted from event $phID.");
 		}
-        $this->_location = NULL; 
+		$this->_location = null;
 	}
 
 	/**
@@ -203,9 +202,96 @@ class Event
 		// Not yet implemented
 	}
 
+	/**
+	 * This method takes as inputs a user ID and a event ID and adds a FOLLOWER_OF edge to neo4j.
+	 * @access public
+	 * @param uID, eID
+	 * @return boolean
+	 */
+	public function addEventFollower($uID, $eID)
+	{
+		$graph = new Graph();
+		$connectionType = 'FOLLOWER_OF';
+		$succ = $graph->addConnection($uID, $eID, $connectionType);
+		return $succ;
+	}
+
+	public function deleteEventFollower($uID, $eID)
+	{
+		$graph = new Graph();
+		$connectionType = 'FOLLOWER_OF';
+		$succ = $graph->deleteConnection($uID, $eID, $connectionType);
+		return $succ;
+	}
+
+	/**
+	 * This method takes as inputs a user ID and a event ID and adds a ORGANISER_OF edge to neo4j.
+	 * @access public
+	 * @param uID, eID
+	 * @return boolean
+	 */
+	public function addEventOrganiser($uID, $eID)
+	{
+		$graph = new Graph();
+		$connectionType = 'ORGANISER_OF';
+		$succ = $graph->addConnection($uID, $eID, $connectionType);
+		return $succ;
+	}
+
+	public function deleteEventOrganiser($uID, $eID)
+	{
+		$graph = new Graph();
+		$connectionType = 'ORGANISER_OF';
+		$succ = $graph->deleteConnection($uID, $eID, $connectionType);
+		return $succ;
+	}
+
+	public function changeEventOrganiser($uID, $uID2, $pID)
+	{
+		$graph = new Graph();
+		$succ = $this->deleteEventOrganiser($uID, $pID);
+		if ($succ == 1)
+			$succ2 = $this->addEventOrganiser($uID2, $pID);
+	}
+
+	/**
+	 * This method takes as inputs a user ID and a event ID and adds a ATTENDEE_OF edge to neo4j.
+	 * @access public
+	 * @param uID, eID
+	 * @return boolean
+	 */
+	public function addEventAttendee($uID, $eID)
+	{
+		$graph = new Graph();
+		$connectionType = 'ATTENDEE_OF';
+		$succ = $graph->addConnection($uID, $eID, $connectionType);
+		return $succ;
+	}
+
+	public function deleteEventAttendee($uID, $eID)
+	{
+		$graph = new Graph();
+		$connectionType = 'ATTENDEE_OF';
+		$succ = $graph->deleteConnection($uID, $eID, $connectionType);
+		return $succ;
+	}
+
+	/**
+	 * This method takes as inputs a user ID and an event ID and adds an INVITED_TO edge to neo4j.
+	 * @access public
+	 * @param uID, eID
+	 * @return boolean
+	 */
+	public function addUserEventInvitation($uID, $eID)
+	{
+		$graph = new Graph();
+		$connectionType = 'INVITED_TO';
+		$succ = $graph->addConnection($uID, $eID, $connectionType);
+		return $succ;
+	}
 
 	/**********************************************************/
-	/** BEGGINING OF SETERS and GETERS *****************************/
+	/** SETS and GETS *****************************/
 	/**********************************************************/
 	/**
 	 * This method returns the name of the event.
@@ -604,10 +690,6 @@ class Event
 	{
 		$this->_followerCount = $count;
 	}
-
-	/**********************************************************/
-	/** END OF SETERS and GETERS *****************************/
-	/**********************************************************/
 }
 
 ?>

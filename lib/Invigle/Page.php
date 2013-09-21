@@ -19,9 +19,9 @@ class Page
 	public $_followerCount;
 	public $_pageType;
 	public $_profilePicID;
-    private $_nodeType;
-    
-    public function __construct()
+	private $_nodeType;
+
+	public function __construct()
 	{
 		$this->_nodeType = 'Page';
 	}
@@ -184,7 +184,63 @@ class Page
 	{
 		// Not yet implemented
 	}
+    
+    * /**
+	 * This method takes as inputs a user ID and a page ID and adds a FOLLOWER_OF edge to neo4j.
+	 * @access public
+	 * @param uID, pID
+	 * @return boolean
+	 */
+	public function addPageFollower($uID, $pID)
+	{
+		$graph = new Graph();
+		$connectionType = 'FOLLOWER_OF';
+		$succ = $graph->addConnection($uID, $pID, $connectionType);
+		return $succ;
+	}
 
+	public function deletePageFollower($uID, $pID)
+	{
+		$graph = new Graph();
+		$connectionType = 'FOLLOWER_OF';
+		$succ = $graph->deleteConnection($uID, $pID, $connectionType);
+		return $succ;
+	}
+
+	/**
+	 * This method takes as inputs a user ID and a page ID and adds a ADMIN_OF edge to neo4j.
+	 * @access public
+	 * @param uID, pID
+	 * @return boolean
+	 */
+	public function addPageAdmin($uID, $pID)
+	{
+		$graph = new Graph();
+		$connectionType = 'ADMIN_OF';
+		$succ = $graph->addConnection($uID, $pID, $connectionType);
+		return $succ;
+	}
+
+	public function deletePageAdmin($uID, $pID)
+	{
+		$graph = new Graph();
+		$connectionType = 'ADMIN_OF';
+		$succ = $graph->deleteConnection($uID, $pID, $connectionType);
+		return $succ;
+	}
+
+	public function changePageAdmin($uID, $uID2, $pID)
+	{
+		$graph = new Graph();
+		$succ = $this->deletePageAdmin($uID, $pID);
+		if ($succ == 1)
+			$succ2 = $this->addPageAdmin($uID2, $pID);
+	}
+
+
+	/**********************************************************/
+	/** SETS and GETS *****************************/
+	/**********************************************************/
 	/**
 	 * This method returns the name of the page.
 	 * @access public
