@@ -26,16 +26,16 @@ class Comment
 	/* The Class Constructor*/
 	public function __construct()
 	{
-		$this->_comment = null;
-        date_default_timezone_set('Europe/London');
-        $this->_date = date('m/d/Y h:i:s a', time());
-        $this->_sID = null;
-        $this->_pHID = null;
-        $this->_eID = null;
-        $this->_gID = null;
-        $this->_uID = null;
-        $this->_pID = null;
-        $this->_nodeType = 'Comment';
+		$this->_comment = NULL;
+		date_default_timezone_set('Europe/London');
+		$this->_date = date('m/d/Y h:i:s a', time());
+		$this->_sID = NULL;
+		$this->_pHID = NULL;
+		$this->_eID = NULL;
+		$this->_gID = NULL;
+		$this->_uID = NULL;
+		$this->_pID = NULL;
+		$this->_nodeType = 'Comment';
 	}
 
 	/**
@@ -61,7 +61,7 @@ class Comment
 		//return the new comment ID.
 		$bit = explode("/", $apiCall['data'][0][0]['self']);
 		$commentId = end($bit);
-        $this->_cID = $commentId;
+		$this->_cID = $commentId;
 		return $commentId;
 	}
 
@@ -74,7 +74,11 @@ class Comment
 	{
 		$graph = new Graph();
 		$succDelete = $graph->deleteNodeByID($cID);
-		return $succDelete;
+        if (!$succDelete)
+		{
+			throw new Exception("Comment $cID could not be deleted.");
+		}
+        $this->_cID = NULL;   
 	}
 
 	/**
@@ -88,7 +92,10 @@ class Comment
 	{
 		$graph = new Graph();
 		$succEdit = $graph->editNodeProperties($cArray);
-		return $succEdit;
+        if (!$succEdit)
+		{
+			throw new Exception("Comment could not be edited.");
+		}
 	}
 
 	public function addCommentStatus($commentID, $statusID)
@@ -96,12 +103,11 @@ class Comment
 		$graph = new Graph();
 		$connectionType = 'POSTED_ON';
 		$succ = $graph->addConnection($commentID, $statusID, $connectionType);
-        if (!$succ)
-			{
-				throw new Exception("New comment on status $statusID could not be added.");
-			}
-        $this->_sID = $statusID;
-		return $succ;
+		if (!$succ)
+		{
+			throw new Exception("New comment on status $statusID could not be added.");
+		}
+		$this->_sID = $statusID;
 	}
 
 	public function deleteCommentStatus($commentID, $statusID)
@@ -109,11 +115,11 @@ class Comment
 		$graph = new Graph();
 		$connectionType = 'POSTED_ON';
 		$succ = $graph->deleteConnection($commentID, $statusID, $connectionType);
-        if (!$succ)
-			{
-				throw new Exception("Latest comment on status $statusID could not be deleted.");
-			}
-		return $succ;
+		if (!$succ)
+		{
+			throw new Exception("Latest comment on status $statusID could not be deleted.");
+		}
+        $this->_sID = NULL;
 	}
 
 	public function addCommentPost($commentID, $postID)
@@ -121,7 +127,11 @@ class Comment
 		$graph = new Graph();
 		$connectionType = 'POSTED_ON';
 		$succ = $graph->addConnection($commentID, $postID, $connectionType);
-		return $succ;
+		if (!$succ)
+		{
+			throw new Exception("New comment on post $postID could not be added.");
+		}
+		$this->_pID = $postID;
 	}
 
 	public function deleteCommentPost($commentID, $postID)
@@ -129,7 +139,11 @@ class Comment
 		$graph = new Graph();
 		$connectionType = 'POSTED_ON';
 		$succ = $graph->deleteConnection($commentID, $postID, $connectionType);
-		return $succ;
+		if (!$succ)
+		{
+			throw new Exception("Latest comment on post $postID could not be deleted.");
+		}
+		$this->_pID = NULL;
 	}
 
 	public function addPhotoComment($commentID, $photoID)
@@ -137,7 +151,11 @@ class Comment
 		$graph = new Graph();
 		$connectionType = 'POSTED_ON';
 		$succ = $graph->addConnection($commentID, $photoID, $connectionType);
-		return $succ;
+		if (!$succ)
+		{
+			throw new Exception("New comment on photo $photoID could not be added.");
+		}
+        $this->_pHID = $photoID;
 	}
 
 	public function deletePhotoComment($commentID, $photoID)
@@ -145,7 +163,11 @@ class Comment
 		$graph = new Graph();
 		$connectionType = 'POSTED_ON';
 		$succ = $graph->deleteConnection($commentID, $photoID, $connectionType);
-		return $succ;
+		if (!$succ)
+		{
+			throw new Exception("Latest comment on photo $photoID could not be deleted.");
+		}
+		$this->_pHID = NULL;
 	}
 
 	public function connectComments($commentID, $commentID2)
@@ -153,7 +175,10 @@ class Comment
 		$graph = new Graph();
 		$connectionType = 'NEXT';
 		$succ = $graph->addConnection($commentID, $commentID2, $connectionType);
-		return $succ;
+        if (!$succ)
+		{
+			throw new Exception("New comment $newCommId could not be connected to the previous latest message $currentId.");
+		}
 	}
 
 	public function disconnectComments($commentID, $commentID2)
@@ -173,48 +198,27 @@ class Comment
 	{
 		$newCommId = $this->createComment($cArray);
 		$currLatestId = $this->getLatestComment();
-		if ($nodeType == 'photo')
-		{
-			$photoID = $nodeID;
-			$succ = $this->deletePhotoComment($currLatestId, $photoID);
-			if (!$succ)
-			{
-				throw new Exception("Latest comment on photo $photoID could not be deleted.");
-			}
-			$succ = $this->addPhotoComment($newCommId, $photoID);
-			if (!$succ)
-			{
-				throw new Exception("New comment on photo $photoID could not be added.");
-			}
-		}
 		if ($nodeType == 'status')
 		{
 			$statusID = $nodeID;
 			$succ = $this->deleteCommentStatus($currLatestId, $statusID);
-			
-			
+			$succ = $this->addCommentStatus($newCommId, $statusID);
 		}
 		if ($nodeType == 'post')
 		{
 			$postID = $nodeID;
 			$succ = $this->deleteCommentPost($currLatestId, $postID);
-			if (!$succ)
-			{
-				throw new Exception("Latest comment on post $postID could not be deleted.");
-			}
-			$succ = $this->addPostComment($newCommId, $postID);
-			if (!$succ)
-			{
-				throw new Exception("New comment on post $postID could not be added.");
-			}
+			$succ = $this->addCommentPost($newCommId, $postID);
+		}
+
+		if ($nodeType == 'photo')
+		{
+			$photoID = $nodeID;
+			$succ = $this->deletePhotoComment($currLatestId, $photoID);
+			$succ = $this->addPhotoComment($newCommId, $photoID);
 		}
 		$succ = $this->connectComments($newCommId, $currLatestId);
-		if (!$succ)
-		{
-			throw new Exception("New comment $newCommId could not be connected to the previous latest message $currentId.");
-		}
 		$this->_latestCommID = $newCommId;
 	}
 }
-
 ?>
