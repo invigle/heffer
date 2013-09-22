@@ -14,8 +14,6 @@ class Group
 	private $_shortDescription;
 	private $_slogan;
 	private $_website;
-	private $_gID;
-	private $_pHID;
 	private $_location;
 	private $_memberCount;
 	private $_institution;
@@ -26,13 +24,32 @@ class Group
 	private $_groupType;
 	private $_profilePicID;
 	private $_nodeType;
+	private $_eID;
+	private $_gID;
+	private $_pHID;
 
+	/* The Class Constructor*/
 	public function __construct()
 	{
+		$this->_name = null;
+		$this->_category = null;
+		$this->_shortDescription = null;
+		$this->_slogan = null;
+		$this->_website = null;
+		$this->_location = null;
+		$this->_memberCount = null;
+		$this->_institution = null;
+		$this->_isPaid = null;
+		$this->_paymentType = null;
+		$this->_privacy = null;
+		$this->_followerCount = null;
+		$this->_groupType = null;
+		$this->_profilePicID = null;
 		$this->_nodeType = 'Group';
+		$this->_eID = null;
+		$this->_gID = null;
+		$this->_pHID = null;
 	}
-    
-    //Pull to the master 
 
 	/**
 	 * Find the ID of a category using cypher indexBy and indexValue
@@ -44,9 +61,10 @@ class Group
 		$api = $this->neo4japi('cypher', 'JSONPOST', $postfields);
 		if (isset($api['data'][0]))
 		{
-			$cat = explode("/", $api['data']['0']['0']['self']);
-			return end($catID);
+			$categoryID = explode("/", $api['data']['0']['0']['self']);
+			return end($categoryID);
 		}
+		$this->_category = $categoryID;
 	}
 
 	/**
@@ -72,19 +90,22 @@ class Group
 		//return the new group ID.
 		$bit = explode("/", $apiCall['data'][0][0]['self']);
 		$groupId = end($bit);
+		$this->_gID = $groupId;
 		return $groupId;
 	}
 
 	/** Function to delete a group node given an ID.
 	 * @access private
 	 * @param gID
-	 * @return boolean
 	 */
 	public function deleteGroup($gID)
 	{
 		$graph = new Graph();
 		$succ = $graph->deleteNodeByID($gID);
-		return $succ;
+		if (!$succ)
+		{
+			throw new Exception("Group $gID could not be deleted.");
+		}
 	}
 
 	/**
@@ -100,129 +121,234 @@ class Group
 		$succ = $graph->editNodeProperties($gArray);
 		return $succ;
 	}
-    
-    /**
-	 * This method takes as inputs a group ID and an array. The latter is used to find 
-     * the ID of the category and then it adds the edge to neo4j.
-	 * @access public
-	 * @param gID, catParams
-	 * @return boolean
-	 */
-	public function addGroupCategory($gID, $catParams)
-	{
-		$graph = new Graph();
-		$connectionType = 'HAS';
-        $catID = getCategoryId($catParams);
-		$succ = $graph->addConnection($gID, $catID, $connectionType);
-		return $succ;
-	}
-    
-    /**
-	 * This method takes as inputs a group ID and an array. The latter is used to find 
-     * the ID of the category and then it deletes the edge from neo4j.
-	 * @access public
-	 * @param gID, catParams
-	 * @return boolean
-	 */
-	public function deleteGroupCategory($gID, $catParams)
-	{
-		$graph = new Graph();
-		$connectionType = 'HAS';
-        $catID = getCategoryId($catParams);
-		$succ = $graph->deleteConnection($gID, $catID, $connectionType);
-		return $succ;
-	}
-        
+
 	/**
-	 * This method takes as inputs a group ID and a location ID and adds the edge to neo4j.
+	 * This method takes as inputs a group ID the ID of the category and then it adds a HAS edge to neo4j.
 	 * @access public
-	 * @param pID, locID
-	 * @return boolean
+	 * @param gID, catID
+	 */
+	public function addGroupCategory($gID, $catID)
+	{
+		$graph = new Graph();
+		$connectionType = 'HAS';
+		$succ = $graph->addConnection($gID, $catID, $connectionType);
+		if (!$succ)
+		{
+			throw new Exception("Category $catID could not be added to group $gID.");
+		}
+		$this->_category = $gID;
+	}
+
+	/**
+	 *  This method takes as inputs a group ID the ID of the category and then it adds a HAS edge from neo4j.
+	 * @access public
+	 * @param gID, catID
+	 */
+	public function deleteGroupCategory($gID, $catID)
+	{
+		$graph = new Graph();
+		$connectionType = 'HAS';
+		$succ = $graph->deleteConnection($gID, $catID, $connectionType);
+		if (!$succ)
+		{
+			throw new Exception("Category $catID could not be deleted from group $gID.");
+		}
+		$this->_category = null;
+	}
+
+	/**
+	 * This method takes as inputs a group ID and a location ID and adds a LOCATED_AT edge to neo4j.
+	 * @access public
+	 * @param gID, locID
 	 */
 	public function addGroupLocation($gID, $locID)
 	{
 		$graph = new Graph();
 		$connectionType = 'LOCATED_AT';
 		$succ = $graph->addConnection($gID, $locID, $connectionType);
-		return $succ;
+		if (!$succ)
+		{
+			throw new Exception("Location $locID could not be added to group $gID.");
+		}
+		$this->_location = $locID;
 	}
 
 	/**
-	 * This method takes as inputs a page ID and a location ID and deletes the edge to neo4j.
+	 * This method takes as inputs a page ID and a location ID and deletes a LOCATED_AT edge from neo4j.
 	 * @access public
-	 * @param pID, locID
-	 * @return boolean
 	 */
 	public function deleteGroupLocation($gID, $locID)
 	{
 		$graph = new Graph();
 		$connectionType = 'LOCATED_AT';
 		$succ = $graph->deleteConnection($gID, $locID, $connectionType);
-		return $succ;
+		if (!$succ)
+		{
+			throw new Exception("Location $locID could not be deleted from group $gID.");
+		}
+		$this->_location = null;
 	}
 
 	/**
-	 * This method takes as inputs a group ID and a event ID and adds the edge to neo4j.
+	 * This method takes as inputs a group ID and a event ID and adds an ORGANISER_OF edge to neo4j.
 	 * @access public
 	 * @param gID, eID
-	 * @return boolean
 	 */
 	public function addGroupEvent($gID, $eID)
 	{
 		$graph = new Graph();
 		$connectionType = 'ORGANISER_OF';
 		$succ = $graph->addConnection($gID, $eID, $connectionType);
-		return $succ;
+		if (!$succ)
+		{
+			throw new Exception("Event $eID could not be added to group $gID.");
+		}
+		$this->_eID = $eID;
 	}
 
 	/**
-	 * This method takes as inputs a group ID and a event ID and deltes from neo4j.
+	 * This method takes as inputs a group ID and a event ID and deletes a ORGANISER_OF edge from neo4j.
 	 * @access public
 	 * @param gID, eID
-	 * @return boolean
 	 */
 	public function deleteGroupEvent($gID, $eID)
 	{
 		$graph = new Graph();
 		$connectionType = 'ORGANISER_OF';
 		$succ = $graph->deleteConnection($gID, $eID, $connectionType);
-		return $succ;
+		if (!$succ)
+		{
+			throw new Exception("Event $eID could not be deleted from group $gID.");
+		}
+		$this->_eID = null;
+	}
+
+	public function addGroupPhoto($phID, $gID)
+	{
+		$graph = new Graph();
+		$connectionType = 'RELATED_TO';
+		$succ = $graph->addConnection($phID, $gID, $connectionType);
+		if (!$succ)
+		{
+			throw new Exception("Photo $phID could not be related to group $gID.");
+		}
+		$this->_pHID = $phID;
+	}
+
+	public function deleteGroupPhoto($phID, $gID)
+	{
+		$graph = new Graph();
+		$connectionType = 'RELATED_TO';
+		$succ = $graph->deleteConnection($phID, $gID, $connectionType);
+		if (!$succ)
+		{
+			throw new Exception("Photo $phID related to group $gID couldn't be deleted.");
+		}
+		$this->_pHID = null;
 	}
 
 	/**
-	 * This method takes as inputs a group ID and an array. 
-	 * It then finds the catergory ID from the array paramsCat and adds an edge to  
-	 * neo4j between the group and the category.
+	 * This method takes as inputs a user ID and a group ID and adds a FOLLOWER_OF edge to neo4j.
 	 * @access public
-	 * @param gID, paramsCat
-	 * @return boolean
+	 * @param uID, gID
 	 */
-	public function addGroupCategory($gID, array $params)
+	public function addGroupFollower($uID, $gID)
 	{
-		$catID = getCategoryId($params);
 		$graph = new Graph();
-		$connectionType = 'HAS';
-		$succ = $graph->addConnection($gID, $catID, $connectionType);
-		return $succ;
+		$connectionType = 'FOLLOWER_OF';
+		$succ = $graph->addConnection($uID, $gID, $connectionType);
+		if (!$succ)
+		{
+			throw new Exception("User $uID could not be added to the followers of $gID.");
+		}
+		$this->_followerCount += 1;
+	}
+
+	public function deleteGroupFollower($uID, $gID)
+	{
+		$graph = new Graph();
+		$connectionType = 'FOLLOWER_OF';
+		$succ = $graph->deleteConnection($uID, $gID, $connectionType);
+		if (!$succ)
+		{
+			throw new Exception("User $uID could not be deleted from the followers of $gID.");
+		}
+		$this->_followerCount -= 1;
 	}
 
 	/**
-	 * This method takes as inputs a group ID and an array. 
-	 * It then finds the catergory ID from the array paramsCat and deletes the edge 
-     * between the group and the category from neo4j.
+	 * This method takes as inputs a user ID and a group ID and adds a ADMIN_OF edge to neo4j.
 	 * @access public
-	 * @param gID, paramsCat
+	 * @param uID, gID
+	 */
+	public function addGroupAdmin($uID, $gID)
+	{
+		$graph = new Graph();
+		$connectionType = 'ADMIN_OF';
+		$succ = $graph->addConnection($uID, $gID, $connectionType);
+		if (!$succ)
+		{
+			throw new Exception("User $uID could not be added as admin of group $gID.");
+		}
+	}
+
+	public function deleteGroupAdmin($uID, $gID)
+	{
+		$graph = new Graph();
+		$connectionType = 'ADMIN_OF';
+		$succ = $graph->deeleteConnection($uID, $gID, $connectionType);
+		if (!$succ)
+		{
+			throw new Exception("User $uID could not be removed as admin of group $gID.");
+		}
+	}
+
+	/**
+	 * This method takes as inputs a user ID and a group ID and adds a MEMBER_OF edge to neo4j.
+	 * @access public
+	 * @param uID, gID
+	 */
+	public function addGroupMember($uID, $gID)
+	{
+		$graph = new Graph();
+		$connectionType = 'MEMBER_OF';
+		$succ = $graph->addConnection($uID, $gID, $connectionType);
+		if (!$succ)
+		{
+			throw new Exception("User $uID could not be added as member of group $gID.");
+		}
+		$this->_memberCount += 1;
+	}
+
+	public function deleteGroupMember($uID, $gID)
+	{
+		$graph = new Graph();
+		$connectionType = 'MEMBER_OF';
+		$succ = $graph->deleteConnection($uID, $gID, $connectionType);
+		if (!$succ)
+		{
+			throw new Exception("User $uID could not be deleted from the members of group $gID.");
+		}
+		$this->_memberCount -= 1;
+	}
+
+	/**
+	 * This method takes as inputs a user ID and a group ID and adds a INVITED_TO edge to neo4j.
+	 * @access public
+	 * @param uID, gID
 	 * @return boolean
 	 */
-	public function deleteGroupCategory($gID, array $params)
+	public function addUserGroupInvitation($uID, $gID)
 	{
-		$catID = getCategoryId($params);
 		$graph = new Graph();
-		$connectionType = 'HAS';
-		$succ = $graph->deleteConnection($gID, $catID, $connectionType);
+		$connectionType = 'INVITED_TO';
+		$succ = $graph->addConnection($uID, $gID, $connectionType);
 		return $succ;
 	}
 
+	/**********************************************************/
+	/** SETS and GETS
+	 * /**********************************************************/
 
 	/**
 	 * This method returns the name of the group.

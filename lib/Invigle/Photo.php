@@ -7,23 +7,22 @@ use Invigle\Graph;
  * @access public
  * @author Grant
  */
-class Photo {
+class Photo
+{
 	private $_photoData;
 	private $_timestamp;
-	private $_pHID;
+	private $_tagArray;
+	private $_nodeType;
 	private $_eID;
 	private $_uID;
-	private $_tagArray;
 	private $_pID;
-    private $_nodeType;
-    
-    public function __construct()
+	private $_pHID;
+
+	public function __construct()
 	{
 		$this->_nodeType = 'Photo';
 	}
-
-
-    /**
+	/**
 	 * This method takes as input an array with all the information of a photo and 
 	 * adds this photo to the GD as a 'photo node'.
 	 * @access public
@@ -48,8 +47,8 @@ class Photo {
 		$photoId = end($bit);
 		return $photoId;
 	}
-    
-    /** Function to delete a photo node given an ID.
+
+	/** Function to delete a photo node given an ID.
 	 * @access private
 	 * @param phID
 	 * @return boolean
@@ -60,96 +59,71 @@ class Photo {
 		$succ = $graph->deleteNodeByID($phID);
 		return $succ;
 	}
-    
-    /**
-	 * This method takes as inputs a photo ID, the ID of the tagger and the taggeee of a photo and adds 
-     * an edge to neo4j.
+
+	/**
+	 * This method takes as inputs a photo ID, the ID of the tagger and the taggeee of a photo and adds a TAGGED_IN bedge to neo4j.
 	 * @access public
 	 * @param phID, taggerUID, taggeeUID
 	 * @return boolean, boolean
 	 */
-	public function addTag($taggeeUID, $phID, $taggerUID) 
+	public function addTag($taggeeUID, $phID, $taggerUID)
 	{
 		$graph = new Graph();
-        $connectionType = 'TAGGED_IN';
-        $tagArray[0] = 'TAGGED_BY';
-        $tagArray[1] = $taggerUID;
+		$connectionType = 'TAGGED_IN';
+		$tagArray[0] = 'TAGGED_BY';
+		$tagArray[1] = $taggerUID;
 		$succTag = $graph->addConnection($taggeeUID, $phID, $connectionType);
-        $succEdit = $graph->editConnectionProperties($tagArray);
-        return $succTag;
-        return $succEdit; 
+		$succEdit = $graph->editConnectionProperties($tagArray);
+		return $succTag;
+		return $succEdit;
 	}
 
-	 /**
-	 * This method takes as inputs a photo ID, the ID of the taggee of a photo and deletes the edge form neo4j.
+	/**
+	 * This method takes as inputs a photo ID, the ID of the taggee of a photo and deletes a TAGGED_IN edge form neo4j.
 	 * @access public
 	 * @param phID, taggeeUID
 	 * @return boolean, boolean
 	 */
-	public function deleteTag($taggeeUID, $phID) {
-	   	$graph = new Graph();
-        $connectionType = 'TAGGED_IN';
+	public function deleteTag($taggeeUID, $phID)
+	{
+		$graph = new Graph();
+		$connectionType = 'TAGGED_IN';
 		$succ = $graph->deleteConnection($taggeeUID, $phID, $connectionType);
-        return $succ; 
-	} 
-    
-    /**
-	 * This method takes as inputs a photo ID, the ID of a location and adds the edge to neo4j.
-	 * @access public
-	 * @param phID, locID
-	 * @return boolean
-	 */
-	public function addPhotoLocation($phID, $locID) 
-	{
-		$graph = new Graph();
-        $connectionType = 'TAKEN_AT';
-		$succ = $graph->addConnection($phID, $locID, $connectionType);
-        return $succ;
-	}
-    
-    /**
-	 * This method takes as inputs a photo ID, the ID of a location and adds the edge to neo4j.
-	 * @access public
-	 * @param phID, locID
-	 * @return boolean
-	 */
-	public function deletePhotoLocation($phID, $locID) 
-	{
-		$graph = new Graph();
-        $connectionType = 'TAKEN_AT';
-		$succ = $graph->deleteConnection($phID, $locID, $connectionType);
-        return $succ;
-	}
-    
-    /**
-	 * This method takes as inputs a comment ID and a photo ID and adds the edge to neo4j.
-	 * @access public
-	 * @param cID, phID
-	 * @return boolean
-	 */
-	public function addPhotoComment($cID, $phID) 
-	{
-		$graph = new Graph();
-        $connectionType = 'POSTED_ON';
-		$succ = $graph->addConnection($cID, $phID, $connectionType);
-        return $succ;
+		return $succ;
 	}
 
-    /**
-	 * This method takes as inputs a comment ID and a photo ID and deletes the edge from neo4j.
+	/**
+	 * This method takes as inputs a photo ID, the ID of a location and adds A TAKEN_AT edge to neo4j.
 	 * @access public
-	 * @param cID, phID
+	 * @param phID, locID
 	 * @return boolean
 	 */
-	public function deletePhotoComment($cID, $phID) 
+	public function addPhotoLocation($phID, $locID)
 	{
 		$graph = new Graph();
-        $connectionType = 'POSTED_ON';
-		$succ = $graph->deleteConnection($cID, $phID, $connectionType);
-        return $succ;
+		$connectionType = 'TAKEN_AT';
+		$succ = $graph->addConnection($phID, $locID, $connectionType);
+		return $succ;
 	}
-        
-    /**
+
+	/**
+	 * This method takes as inputs a photo ID, the ID of a location and deletes a TAKEN_AT edge from neo4j.
+	 * @access public
+	 * @param phID, locID
+	 * @return boolean
+	 */
+	public function deletePhotoLocation($phID, $locID)
+	{
+		$graph = new Graph();
+		$connectionType = 'TAKEN_AT';
+		$succ = $graph->deleteConnection($phID, $locID, $connectionType);
+		return $succ;
+	}
+
+	/**********************************************************/
+	/** BEGGINING OF SETERS and GETERS
+	 * /**********************************************************/
+	/**
 	 * This method returns the metadata of the photo.
 	 * @access public
 	 * @return string
@@ -170,7 +144,7 @@ class Photo {
 		$this->_photoData = $data;
 	}
 
-    /**
+	/**
 	 * This method returns the timestamp in UTC indicating when photo was uploaded to Invigle.
 	 * @access public
 	 * @return date
@@ -189,9 +163,9 @@ class Photo {
 	public function setPhotoTimestamp($timestamp)
 	{
 		$this->_timestamp = $timestamp;
-	}  
-    
-    /**
+	}
+
+	/**
 	 * This method returns the ID of the event that the photo was taken at.
 	 * @access public
 	 * @return integer
@@ -210,9 +184,9 @@ class Photo {
 	public function setPhotoEventId($id)
 	{
 		$this->_eID = $id;
-	} 
-    
-    /**
+	}
+
+	/**
 	 * This method returns the ID of the user who uploaded the photo.
 	 * @access public
 	 * @return integer
@@ -231,9 +205,9 @@ class Photo {
 	public function setPhotoUploaderId($id)
 	{
 		$this->_uID = $id;
-	} 
+	}
 
-    /**
+	/**
 	 * This method returns an array with all the tags on that photo.
 	 * @access public
 	 * @return integer
@@ -245,7 +219,7 @@ class Photo {
 
 	/**
 	 * This method sets the array of tags of this photo. 
-     * It can be used when a tag is added to update the _tagArray
+	 * It can be used when a tag is added to update the _tagArray
 	 * @access public
 	 * @param array (array)
 	 * @return boolean
@@ -253,9 +227,9 @@ class Photo {
 	public function setTagArray($array)
 	{
 		$this->_tagArray = $array;
-	}  
-    
-    /**
+	}
+
+	/**
 	 * This method returns the ID of the page the photo was uploaded to.
 	 * @access public
 	 * @return integer
@@ -274,6 +248,12 @@ class Photo {
 	public function setPhotoPageId($id)
 	{
 		$this->_pID = $id;
-	}    
+	}
+
+	/**********************************************************/
+	/** END OF SETERS and GETERS
+	 * /**********************************************************/
+
 }
+
 ?>

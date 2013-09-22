@@ -15,15 +15,28 @@ class Page
 	public $_slogan;
 	public $_website;
 	public $_pID;
+	public $_eID;
 	public $_location;
 	public $_followerCount;
 	public $_pageType;
 	public $_profilePicID;
-    private $_nodeType;
-    
-    public function __construct()
+	private $_nodeType;
+	private $_hasAdmin;
+
+	public function __construct()
 	{
+		$this->_name = null;
+		$this->_category = null;
+		$this->_shortDescription = null;
+		$this->_slogan = null;
+		$this->_website = null;
+		$this->_pID = null;
+		$this->_location = null;
+		$this->_followerCount = null;
+		$this->_pageType = null;
+		$this->_profilePicID = null;
 		$this->_nodeType = 'Page';
+		$this->_hasAdmin = null;
 	}
 
 	/**
@@ -63,7 +76,10 @@ class Page
 	{
 		$graph = new Graph();
 		$succ = $graph->deleteNodeByID($pID);
-		return $succ;
+		if (!$succ)
+		{
+			throw new Exception("Page $pID could not be deleted.");
+		}
 	}
 
 	/**
@@ -92,7 +108,11 @@ class Page
 		$graph = new Graph();
 		$connectionType = 'LOCATED_AT';
 		$succ = $graph->addConnection($pID, $locID, $connectionType);
-		return $succ;
+		if (!$succ)
+		{
+			throw new Exception("Location $locID of page $pID could not be added.");
+		}
+		$this->_location = $locID;
 	}
 
 
@@ -107,7 +127,11 @@ class Page
 		$graph = new Graph();
 		$connectionType = 'LOCATED_AT';
 		$succ = $graph->deleteConnection($pID, $locID, $connectionType);
-		return $succ;
+		if (!$succ)
+		{
+			throw new Exception("Location $locID of page $pID could not be deleted.");
+		}
+		$this->_location = null;
 	}
 
 	/**
@@ -121,7 +145,11 @@ class Page
 		$graph = new Graph();
 		$connectionType = 'ORGANISER_OF';
 		$succ = $graph->addConnection($pID, $eID, $connectionType);
-		return $succ;
+		if (!$succ)
+		{
+			throw new Exception("Event $eID organized by page $pID could not be added.");
+		}
+		$this->_eID = $eID;
 	}
 
 
@@ -136,33 +164,100 @@ class Page
 		$graph = new Graph();
 		$connectionType = 'ORGANISER_OF';
 		$succ = $graph->deleteConnection($pID, $eID, $connectionType);
-		return $succ;
+		if (!$succ)
+		{
+			throw new Exception("Event $eID organized by page $pID could not be deleted.");
+		}
+		$this->_eID = null;
 	}
 
-
 	/**
+	 * This method takes as inputs a user ID and a page ID and adds a FOLLOWER_OF edge to neo4j.
 	 * @access public
-	 * @param id
+	 * @param uID, pID
+	 * @return boolean
 	 */
-	public function getPage($id)
+	public function addPageFollower($uID, $pID)
 	{
-		// Not yet implemented
+		$graph = new Graph();
+		$connectionType = 'FOLLOWER_OF';
+		$succ = $graph->addConnection($uID, $pID, $connectionType);
+		if (!$succ)
+		{
+			throw new Exception("User $uID could not be added as follower of page $pID.");
+		}
+		$this->_followerCount += 1;
+	}
+
+	public function deletePageFollower($uID, $pID)
+	{
+		$graph = new Graph();
+		$connectionType = 'FOLLOWER_OF';
+		$succ = $graph->deleteConnection($uID, $pID, $connectionType);
+		if (!$succ)
+		{
+			throw new Exception("User $uID could not be deleted from followers of page $pID.");
+		}
+		$this->_followerCount -= 1;
 	}
 
 	/**
-	 * This method takes the ID of a page and gets 'limit' number of page followers. When the users scrolls down the page, they can see the next set of followers by the method skipping a number of followers indicated by the third argument of the method called 'skip'.
+	 * This method takes as inputs a user ID and a page ID and adds a ADMIN_OF edge to neo4j.
+	 * @access public
+	 * @param uID, pID
+	 * @return boolean
+	 */
+	public function addPageAdmin($uID, $pID)
+	{
+		$graph = new Graph();
+		$connectionType = 'ADMIN_OF';
+		$succ = $graph->addConnection($uID, $pID, $connectionType);
+		if (!$succ)
+		{
+			throw new Exception("User $uID could not be added as admin of page $pID.");
+		}
+		$_hasAdmin = true;
+	}
+
+	public function deletePageAdmin($uID, $pID)
+	{
+		$graph = new Graph();
+		$connectionType = 'ADMIN_OF';
+		$succ = $graph->deleteConnection($uID, $pID, $connectionType);
+		if (!$succ)
+		{
+			throw new Exception("User $uID could not be removed as admin of page $pID.");
+		}
+		$this->_hasAdmin = false;
+	}
+
+	public function changePageAdmin($uID, $uID2, $pID)
+	{
+		$graph = new Graph();
+		$this->deletePageAdmin($uID, $pID);
+		$this->addPageAdmin($uID2, $pID);
+	}
+
+
+	/**
+	 * This method takes the ID of a page and gets 'limit' number of page followers. 
+	 * When the users scrolls down the page, they can see the next set of followers by the method 
+	 * skipping a number of followers indicated by the third argument of the method called 'skip'.
 	 * @access public
 	 * @param id
 	 * @param limit
 	 * @param skip
 	 */
-	public function getFollowers($id, $limit, $skip)
+	public function getFollowers($pID, $limit, $skip)
 	{
 		// Not yet implemented
 	}
 
 	/**
-	 * This method takes the ID of a page and retrieves a number of items on the page's timeline determined by the input limit. When the users scrolls down the page, they can see the next set of items by the method skipping a number of items indicated by the third argument of the method called 'skip'.
+	 * This method takes the ID of a page and retrieves a number of items on the page's 
+	 * timeline determined by the input limit. 
+	 * When the users scrolls down the page, they can see the next set of items by the 
+	 * method skipping a number of items indicated by the third argument of the method called 'skip'.
 	 * @access public
 	 * @param id
 	 * @param limit
@@ -185,6 +280,9 @@ class Page
 		// Not yet implemented
 	}
 
+	/**********************************************************/
+	/** SETS and GETS *****************************/
+	/**********************************************************/
 	/**
 	 * This method returns the name of the page.
 	 * @access public

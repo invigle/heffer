@@ -3,7 +3,8 @@ namespace Invigle\FrontEndUIs;
  
 use Invigle\FrontEndUIs,
     Invigle\Language,
-    Invigle\User;
+    Invigle\User,
+    Invigle\Validation;
 
  
 /**
@@ -54,12 +55,7 @@ class FrontPage extends FrontEndUIs {
     private function authenticationLayer()
     {
         if($this->_loggedin){
-            $user = new User();
-            $userInfo = $user->userDetails();
-            
-            return '<div class="container">
-                        <b>'.$this->_language->_frontPage["logged-in-as"].' '.$userInfo['firstname'].' '.$userInfo['lastname'].'</b> (<a href="?logout=true">Logout</a>)
-                    </div>';
+            return $this->renderUserHomepage();
         }else{
             return '<div class="container">
                         <div class="row">
@@ -73,6 +69,31 @@ class FrontPage extends FrontEndUIs {
                     </div>';
         }
                 
+    }
+    
+    private function renderUserHomepage()
+    {
+        $userModule = new User();
+        $userInfo = $userModule->userDetails();
+        
+        $friendReqHTML = "";
+        $friendRequests = $userModule->userFriendRequests($_SESSION['uid']);
+        if(isset($friendRequests)){
+            foreach($friendRequests as $req){
+                $friendReqHTML.= '<a href="user.php?username='.$req['username'].'">'.$req['firstname'].' '.$req['lastname'].'</a> [<a href="user.php?username='.$req['username'].'&a=acceptfriend">Accept</a>]<br />';
+            }
+        }else{
+            $friendReqHTML = "none";
+        }
+        
+        return '<div class="container">
+                    <b>'.$this->_language->_frontPage["logged-in-as"].' '.$userInfo['firstname'].' '.$userInfo['lastname'].'</b> (<a href="user.php?username='.$userInfo['username'].'">'.$this->_language->_frontPage["my-profile"].'</a> | <a href="accountdetails.php">'.$this->_language->_frontPage["my-details"].'</a> | <a href="?logout=true">Logout</a>)<br />
+                    '.$this->_language->_frontPage["followers"].': '.$userInfo['followerCount'].'<br>
+                    '.$this->_language->_frontPage["friends"].': '.$userInfo['friendCount'].'<br />
+                    <hr>
+                    <b>Friend Requests ('.count($friendRequests).')</b><br />
+                    '.$friendReqHTML.'
+                </div>';
     }
     
     private function loginForm($userInput)
@@ -90,8 +111,13 @@ class FrontPage extends FrontEndUIs {
             if(!$login){
                 $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["login-failed"].'';
             }else{
-                //Refresh Page.
-                return '<script>location.reload();</script>';
+                //Refresh Page or redirect to wherever this person was heading before being asked to login.
+                if(isset($_SESSION['ROUTE'])){
+                    echo '<script>window.location.href = "'.$_SESSION['ROUTE'].'";</script>';
+                    unset($_SESSION['ROUTE']);
+                }else{
+                    return '<script>location.reload();</script>';
+                }
                 
             }
             
@@ -99,7 +125,7 @@ class FrontPage extends FrontEndUIs {
         if(!isset($error)){
             $error = "";
         }
-        
+
         return ''.$error.'
                 <form method="POST" action="'.$_SERVER['PHP_SELF'].'">
                     <input type="hidden" name="loginform" value="submit">
@@ -142,7 +168,7 @@ class FrontPage extends FrontEndUIs {
             //$userArray Variables that will be stored in neo4j.
             $userArray = array(
                             'username'=>$userInput['username'],
-                            'password'=>hash('sha256', CONF_SECURITYSALT.$userInput['password']), //SHA256 Hash the users password with SECURITYSALT from Configuration.php
+                            'password'=>hash('sha256', "".CONF_SECURITYSALT."".$userInput['password'].""), //SHA256 Hash the users password with SECURITYSALT from Configuration.php
                             'firstname'=>$userInput['firstname'],
                             'lastname'=>$userInput['lastname'],
                             'email'=>$userInput['email'],
@@ -151,36 +177,55 @@ class FrontPage extends FrontEndUIs {
                             'sessionid'=>'',
                             'ipaddress'=>$_SERVER['REMOTE_ADDR'],
                             'lastAction'=>time(),
-                            'rememberme'=>''
+                            'rememberme'=>'',
+                            'lastupdate'=>'',
+                            'emailvalidated'=>'0',
+                            'invitedby'=>'',
+                            'location'=>'',
+                            'institution'=>'',
+                            'relationshipStatus'=>'',
+                            'sexualPref'=>'',
+                            'profilePicID'=>'',
+                            'followerCount'=>'0',
+                            'friendCount'=>'0',
+                            'privateProfile'=>'no',
                               );
             
-            //Check that the Date of Birth fields are numeric values only.
-            if(!is_numeric($userInput['dob_day']) || !is_numeric($userInput['dob_month']) || !is_numeric($userInput['dob_year'])){
-                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["dob-invalid"].'';
+            $validationModule = new Validation();
+            
+            //Check the users date of birth is valid.
+            $dobCheck = $validationModule->validateDateOfBirth($_POST['dob_day'], $_POST['dob_month'], $_POST['dob_month']);
+            if(!$dobCheck['status']){
+                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_inputValidation[$dobCheck['error']].'';
             }
             
-            //Check that the users password is more than 6 characters long.
-            if(strlen($userInput['password'] <= "6")){
-                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["pw-too-short"].'';
+            //Check that the users password is valid
+            $pwCheck = $validationModule->validatePassword(($_POST['password']), $_POST['password']); //Were using $_POST['password'] twice here because we dont have a confirm field on initial signup.
+            if(!$pwCheck['status']){
+                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_inputValidation[$pwCheck['error']].'';
             }
             
-            //Check that firstname and lastname are more than 2 characters long and are not numeric.
-            if(strlen($userInput['firstname']) < "2"){
-                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["firstname-too-short"].'';
+            //Check that firstname is longer than 2 characters and not numeric.
+            $fnameCheck = $validationModule->validateFirstName($_POST['firstname']);
+            if(!$fnameCheck['status']){
+                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_inputValidation[$fnameCheck['error']].'';
             }
-            if(is_numeric($userInput['firstname'])){
-                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["name-is-numeric"].'';
+            
+            //Check that lastname is longer than 2 characters and not numeric.
+            $lnameCheck = $validationModule->validateLastName($_POST['lastname']);
+            if(!$lnameCheck['status']){
+                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_inputValidation[$lnameCheck['error']].'';
             }
-            if(strlen($userInput['lastname']) < "2"){
-                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["lastname-too-short"].'';
+            
+            $unCheck = $validationModule->validateUsername($_POST['username']);
+            if(!$unCheck['status']){
+                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_inputValidation[$unCheck['error']].'';
             }
-            if(is_numeric($userInput['lastname'])){
-                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["name-is-numeric"].'';
+            
+            $emailCheck = $validationModule->validateEmailAddress($_POST['email'], $_POST['confirmemail']);
+            if(!$emailCheck['status']){
+                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_inputValidation[$emailCheck['error']].'';
             }
-            /*
-            if($userInput['email'] !== $userInput['confirmemail']){
-                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["emails-dont-match"].'';
-            }*/
             
             //If no error is set yet
             if(!isset($error)){
@@ -190,13 +235,9 @@ class FrontPage extends FrontEndUIs {
             
             //Check for errors in the addUser() function.
             if($add === "email-taken"){
-                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["email-taken"].'';
+                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_inputValidation["email-taken"].'';
             }elseif($add === "username-taken"){
-                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["username-taken"].'';
-            }elseif($add === "username-invalid"){
-                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["username-invalid"].'';
-            }elseif($add === "email-invalid"){
-                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_frontPage["email-invalid"].'';
+                $error = '<b>'.$this->_language->_frontPage["error"].': </b>'.$this->_language->_inputValidation["username-taken"].'';
             }
             
             if(isset($error)){

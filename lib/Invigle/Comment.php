@@ -11,6 +11,7 @@ class Comment
 {
 	private $_comment;
 	private $_date;
+	private $_nodeType;
 	private $_cID;
 	private $_sID;
 	private $_pHID;
@@ -18,11 +19,23 @@ class Comment
 	private $_gID;
 	private $_uID;
 	private $_pID;
-	private $_nodeType;
 
+	// The ID of the latest comment added to the post/photo/status
+	public $_latestCommID;
+
+	/* The Class Constructor*/
 	public function __construct()
 	{
+		$this->_comment = null;
+		date_default_timezone_set('Europe/London');
+		$this->_date = date('m/d/Y h:i:s a', time());
 		$this->_nodeType = 'Comment';
+		$this->_sID = null;
+		$this->_pHID = null;
+		$this->_eID = null;
+		$this->_gID = null;
+		$this->_uID = null;
+		$this->_pID = null;
 	}
 
 	/**
@@ -48,19 +61,23 @@ class Comment
 		//return the new comment ID.
 		$bit = explode("/", $apiCall['data'][0][0]['self']);
 		$commentId = end($bit);
+		$this->_cID = $commentId;
 		return $commentId;
 	}
 
 	/** Function to delete a comment node given an ID.
 	 * @access private
 	 * @param cID
-	 * @return boolean
 	 */
 	public function deleteComment($cID)
 	{
 		$graph = new Graph();
 		$succDelete = $graph->deleteNodeByID($cID);
-		return $succDelete;
+		if (!$succDelete)
+		{
+			throw new Exception("Comment $cID could not be deleted.");
+		}
+		$this->_cID = null;
 	}
 
 	/**
@@ -68,202 +85,231 @@ class Comment
 	 * the GD with information provided by the cArray which is the input to the editComment method
 	 * @access public
 	 * @param cArray
-	 * @return boolean
 	 */
 	public function editComment($cArray)
 	{
 		$graph = new Graph();
 		$succEdit = $graph->editNodeProperties($cArray);
-		return $succEdit;
+		if (!$succEdit)
+		{
+			throw new Exception("Comment could not be edited.");
+		}
 	}
 
-	/**
-	 * This method returns a comment
-	 * @access public
-	 * @return string
-	 */
+	public function addCommentStatus($commentID, $statusID)
+	{
+		$graph = new Graph();
+		$connectionType = 'POSTED_ON';
+		$succ = $graph->addConnection($commentID, $statusID, $connectionType);
+		if (!$succ)
+		{
+			throw new Exception("New comment on status $statusID could not be added.");
+		}
+		$this->_sID = $statusID;
+	}
+
+	public function deleteCommentStatus($commentID, $statusID)
+	{
+		$graph = new Graph();
+		$connectionType = 'POSTED_ON';
+		$succ = $graph->deleteConnection($commentID, $statusID, $connectionType);
+		if (!$succ)
+		{
+			throw new Exception("Latest comment on status $statusID could not be deleted.");
+		}
+		$this->_sID = null;
+	}
+
+	public function addCommentPost($commentID, $postID)
+	{
+		$graph = new Graph();
+		$connectionType = 'POSTED_ON';
+		$succ = $graph->addConnection($commentID, $postID, $connectionType);
+		if (!$succ)
+		{
+			throw new Exception("New comment on post $postID could not be added.");
+		}
+		$this->_pID = $postID;
+	}
+
+	public function deleteCommentPost($commentID, $postID)
+	{
+		$graph = new Graph();
+		$connectionType = 'POSTED_ON';
+		$succ = $graph->deleteConnection($commentID, $postID, $connectionType);
+		if (!$succ)
+		{
+			throw new Exception("Latest comment on post $postID could not be deleted.");
+		}
+		$this->_pID = null;
+	}
+
+	public function addPhotoComment($commentID, $photoID)
+	{
+		$graph = new Graph();
+		$connectionType = 'POSTED_ON';
+		$succ = $graph->addConnection($commentID, $photoID, $connectionType);
+		if (!$succ)
+		{
+			throw new Exception("New comment on photo $photoID could not be added.");
+		}
+		$this->_pHID = $photoID;
+	}
+
+	public function deletePhotoComment($commentID, $photoID)
+	{
+		$graph = new Graph();
+		$connectionType = 'POSTED_ON';
+		$succ = $graph->deleteConnection($commentID, $photoID, $connectionType);
+		if (!$succ)
+		{
+			throw new Exception("Latest comment on photo $photoID could not be deleted.");
+		}
+		$this->_pHID = null;
+	}
+
+	public function connectComments($commentID, $commentID2)
+	{
+		$graph = new Graph();
+		$connectionType = 'NEXT';
+		$succ = $graph->addConnection($commentID, $commentID2, $connectionType);
+		if (!$succ)
+		{
+			throw new Exception("New comment $newCommId could not be connected to the previous latest message $currentId.");
+		}
+	}
+
+	public function disconnectComments($commentID, $commentID2)
+	{
+		$graph = new Graph();
+		$connectionType = 'NEXT';
+		$succ = $graph->deleteConnection($commentID, $commentID2, $connectionType);
+		return $succ;
+	}
+
+	public function getLatestComment()
+	{
+		return $this->_latestCommID;
+	}
+
+	public function updateLatestComment($cArray, $commentID, $nodeID, $nodeType)
+	{
+		$newCommId = $this->createComment($cArray);
+		$currLatestId = $this->getLatestComment();
+		if ($nodeType == 'status')
+		{
+			$statusID = $nodeID;
+			$succ = $this->deleteCommentStatus($currLatestId, $statusID);
+			$succ = $this->addCommentStatus($newCommId, $statusID);
+		}
+		if ($nodeType == 'post')
+		{
+			$postID = $nodeID;
+			$succ = $this->deleteCommentPost($currLatestId, $postID);
+			$succ = $this->addCommentPost($newCommId, $postID);
+		}
+
+		if ($nodeType == 'photo')
+		{
+			$photoID = $nodeID;
+			$succ = $this->deletePhotoComment($currLatestId, $photoID);
+			$succ = $this->addPhotoComment($newCommId, $photoID);
+		}
+		$succ = $this->connectComments($newCommId, $currLatestId);
+		$this->_latestCommID = $newCommId;
+	}
+
+	/**********************************************************/
+	/** SETS and GETS *****************************/
+	/**********************************************************/
 	public function getComment()
 	{
 		return $this->_comment;
 	}
 
-	/**
-	 * This method sets a comment.
-	 * @access public
-	 * @param $comment (string)
-	 * @return boolean
-	 */
 	public function setComment($comment)
 	{
 		$this->_comment = $comment;
 	}
 
-	/**
-	 * This method returns the date of the comment
-	 * @access public
-	 * @return timestamp
-	 */
 	public function getCommentDate()
 	{
 		return $this->_date;
 	}
 
-	/**
-	 * This method sets the date of a comment.
-	 * @access public
-	 * @param $date (timestamp)
-	 * @return boolean
-	 */
 	public function setCommentDate($date)
 	{
 		$this->_date = $date;
 	}
 
-	/**
-	 * This method returns the ID of the comment.
-	 * @access public
-	 * @return integer
-	 */
-	public function getCommentId()
+	public function getCommentID()
 	{
 		return $this->_cID;
 	}
 
-	/**
-	 * This method sets the ID of the comment.
-	 * @access public
-	 * @param id (integer)
-	 * @return boolean
-	 */
-	public function setCommentId($id)
+	public function setCommentID($cID)
 	{
-		$this->_cID = $id;
+		$this->_cID = $cID;
 	}
 
-	/**
-	 * This method returns the ID of the status the comment was posted on.
-	 * @access public
-	 * @return integer
-	 */
-	public function getCommentStatusId()
+	public function getCommentStatusID()
 	{
 		return $this->_sID;
 	}
 
-	/**
-	 * This method sets the ID of the status the comment was posted on.
-	 * @access public
-	 * @param id (integer)
-	 * @return boolean
-	 */
-	public function setCommentStatusId($id)
+	public function setCommentStatusID($cID)
 	{
-		$this->_sID = $id;
+		$this->_cID = $cID;
 	}
 
-	/**
-	 * This method returns the ID of the photo the comment was posted on.
-	 * @access public
-	 * @return integer
-	 */
-	public function getCommentPhotoId()
+	public function getCommentPhotoID()
 	{
 		return $this->_pHID;
 	}
 
-	/**
-	 * This method sets the ID of the photo the comment was posted on.
-	 * @access public
-	 * @param id (integer)
-	 * @return boolean
-	 */
-	public function setCommentPhotoId($id)
+	public function setCommentPhotoID($phID)
 	{
-		$this->_pHID = $id;
+		$this->_pHID = $phID;
 	}
 
-	/**
-	 * This method returns the ID of the event the comment was posted on its timeline.
-	 * @access public
-	 * @return integer
-	 */
-	public function getCommentEventId()
+	public function getCommentEventID()
 	{
 		return $this->_eID;
 	}
 
-	/**
-	 * This method sets the ID of the event the comment was posted on its timeline.
-	 * @access public
-	 * @param id (integer)
-	 * @return boolean
-	 */
-	public function setCommentEventId($id)
+	public function setCommentEventID($eID)
 	{
-		$this->_eID = $id;
+		$this->_eID = $eID;
 	}
 
-	/**
-	 * This method returns the ID of the group the comment was posted on its timeline.
-	 * @access public
-	 * @return integer
-	 */
-	public function getCommentGroupId()
+	public function getCommentGroupID()
 	{
 		return $this->_gID;
 	}
 
-	/**
-	 * This method sets the ID of the group the comment was posted on its timeline.
-	 * @access public
-	 * @param id (integer)
-	 * @return boolean
-	 */
-	public function setCommentGroupId($id)
+	public function setCommentGroupID($gID)
 	{
-		$this->_gID = $id;
+		$this->_gID = $gID;
 	}
 
-	/**
-	 * This method returns the ID of the user who posted the comment.
-	 * @access public
-	 * @return integer
-	 */
-	public function getCommentUserId()
+	public function getCommentUserID()
 	{
 		return $this->_uID;
 	}
 
-	/**
-	 * This method sets the ID of the user who posted the comment.
-	 * @access public
-	 * @param id (integer)
-	 * @return boolean
-	 */
-	public function setCommentUserId($id)
+	public function setCommentUserID($uID)
 	{
-		$this->_uID = $id;
+		$this->_uID = $uID;
 	}
 
-	/**
-	 * This method returns the ID of the page who the comment was posted on its timeline.
-	 * @access public
-	 * @return integer
-	 */
-	public function getCommentPageId()
+	public function getCommentPostID()
 	{
 		return $this->_pID;
 	}
 
-	/**
-	 * This method sets the ID of the page who the comment was posted on its timeline.
-	 * @access public
-	 * @param id (integer)
-	 * @return boolean
-	 */
-	public function setCommentPageId($id)
+	public function setCommentPostID($PID)
 	{
-		$this->_pID = $id;
+		$this->_pID = $pID;
 	}
 
 }

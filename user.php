@@ -1,7 +1,7 @@
 <?php
 session_start();
 /**
- * frontpage - The Invigle home page
+ * User - View a user
  * 
  * @package   
  * @author heffer
@@ -11,18 +11,15 @@ session_start();
  */
 require_once("configuration.php");
  
-use Invigle\FrontEndUIs\FrontPage,
-    Invigle\Language\EN_GB,
-    Invigle\User;
+use    Invigle\FrontEndUIs\userProfile,
+       Invigle\Language\EN_GB,
+       Invigle\Graph,
+       Invigle\User;
 
 require_once("bootstrap.php");
 
-if(isset($_GET['logout'])){
-    $user = new User();
-    $user->userLogout();
-}
 
 $language = new EN_GB();
-$frontPage = new FrontPage($language);
+$userProfile = new userProfile($language);
 
 ?>
