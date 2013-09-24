@@ -45,7 +45,15 @@ class Events extends FrontEndUIs {
         echo $this->renderTopNav();
         echo '<div class="container">';
             if($_GET['a'] === "new"){
-                echo $this->renderNewEventForm();
+                if(isset($_POST['saveNewEvent'])){
+                    $eventsModule = new Event();
+                    $add = $eventsModule->addEvent($_POST);
+                    print '<pre>';
+                    print_r($add);
+                    print '</pre>';
+                }else{
+                    echo $this->renderNewEventForm();
+                }
             }else{
                 echo $this->renderEventPage($_GET['eventId']);
             }
@@ -67,64 +75,76 @@ class Events extends FrontEndUIs {
     
     public function renderNewEventForm()
     {
-        return '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">
-                    <input type="hidden" name="saveNewEvent" value="">
-                    <b>'.$this->_language->_events['add-new-event'].'</b><br />
+        return '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?a=new">
+                    <input type="hidden" name="saveNewEvent" value="true">
+                    <input type="hidden" name="createEventAs" value="user"> <!-- This should be changed to show the option of a User or Event etc. -->
+                    <h2>'.$this->_language->_events['add-new-event'].'</h2>
                     
                     <div class="row">
                         <div class="col-md-8">
-                            <label for="name">[NAME]</label>
-                            <input type="text" name="name" value="" placeholder="[NAME-PLACEHOLDER]" class="form-control" id="name">
+                            <label for="name">'.$this->_language->_events['name'].'</label>
+                            <input type="text" name="name" value="" placeholder="'.$this->_language->_events['name-placeholder'].'" class="form-control" id="name">
                             <br />
-                            <label for="description">[DESCRIPTION]</label>
-                            <textarea name="description" id="description" class="form-control" placeholder="[DESC-PLACEHOLDER]"></textarea>
+                            <label for="description">'.$this->_language->_events['description'].'</label>
+                            <textarea name="description" id="description" class="form-control" placeholder="'.$this->_language->_events['desc-placeholder'].'"></textarea>
                             <br />
                             <div class="row">
                                 <div class="col-md-6">
-                                    <label>[FEE-REQUIRED]</label><br />
-                                    <input type="radio" name="isPaid" value="1" id="isPaid"> <label for="isPaid">[YES]</a>
-                                    <input type="radio" name="isPaid" value="0" id="isNotPaid"> <label for="isNotPaid">[NO]</a>
+                                    <label>'.$this->_language->_events['fee-required'].'</label><br />
+                                    <input type="radio" name="isPaid" value="1" id="isPaid"> <label for="isPaid">'.$this->_language->_events['yes'].'</label>
+                                    <input type="radio" name="isPaid" value="0" id="isNotPaid"> <label for="isNotPaid">'.$this->_language->_events['no'].'</label>
                                 </div>
                                 <div class="col-md-6">
-                                    <label>[FEE-TYPE]</label><br />
-                                    <input type="radio" name="paymentType" value="1" id="oneTime"> <label for="oneTime">[ONE-TIME]</a>
-                                    <input type="radio" name="paymentType" value="0" id="feeRecurring"> <label for="feeRecurring">[RECURRING]</a>
+                                    <label>'.$this->_language->_events['fee-type'].'</label><br />
+                                    <input type="radio" name="paymentType" value="1" id="oneTime"> <label for="oneTime">'.$this->_language->_events['one-time'].'</label>
+                                    <input type="radio" name="paymentType" value="0" id="feeRecurring"> <label for="feeRecurring">'.$this->_language->_events['recurring'].'</label>
                                 </div>
                             </div>
-                            <label for="location">[LOCATION]</label>
-                            <input type="text" name="location" value="" placeholder="[LOCATION-PLACEHOLDER]" class="form-control" id="location">
+                            <label for="location">'.$this->_language->_events['location'].'</label>
+                            <input type="text" name="location" value="" placeholder="'.$this->_language->_events['location-placeholder'].'" class="form-control" id="location">
                         </div>
                         
                         <div class="col-md-4">
-                            <label for="category">[CATEGORY]</label>
-                            <input type="text" name="category" value="" placeholder="[CATEGORY-PLACEHOLDER]" class="form-control" id="category">
+                            <label for="category">'.$this->_language->_events['category'].'</label>
+                            <input type="text" name="categories" value="" placeholder="'.$this->_language->_events['category-placeholder'].'" class="form-control" id="category">
                             <br />
-                            <label for="type">[TYPE]</label>
+                            <label for="type">'.$this->_language->_events['type'].'</label>
                             <select id="type" name="type" class="form-control">
-                                <option value="sport">[SPORT]</option>
-                                <option value="religion">[RELIGION]</option>
-                                <option value="business">[BUSINESS]</option>
-                                <option value="party">[PARTY]</option>
+                                <option value="sport">'.$this->_language->_events['sport'].'</option>
+                                <option value="religion">'.$this->_language->_events['religion'].'</option>
+                                <option value="business">'.$this->_language->_events['business'].'</option>
+                                <option value="party">'.$this->_language->_events['party'].'</option>
                             </select>
                             <br />
-                            <label for="date">[DATE]</label>
+                            <label for="date">'.$this->_language->_events['date'].'</label>
                             <div class="row">
                                 <div class="col-md-3">
-                                    <input type="text" name="dob_day" class="form-control" value="" placeholder="DD">
+                                    <input type="text" name="date_day" class="form-control" value="" placeholder="DD">
                                 </div>
                                 <div class="col-md-3">
-                                    <input type="text" name="dob_month" class="form-control" value="" placeholder="MM">
+                                    <input type="text" name="date_month" class="form-control" value="" placeholder="MM">
                                 </div>
                                 <div class="col-md-6">
-                                    <input type="text" name="dob_year" class="form-control" value="" placeholder="YYYY">
+                                    <input type="text" name="date_year" class="form-control" value="" placeholder="YYYY">
                                 </div>
                             </div>
                             <br />
-                            <label>[PRIVACY]</label><br />
-                            <input type="radio" name="privacy" value="1" id="isPublic"> <label for="isPublic">[PUBLIC]</a>
-                            <input type="radio" name="privacy" value="0" id="isPrivate"> <label for="isPrivate">[PRIVATE]</a>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label>'.$this->_language->_events['privacy'].'</label><br />
+                                    <input type="radio" name="privacy" value="public" id="isPublic"> <label for="isPublic">'.$this->_language->_events['public'].'</label>
+                                    <input type="radio" name="privacy" value="private" id="isPrivate"> <label for="isPrivate">'.$this->_language->_events['private'].'</label>    
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="timeline">'.$this->_language->_events['show-on-timeline'].'</label><br />
+                                    <input type="checkbox" name="timeline" value="yes" id="timeline">    
+                                </div>
+                            </div>
+                            
                         </div>
                     </div>
+                    <br />
+                    <input type="submit" name="saveEvent" value="'.$this->_language->_events['save_button'].'">
                     
                 </form>';
     }

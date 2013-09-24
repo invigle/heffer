@@ -27,8 +27,8 @@ if(isset($_GET['logout'])){
 //$user = new User();
 //$rtn = $user->updateUserTimeline('1', '9999');
 
-$graphModule = new Graph();
-$rtn = $graphModule->deleteConnection('1', '5', 'timeline');
+//$graphModule = new Graph();
+//$rtn = $graphModule->deleteConnection('1', '5', 'timeline');
 
 print '<pre>';
 print_r($rtn);

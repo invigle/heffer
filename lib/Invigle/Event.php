@@ -65,12 +65,53 @@ class Event
 	 */
 	public function addEvent($eArray)
 	{
-		$graphModule = new Graph();        
-        $eventId = $graphModule->createNode('Event', $eArray);
+	    $graphModule = new Graph();
+        
+        $newEventArray = array(
+            'name'=>$eArray['name'],
+            'description'=>$eArray['description'],
+            'location'=>$eArray['location'],
+            'categories'=>$eArray['categories'],
+            'type'=>$eArray['type'],
+            'date'=>"$eArray[date_day]-$eArray[date_month]-$eArray[date_year]",
+            'privacy'=>$eArray['privacy'],
+            'timestamp'=>time(),
+            'profilePicID'=>'',
+            'INID'=>'',
+            'LID'=>'',
+            'attendeeCount'=>'0',
+            'invitedCount'=>'0',
+        );
+        
+        if(isset($eArray['isPaid'])){
+            $newEventArray['isPaid'] = $eArray['isPaid'];
+            $newEventArray['paymentType'] = $eArray['paymentType'];
+        }
+        
+        if($eArray['createEventAs'] === "user"){
+            $newEventArray['ownerType'] = "user";
+            $newEventArray['OwnerID'] = $_SESSION['uid'];
+        }
+        
+        $eventId = $graphModule->createNode('Event', $newEventArray);
 		
         //Add a connection from the creator to the event.
         if($eArray['createEventAs'] === "user"){
             $creatorId = $_SESSION['uid'];
+            if(isset($eArray['timeline'])){
+                //Add to users Timeline
+                $createActionProperties = array(
+                    'actionType'=>'newEvent',
+                    'timestamp'=>time(),
+                    'uid'=>$eventId,
+                );
+                
+                $newEventActionId = $graphModule->createNode('Action', $createActionProperties);
+                
+                
+                $userModule = new User();
+                $userModule->updateUserTimeline($_SESSION['uid'], $newEventActionId);
+            }
         }
         
         $graphModule->addConnection($creatorId, $eventId, 'organiserOf');
