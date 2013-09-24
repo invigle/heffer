@@ -39,6 +39,8 @@ class User
 	private $_followerCount;
 	private $_friendCount;
 	private $_url;
+    
+    
 
 	/**
 	 * This method will check the graph database to ensure a username is unique.
@@ -47,11 +49,10 @@ class User
 	 */
 	public function validateUsername($username)
 	{
-		$graph = new Graph();
-		$check['query'] = "MATCH n:User WHERE n.username = \"$username\" RETURN count(*);";
-		$api = $graph->neo4japi('cypher', 'JSONPOST', $check);
-
-		if ($api['data'][0][0] >= "1")
+		$graphModule = new Graph();
+		$count = $graphModule->countNodes('User', 'username', $username);
+        
+		if ($count)
 		{
 			return false;
 		} else
@@ -67,12 +68,10 @@ class User
 	 */
 	public function validateEmailAddress($email)
 	{
-		$graph = new Graph();
-
-		$check['query'] = "MATCH n:User WHERE n.email = \"$email\" RETURN count(*);";
-		$api = $graph->neo4japi('cypher', 'JSONPOST', $check);
-
-		if ($api['data'][0][0] >= "1")
+		$graphModule = new Graph();
+        $count = $graphModule->countNodes('User', 'email', $email);
+        
+		if ($count)
 		{
 			return false;
 		} else
@@ -102,38 +101,25 @@ class User
 		}
 
 		//Create the new user account in neo4j
-		$graph = new Graph();
-
-		$queryString = "";
-		foreach ($aUserArray as $key => $value)
-		{
-			$queryString .= "$key : \"$value\", ";
-		}
-		$queryString = substr($queryString, 0, -2);
-		$user['query'] = "CREATE (n:User {" . $queryString . "}) RETURN n;";
-
-		$apiCall = $graph->neo4japi('cypher', 'JSONPOST', $user);
+		$graphModule = new Graph();
+		$userId = $graphModule->createNode('User', $aUserArray);
 
 		//Email the new User their login credentials?
 
 		//Login the new User and forward them to a profile page.
 
 		//return the New User ID.
-		$bit = explode("/", $apiCall['data'][0][0]['self']);
-		$userId = end($bit);
-
 		return $userId;
 	}
+    
 
 	/**
 	 * This method takes input as an array from $_POST and logs in a user.
 	 */
 	public function loginUser(array $userInput)
 	{
-		$graph = new Graph();
-
-		$run['query'] = "MATCH n:User WHERE n.email = '$userInput[email]' RETURN n;";
-		$login = $graph->neo4japi('cypher', 'JSONPOST', $run);
+		$graphModule = new Graph();
+        $login = $graphModule->matchNode('User', 'email', $userInput['email']);
 
 		if (isset($login['data'][0][0]['data']))
 		{
@@ -161,9 +147,16 @@ class User
 				}
 
 				//Store the users logged in status in Neo4j.
-				$updateDB['query'] = "MATCH n:User WHERE n.email = '$userInput[email]' SET n.sessionid='$_SESSION[sid]' SET n.ipaddress='$_SERVER[REMOTE_ADDR]' SET n.lastAction='" .
-					time() . "' SET n.rememberme='" . $userInput['rememberme'] . "' RETURN n;";
-				$update = $graph->neo4japi('cypher', 'JSONPOST', $updateDB);
+				//$updateDB['query'] = "MATCH n:User WHERE n.email = '$userInput[email]' SET n.sessionid='$_SESSION[sid]' SET n.ipaddress='$_SERVER[REMOTE_ADDR]' SET n.lastAction='" . time() . "' SET n.rememberme='" . $userInput['rememberme'] . "' RETURN n;";
+				//$update = $graphModule->neo4japi('cypher', 'JSONPOST', $updateDB);
+                
+                $nodeProperties = array(
+                    'sessionid'=>$_SESSION['sid'],
+                    'ipaddress'=>$_SERVER['REMOTE_ADDR'],
+                    'lastAction'=>time(),
+                    'rememberme'=>$userInput['rememberme'],
+                );
+                $graphModule->updateNode('User', 'email', $userInput['email'], $nodeProperties);
 
 				return true;
 			} else
@@ -186,11 +179,9 @@ class User
 	 */
 	public function validateSession()
 	{
-		$graph = new Graph();
+		$graphModule = new Graph();
 
-		$val['query'] = "MATCH n:User WHERE n.sessionid='$_SESSION[sid]' RETURN n;";
-		$api = $graph->neo4japi('cypher', 'JSONPOST', $val);
-
+        $api = $graphModule->matchNode('User', 'sessionid', $_SESSION['sid']);
 		if (isset($api['data'][0][0]['data']))
 		{
 			$userInfo = $api['data'][0][0]['data'];
@@ -218,10 +209,8 @@ class User
 	 */
 	public function userDetails()
 	{
-		$graph = new Graph();
-
-		$usr['query'] = "START n=node($_SESSION[uid]) RETURN n;";
-		$api = $graph->neo4japi('cypher', 'JSONPOST', $usr);
+		$graphModule = new Graph();
+        $api = $graphModule->matchNode('User', 'sessionid', $_SESSION['sid']);
 
 		return $api['data'][0][0]['data'];
 	}
@@ -234,11 +223,8 @@ class User
 	 */
 	public function userDetailsById($uID)
 	{
-		$graph = new Graph();
-
-		$usr['query'] = "START n=node($uID) RETURN n;";
-		$api = $graph->neo4japi('cypher', 'JSONPOST', $usr);
-
+		$graphModule = new Graph();
+        $api = $graphModule->selectNodeById($uID);
 		return $api['data'][0][0]['data'];
 	}
 
@@ -288,12 +274,10 @@ class User
 	 */
 	public function updateUserTimestamp($userID)
 	{
-		$graph = new Graph();
-
-		//Update the n.lastupdate to time().
-		$updateDB['query'] = "START n=node($userID) SET n.lastupdate='" . time() .
-			"' RETURN n;";
-		$update = $graph->neo4japi('cypher', 'JSONPOST', $updateDB);
+		$graphModule = new Graph();
+        
+        $update['lastupdate'] = time();
+        $graphModule->updateNodeById($userID, $update);
 	}
 
 
@@ -310,8 +294,7 @@ class User
 	public function checkFollowStatus($follower, $followee)
 	{
 		$graphModule = new Graph();
-		$rels = $graphModule->neo4japi('node/' . $follower .
-			'/relationships/out/followerOf', 'GET');
+		$rels = $graphModule->neo4japi('node/'.$follower.'/relationships/out/followerOf', 'GET');
 		foreach ($rels as $rel)
 		{
 			$en = explode("/", $rel['end']);
@@ -333,8 +316,7 @@ class User
 	public function userFollowersList($uID)
 	{
 		$graphModule = new Graph();
-		$rels = $graphModule->neo4japi('node/' . $uID . '/relationships/in/followerOf',
-			'GET');
+		$rels = $graphModule->neo4japi('node/'.$uID.'/relationships/in/followerOf', 'GET');
 
 		$i = 0;
 		foreach ($rels as $follower)
@@ -364,8 +346,7 @@ class User
 	public function userFollowingList($uID)
 	{
 		$graphModule = new Graph();
-		$rels = $graphModule->neo4japi('node/' . $uID . '/relationships/out/followerOf',
-			'GET');
+		$rels = $graphModule->neo4japi('node/'.$uID.'/relationships/out/followerOf', 'GET');
 
 		$i = 0;
 		foreach ($rels as $follower)
@@ -398,19 +379,22 @@ class User
 		$graph = new Graph();
 
 		//Add the relationship between follower and followee.
-		$api = $graph->addConnection($follower, $followee, 'followerOf');
+		$api = $graphModule->addConnection($follower, $followee, 'followerOf');
 
 		//Add an Action node for the action and return the node id.
-		$user['query'] = "CREATE (n:Action { actionType : \"followerOf\", timestamp : \"" .
-			time() . "\", uid : \"$followee\" }) RETURN n;";
-		$apiCall = $graph->neo4japi('cypher', 'JSONPOST', $user);
-
-		//Get NodeID of Action
-		$bit = explode("/", $apiCall['data'][0][0]['self']);
-		$actionId = end($bit);
+		//$user['query'] = "CREATE (n:Action { actionType : \"followerOf\", timestamp : \"" .time() . "\", uid : \"$followee\" }) RETURN n;";
+		//$apiCall = $graph->neo4japi('cypher', 'JSONPOST', $user);
+        
+        $createProperties = array(
+            'actionType'=>'followerOf',
+            'timestamp'=>time(),
+            'uid'=>$followee,
+        );
+        
+        $actionId = $graphModule->createNode('Action', $createProperties);
 
 		//Add a relationship from follower to action node.
-		$action = $graph->addConnection($follower, $actionId, 'timeline');
+		$action = $graphModule->addConnection($follower, $actionId, 'timeline');
 
 		//Update the Users last action timestamp.
 		$this->updateUserTimestamp($follower);
@@ -421,9 +405,8 @@ class User
 
 	public function getNumberOfFollowers($uID)
 	{
-		$graph = new Graph();
-		$api['query'] = "START n=node($uID) RETURN n;";
-		$apiCall = $graph->neo4japi('cypher', 'JSONPOST', $api);
+		$graphModule = new Graph();
+		$apiCall = $graphModule->selectNodeById($uID);
 		$user = $apiCall['data'][0][0]['data'];
 
 		return $user['followerCount'];
@@ -431,10 +414,11 @@ class User
 
 	public function setNumberOfFollowers($uID, $count)
 	{
-		$graph = new Graph();
+		$graphModule = new Graph();
 		$this->_followerCount = $count;
-		$api['query'] = "START n=node($uID) SET n.followerCount='$count' RETURN n;";
-		$apiCall = $graph->neo4japi('cypher', 'JSONPOST', $api);
+        
+        $properties['followerCount'] = $count;
+        $graphModule->updateNodeById($uID, $properties);
 	}
 
 	public function increaseFollowersCount($uID)
@@ -457,8 +441,7 @@ class User
 	public function checkFriendStatus($follower, $followee)
 	{
 		$graphModule = new Graph();
-		$friends = $graphModule->neo4japi('node/' . $follower .
-			'/relationships/all/friendOf', 'GET');
+		$friends = $graphModule->neo4japi('node/'.$follower.'/relationships/all/friendOf', 'GET');
 		foreach ($friends as $rel)
 		{
 			$en = explode("/", $rel['end']);
@@ -469,8 +452,7 @@ class User
 			}
 		}
 
-		$frReqs = $graphModule->neo4japi('node/' . $follower .
-			'/relationships/all/friendRequest', 'GET');
+		$frReqs = $graphModule->neo4japi('node/'.$follower.'/relationships/all/friendRequest', 'GET');
 		foreach ($frReqs as $rel)
 		{
 			$en = explode("/", $rel['end']);
@@ -510,22 +492,20 @@ class User
 
 		//Add an Action node for the action and return the node id.
 		//Add the actionNode from Requester to Destination
-		$user['query'] = "CREATE (n:Action { actionType : \"friendOf\", timestamp : \"" .
-			time() . "\", uid : \"$uID2\" }) RETURN n;";
-		$apiCall = $graphModule->neo4japi('cypher', 'JSONPOST', $user);
+        $friendProperties1 = array(
+            'actionType'=>'friendOf',
+            'timestamp'=>time(),
+            'uid'=>$uID2,
+        );
+        $actionId = $graphModule->createNode('Action', $friendProperties1);
 
 		//Now add it the other way around.
-		$dest['query'] = "CREATE (n:Action { actionType : \"friendOf\", timestamp : \"" .
-			time() . "\", uid : \"$uID1\" }) RETURN n;";
-		$apiCallD = $graphModule->neo4japi('cypher', 'JSONPOST', $dest);
-
-		//Get NodeID of Action (User -> Friend)
-		$bit = explode("/", $apiCall['data'][0][0]['self']);
-		$actionId = end($bit);
-
-		//Get NodeID of Action (Friend -> User)
-		$bot = explode("/", $apiCallD['data'][0][0]['self']);
-		$actionIdD = end($bot);
+		$friendProperties2 = array(
+            'actionType'=>'friendOf',
+            'timestamp'=>time(),
+            'uid'=>$uID1,
+        );
+        $actionIdD = $graphModule->createNode('Action', $friendProperties2);
 
 		//Add a relationship from follower to action node.
 		$graphModule->addConnection($uID1, $actionId, 'timeline');
@@ -545,9 +525,8 @@ class User
 
 	public function getNumberOfFriends($uID)
 	{
-		$graph = new Graph();
-		$api['query'] = "START n=node($uID) RETURN n;";
-		$apiCall = $graph->neo4japi('cypher', 'JSONPOST', $api);
+		$graphModule = new Graph();
+        $apiCall = $graphModule->selectNodeById($uID);
 		$user = $apiCall['data'][0][0]['data'];
 
 		return $user['friendCount'];
@@ -555,10 +534,11 @@ class User
 
 	public function setNumberOfFriends($uID, $count)
 	{
-		$graph = new Graph();
+		$graphModule = new Graph();
 		$this->_friendCount = $count;
-		$api['query'] = "START n=node($uID) SET n.friendCount='$count' RETURN n;";
-		$apiCall = $graph->neo4japi('cypher', 'JSONPOST', $api);
+        
+        $update['friendCount'] = $count;
+        $graphModule->updateNodeById($uID, $update);
 	}
 
 	public function increaseFriendsCount($uID)
@@ -576,8 +556,7 @@ class User
 	public function userFriendRequests($uID)
 	{
 		$graphModule = new Graph();
-		$rels = $graphModule->neo4japi('node/' . $uID .
-			'/relationships/in/friendRequest', 'GET');
+		$rels = $graphModule->neo4japi('node/'.$uID.'/relationships/in/friendRequest', 'GET');
 
 		$i = 0;
 		foreach ($rels as $follower)
@@ -607,7 +586,7 @@ class User
 	public function getFriendsList($uID)
 	{
 		$graphModule = new Graph();
-		$rels = $graphModule->neo4japi('node/' . $uID . '/relationships/in/friendOf',
+		$rels = $graphModule->neo4japi('node/'.$uID.'/relationships/in/friendOf',
 			'GET');
 
 		$i = 0;
