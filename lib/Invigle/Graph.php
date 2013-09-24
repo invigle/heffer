@@ -81,7 +81,7 @@ class Graph
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
 		$data = curl_exec($ch);
 		curl_close($ch);
-
+        
 		$json = json_decode($data, true);
 		return $json;
 	}
@@ -396,6 +396,23 @@ class Graph
         $rtn = $this->neo4japi('cypher', 'JSONPOST', $a);
         
     return $rtn;
+    }
+    
+    /**
+     * Transverse Nodes
+     * 
+     * @param $startNode [ID of Node to start with i.e. the UserID]
+     * @param $edgeType [Type of Edge to Transverse i.e. timeline]
+     * @param $startRow [First row to return].
+     * @param $endRow [Last row to return].
+     * @return array()
+     */
+    public function transverseNodes($startNode, $edgeType, $startRow='1', $endRow='10')
+    {
+        $a['query'] = "START n=node($startNode) MATCH n-[:$edgeType*$startRow..$endRow]-o RETURN o;";
+        $api = $this->neo4japi('cypher', 'JSONPOST', $a);
+    
+    return $api['data'];
     }
     
 }

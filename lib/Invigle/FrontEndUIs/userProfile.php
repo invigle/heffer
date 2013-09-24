@@ -29,7 +29,7 @@ class userProfile extends FrontEndUIs {
     {
         $this->_language = $theLanguage;
         parent::__construct();
-        $this->_pageTitle = $this->_language->_accountdetails['pageTitle'];
+        $this->_pageTitle = $this->_language->_userProfile['pageTitle'];
         
         if(isset($_SESSION['sid']) && isset($_SESSION['uid'])){
             //Session is set... But is it a real one?

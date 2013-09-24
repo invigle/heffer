@@ -22,7 +22,7 @@ class Timeline{
         );
         
         $eventActions = array(
-            'addedEvent',
+            'newEvent',
         );
         
         $pageActions = array(
@@ -65,13 +65,12 @@ class Timeline{
      * @return html output
 	 */
 	public function createTimeline($userId) {
-		$timelineEdges = $this->_graphModule->neo4japi('node/'.$userId.'/relationships/out/timeline', 'GET');
-        foreach($timelineEdges as $edge){
-            $an = explode("/", $edge['end']);
-            $actionNodeId = end($an);
+        $timelineEdges = $this->_graphModule->transverseNodes($userId, 'timeline', '1', '10');
+        
+        foreach($timelineEdges as $edgeArr){
+            $edge = $edgeArr[0];
+            $actionNode = $edge['data']; 
             
-            $actionNodeRaw = $this->_graphModule->neo4japi('node/'.$actionNodeId.'/', 'GET');
-            $actionNode = $actionNodeRaw['data'];        
             
             if($this->getActionType($actionNode['actionType']) === "user"){
                 //We have determined that this is a user-related action, so grab the destination users details and return a nice array.
@@ -92,12 +91,27 @@ class Timeline{
                 $rtn[] = array(
                     'tlType'=>'status',
                     'timestamp'=>$actionNode['timestamp'],
-                    'actuibType'=>$actionNode['actionType'],
+                    'actionType'=>$actionNode['actionType'],
                     'statusData'=>$actionNode['statusData'],
                 );
+            
+            }elseif($this->getActionType($actionNode['actionType']) === "event"){
+                //This is EVENT related...
+                //Get the Event Node
+                $eventNode = $this->_graphModule->selectNodeById($actionNode['uid']);
+                $eventData = $eventNode['data'][0][0]['data'];
+                
+                $event = array(
+                    'tlType' =>'event',
+                    'timestamp' => $eventData['timestamp'],
+                    'actionType' => 'addEvent',
+                );
+                
+                
+                $rtn[] = array_merge($event, $eventData);
             }
         }
-        
+
         $user = $this->_userModule->userDetailsById($userId);
     
         /*********************************************************
@@ -106,16 +120,13 @@ class Timeline{
          //Temporary Vars because language isnt working.
          $this->_language->_timeline['started-following'] = "started following";
          $this->_language->_timeline['is-friends-with'] = "is now friends with";
-         $this->_language->_timeline['updated-status'] = "updated their status";
-
-         //Sort $rtn by $rtn[]['timestamp'];
-         usort($rtn, function($a, $b) {
-            return $a['timestamp'] - $b['timestamp'];
-         });
-         $rtn = array_reverse($rtn, true);
+         $this->_language->_timeline['updated-his-status'] = "updated his status";
+         $this->_language->_timeline['updated-her-status'] = "updated her status";
+         $this->_language->_timeline['started-event'] = "Started Event: ";
 
          $html = '';
          foreach($rtn as $act){
+         
          $html.= '<i>'.date(CONF_DATEFORMAT, $act['timestamp']).'</i><br />';
             if($act['tlType'] === "user"){
                 if($act['actionType'] === "followerOf"){
@@ -123,8 +134,17 @@ class Timeline{
                 }elseif($act['actionType'] === "friendOf"){
                     $html.= ''.$user['firstname'].' '.$this->_language->_timeline['is-friends-with'].' <a href="user.php?username='.$act['username'].'">'.$act['firstname'].' '.$act['lastname'].'</a>';
                 }
+            
             }elseif($act['tlType'] === "status"){
-                $html.= ''.$user['firstname'].' '.$this->_language->_timeline['updated-status'].'<br />'.$act['statusData'].'';
+                if($user['gender'] === "male"){
+                    $html.= ''.$user['firstname'].' '.$this->_language->_timeline['updated-his-status'].'<br />'.$act['statusData'].'';
+                }else{
+                    $html.= ''.$user['firstname'].' '.$this->_language->_timeline['updated-her-status'].'<br />'.$act['statusData'].'';
+                }
+            
+            }elseif($act['tlType'] === "event"){
+                
+                $html.= ''.$user['firstname'].' '.$this->_language->_timeline['started-event'].' <a href="#">'.$act['name'].'</a>';
             }
          $html.= '<hr>';
          }

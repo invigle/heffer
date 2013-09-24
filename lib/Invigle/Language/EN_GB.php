@@ -94,6 +94,7 @@ class EN_GB extends Language
         );
         
         $this->_userProfile = array(
+            'pageTitle' => "View Profile",
             'user-not-found' => "We were unable to locate that user, please try again.",
             'relationshipstatus' => "Relationship status",
             'follow' => "Follow",
@@ -115,6 +116,37 @@ class EN_GB extends Language
             'timeline' => "Timeline",
             'is-friends-with' => "Is now friends with",
             'started-following' => "Started following",
+            'started-event' => "Started event: ",
+        );
+        
+        $this->_events = array(
+            'pageTitle' => "Event",
+            'add-new-event' => "Add New Event",
+            'name' => "Event Name",
+            'name-placeholder' => "Enter a name for your Event",
+            'description' => "Description of Event",
+            'desc-placeholder' => "Enter a description about your event, Remember the more information you give the more likely you are to succeed.",
+            'fee-required' => "Fee Required",
+            'yes' => "Yes",
+            'no' => "No",
+            'fee-type' => "Fee Frequency",
+            'one-time' => "One Time",
+            'recurring' => "Recurring",
+            'location' => "Location",
+            'location-placeholder' => "LATITUDE:LONGTITUDE (This will be replaced with postcode search)",
+            'category' => "Categories of Event",
+            'category-placeholder' => "i.e. #FoamParty #Gangbang #SkiTrip",
+            'type' => "Event Type",
+            'sport' => "Sport",
+            'religion' => "Religion",
+            'business' => "Business",
+            'party' => "Party",
+            'date' => "Date",
+            'privacy' => "Privacy",
+            'public' => "Public",
+            'private' => "Private",
+            'show-on-timeline' => "Show on Timeline",
+            'save_button' => "Save Button",
         );
     }
 }
