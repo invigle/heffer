@@ -376,7 +376,7 @@ class User
 	 */
 	public function followUser($follower, $followee)
 	{
-		$graph = new Graph();
+		$graphModule = new Graph();
 
 		//Add the relationship between follower and followee.
 		$api = $graphModule->addConnection($follower, $followee, 'followerOf');
