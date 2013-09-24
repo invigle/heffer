@@ -38,15 +38,13 @@ class Status {
             'actionType'=>"newStatus",
         );
         
-        $statusId = $graphModule->createNode('Status', $statusProperties);
+        $statusId = $graphModule->createNode('Status', $statusProperties);       
         
-        //Add Connection from Poster to Status.
-        $action = $graphModule->addConnection($aDataArray['oid'], $statusId, 'timeline');
-        
-        //Update Timestamp
+        //Add Connection from Poster to Status (For Timeline)
         if($aDataArray['type'] === "user"){
+            $userModule->updateUserTimeline($aDataArray['oid'], $statusId);
             $userModule->updateUserTimestamp($aDataArray['oid']);
-        }        
+        }
 	}
 
 	/**

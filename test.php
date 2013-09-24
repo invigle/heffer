@@ -13,7 +13,8 @@ require_once("configuration.php");
  
 use Invigle\FrontEndUIs\FrontPage,
     Invigle\Language\EN_GB,
-    Invigle\User;
+    Invigle\User,
+    Invigle\Graph;
 
 require_once("bootstrap.php");
 
@@ -23,8 +24,11 @@ if(isset($_GET['logout'])){
 }
 
 
-$user = new User();
-$rtn = $user->validateUsername('gavinhanson');
+//$user = new User();
+//$rtn = $user->updateUserTimeline('1', '9999');
+
+$graphModule = new Graph();
+$rtn = $graphModule->deleteConnection('1', '5', 'timeline');
 
 print '<pre>';
 print_r($rtn);

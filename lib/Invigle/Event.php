@@ -50,7 +50,6 @@ class Event
 		$this->_profilePicID = null;
 		date_default_timezone_set('Europe/London');
 		$this->_timestamp = date('m/d/Y h:i:s a', time());
-		;
 		$this->_nodeType = 'Event';
 		$this->_eID = null;
 		$this->_uID = null;
@@ -66,21 +65,17 @@ class Event
 	 */
 	public function addEvent($eArray)
 	{
-		//Create the new event in neo4j
-		$graph = new Graph();
-		$queryString = "";
-		foreach ($eArray as $key => $value)
-		{
-			$queryString .= "$key : \"$value\", ";
-		}
-		$queryString = substr($queryString, 0, -2);
-		$event['query'] = "CREATE (n:Event {" . $queryString . "}) RETURN n;";
-		$apiCall = $graph->neo4japi('cypher', 'JSONPOST', $event);
-
-		//return the New Event ID.
-		$bit = explode("/", $apiCall['data'][0][0]['self']);
-		$eventId = end($bit);
-		$this->_eID = $eventId;
+		$graphModule = new Graph();        
+        $eventId = $graphModule->createNode('Event', $eArray);
+		
+        //Add a connection from the creator to the event.
+        if($eArray['createEventAs'] === "user"){
+            $creatorId = $_SESSION['uid'];
+        }
+        
+        $graphModule->addConnection($creatorId, $eventId, 'organiserOf');
+        
+        $this->_eID = $eventId;
 		return $eventId;
 	}
 

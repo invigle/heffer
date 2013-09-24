@@ -94,6 +94,7 @@ class EN_GB extends Language
         );
         
         $this->_userProfile = array(
+            'pageTitle' => "View Profile",
             'user-not-found' => "We were unable to locate that user, please try again.",
             'relationshipstatus' => "Relationship status",
             'follow' => "Follow",
@@ -115,6 +116,11 @@ class EN_GB extends Language
             'timeline' => "Timeline",
             'is-friends-with' => "Is now friends with",
             'started-following' => "Started following",
+        );
+        
+        $this->_events = array(
+            'pageTitle' => "Event",
+            'add-new-event' => "Add New Event",
         );
     }
 }
