@@ -27,7 +27,24 @@ class Status {
 	 * @param aDataArray
 	 */
 	public function createStatus($aDataArray) {
-		// Not yet implemented
+		$graphModule = new Graph();
+        $userModule = new User();
+        
+        $statusProperties = array(
+            'statusData'=>$aDataArray['statusData'],
+            'timestamp'=>time(),
+            'statusType'=>$aDataArray['type'],
+            'OID'=>$aDataArray['oid'],
+            'actionType'=>"newStatus",
+        );
+        
+        $statusId = $graphModule->createNode('Status', $statusProperties);       
+        
+        //Add Connection from Poster to Status (For Timeline)
+        if($aDataArray['type'] === "user"){
+            $userModule->updateUserTimeline($aDataArray['oid'], $statusId);
+            $userModule->updateUserTimestamp($aDataArray['oid']);
+        }
 	}
 
 	/**

@@ -50,7 +50,6 @@ class Event
 		$this->_profilePicID = null;
 		date_default_timezone_set('Europe/London');
 		$this->_timestamp = date('m/d/Y h:i:s a', time());
-		;
 		$this->_nodeType = 'Event';
 		$this->_eID = null;
 		$this->_uID = null;
@@ -66,21 +65,58 @@ class Event
 	 */
 	public function addEvent($eArray)
 	{
-		//Create the new event in neo4j
-		$graph = new Graph();
-		$queryString = "";
-		foreach ($eArray as $key => $value)
-		{
-			$queryString .= "$key : \"$value\", ";
-		}
-		$queryString = substr($queryString, 0, -2);
-		$event['query'] = "CREATE (n:Event {" . $queryString . "}) RETURN n;";
-		$apiCall = $graph->neo4japi('cypher', 'JSONPOST', $event);
-
-		//return the New Event ID.
-		$bit = explode("/", $apiCall['data'][0][0]['self']);
-		$eventId = end($bit);
-		$this->_eID = $eventId;
+	    $graphModule = new Graph();
+        
+        $newEventArray = array(
+            'name'=>$eArray['name'],
+            'description'=>$eArray['description'],
+            'location'=>$eArray['location'],
+            'categories'=>$eArray['categories'],
+            'type'=>$eArray['type'],
+            'date'=>"$eArray[date_day]-$eArray[date_month]-$eArray[date_year]",
+            'privacy'=>$eArray['privacy'],
+            'timestamp'=>time(),
+            'profilePicID'=>'',
+            'INID'=>'',
+            'LID'=>'',
+            'attendeeCount'=>'0',
+            'invitedCount'=>'0',
+        );
+        
+        if(isset($eArray['isPaid'])){
+            $newEventArray['isPaid'] = $eArray['isPaid'];
+            $newEventArray['paymentType'] = $eArray['paymentType'];
+        }
+        
+        if($eArray['createEventAs'] === "user"){
+            $newEventArray['ownerType'] = "user";
+            $newEventArray['OwnerID'] = $_SESSION['uid'];
+        }
+        
+        $eventId = $graphModule->createNode('Event', $newEventArray);
+		
+        //Add a connection from the creator to the event.
+        if($eArray['createEventAs'] === "user"){
+            $creatorId = $_SESSION['uid'];
+            if(isset($eArray['timeline'])){
+                //Add to users Timeline
+                $createActionProperties = array(
+                    'actionType'=>'newEvent',
+                    'timestamp'=>time(),
+                    'uid'=>$eventId,
+                );
+                
+                $newEventActionId = $graphModule->createNode('Action', $createActionProperties);
+                
+                
+                $userModule = new User();
+                $userModule->updateUserTimeline($_SESSION['uid'], $newEventActionId);
+            }
+        }
+        
+        $graphModule->addConnection($creatorId, $eventId, 'organiserOf');
+        
+        $this->_eID = $eventId;
 		return $eventId;
 	}
 

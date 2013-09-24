@@ -81,7 +81,7 @@ class Graph
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
 		$data = curl_exec($ch);
 		curl_close($ch);
-
+        
 		$json = json_decode($data, true);
 		return $json;
 	}
@@ -290,6 +290,131 @@ class Graph
 
 		return $api['data'];
 	}
+    
+    /**
+     * Count Nodes
+     * 
+     * @params $nodeType, $key, $value
+     * @return boolean
+     */
+    public function countNodes($nodeType, $key = "none", $value = "none")
+    {
+        if($key === "none"){
+            $a['query'] = "MATCH n:$nodeType RETURN count(*);";
+        }else{
+            $a['query'] = "MATCH n:$nodeType WHERE n.$key = \"$value\" RETURN count(*);";    
+        }
+        
+        $api = $this->neo4japi('cypher', 'JSONPOST', $a);
+        
+    return $api['data'][0][0];
+    }
+    
+    /**
+     * Create a Node
+     * 
+     * @params $nodeType, $properties
+     * @return nodeId
+     */
+    public function createNode($nodeType, $properties = array())
+    {
+        $queryString = "";
+		foreach ($properties as $key => $value)
+		{
+			$queryString .= "$key : \"$value\", ";
+		}
+		$queryString = substr($queryString, 0, -2);
+		$user['query'] = "CREATE (n:$nodeType {" . $queryString . "}) RETURN n;";
+
+		$apiCall = $this->neo4japi('cypher', 'JSONPOST', $user);
+        
+        $bit = explode("/", $apiCall['data'][0][0]['self']);
+		$nodeId = end($bit);
+
+    return $nodeId;
+    }
+    
+    /**
+     * Match Nodes
+     * 
+     * @params $nodeType, $key, $value
+     * @return array
+     */
+    public function matchNode($nodeType, $key, $value)
+    {
+        $run['query'] = "MATCH n:$nodeType WHERE n.$key = '$value' RETURN n;";
+		$api = $this->neo4japi('cypher', 'JSONPOST', $run);
+  
+    return $api;
+    }
+    
+    /**
+     * Update Node
+     * 
+     * @params $nodeType, $key, $value, $properties
+     * @return array
+     */
+    public function updateNode($nodeType, $key, $value, $properties = array())
+    {
+        $queryString = "";
+        foreach($properties as $a => $i){
+            $queryString.= "SET n.$a='$i' ";
+        }
+        $q['query'] = "MATCH n:$nodeType WHERE n.$key = '".$value."' ".$queryString."RETURN n;";
+        $update = $this->neo4japi('cypher', 'JSONPOST', $q);
+        
+    return $update;
+    }
+    
+    /**
+     * Update Node With NodeID
+     * 
+     * @params $nodeId, $properties
+     * @return array
+     */
+    public function updateNodeById($nodeId, $properties = array())
+    {
+        $queryString = "";
+        foreach($properties as $a => $i){
+            $queryString.= "SET n.$a='$i' ";
+        }
+        $q['query'] = "START n=node($nodeId) ".$queryString."RETURN n;";
+        $update = $this->neo4japi('cypher', 'JSONPOST', $q);
+        
+    return $update;
+    }
+    
+    /**
+     * Select Node by ID
+     * 
+     * @param $id
+     * @return array()
+     */
+    public function selectNodeById($id)
+    {
+        $a['query'] = "START n=node($id) RETURN n;";
+        $rtn = $this->neo4japi('cypher', 'JSONPOST', $a);
+        
+    return $rtn;
+    }
+    
+    /**
+     * Transverse Nodes
+     * 
+     * @param $startNode [ID of Node to start with i.e. the UserID]
+     * @param $edgeType [Type of Edge to Transverse i.e. timeline]
+     * @param $startRow [First row to return].
+     * @param $endRow [Last row to return].
+     * @return array()
+     */
+    public function transverseNodes($startNode, $edgeType, $startRow='1', $endRow='10')
+    {
+        $a['query'] = "START n=node($startNode) MATCH n-[:$edgeType*$startRow..$endRow]-o RETURN o;";
+        $api = $this->neo4japi('cypher', 'JSONPOST', $a);
+    
+    return $api['data'];
+    }
+    
 }
 
 ?>
