@@ -52,11 +52,9 @@ class User
 		$graphModule = new Graph();
 		$count = $graphModule->countNodes('User', 'username', $username);
         
-		if ($count)
-		{
+		if ($count) {
 			return false;
-		} else
-		{
+		} else {
 			return true;
 		}
 	}
@@ -380,10 +378,6 @@ class User
 
 		//Add the relationship between follower and followee.
 		$api = $graphModule->addConnection($follower, $followee, 'followerOf');
-
-		//Add an Action node for the action and return the node id.
-		//$user['query'] = "CREATE (n:Action { actionType : \"followerOf\", timestamp : \"" .time() . "\", uid : \"$followee\" }) RETURN n;";
-		//$apiCall = $graph->neo4japi('cypher', 'JSONPOST', $user);
         
         $createProperties = array(
             'actionType'=>'followerOf',
@@ -392,9 +386,9 @@ class User
         );
         
         $actionId = $graphModule->createNode('Action', $createProperties);
-
+                
 		//Add a relationship from follower to action node.
-		$action = $graphModule->addConnection($follower, $actionId, 'timeline');
+        $this->updateUserTimeline($follower, $actionId);
 
 		//Update the Users last action timestamp.
 		$this->updateUserTimestamp($follower);
@@ -508,10 +502,10 @@ class User
         $actionIdD = $graphModule->createNode('Action', $friendProperties2);
 
 		//Add a relationship from follower to action node.
-		$graphModule->addConnection($uID1, $actionId, 'timeline');
+        $userModule->updateUserTimeline($uID1, $actionId);
 
 		//Add a relationship from friend->user to action node.
-		$graphModule->addConnection($uID2, $actionIdD, 'timeline');
+        $userModule->updateUserTimeline($uID2, $actionIdD);
 
 		//Update the Users last action timestamp.
 		$this->updateUserTimestamp($uID1);
@@ -633,6 +627,32 @@ class User
 		$succ = $graph->deleteConnection($uID, $iID, $connectionType);
 		return $succ;
 	}
+
+    /**
+     * Update User Timeline
+     * This function will remove the current last timeline edge and replace the latest node + add new edges.
+     * 
+     * @param $userId, $newAction (ID Of Action)
+     * @return none
+     */
+    public function updateUserTimeline($userId, $newAction)
+    {
+        $graphModule = new Graph();
+        
+        //Get old Connection
+        $old = $graphModule->neo4japi("node/".$userId."/relationships/out/timeline");
+        $ol = explode("/", $old[0]['end']);
+        $oldConnectionId = end($ol);
+        
+        //Remove Old Connection from [User]--To(1)-->[oldAction]
+        $graphModule->deleteConnection($userId, $oldConnectionId, 'timeline');
+        
+        //Add Connections 1 & 2 Between User + NewAction + OldAction.
+        $graphModule->addConnection($userId, $newAction, 'timeline');
+        $graphModule->addConnection($newAction, $oldConnectionId, 'timeline');
+    }
+
 }
+
 
 ?>
