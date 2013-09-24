@@ -4,7 +4,8 @@ namespace Invigle\FrontEndUIs;
 use Invigle\FrontEndUIs,
     Invigle\Language,
     Invigle\User,
-    Invigle\Validation;
+    Invigle\Validation,
+    Invigle\Status;
 
  
 /**
@@ -86,8 +87,31 @@ class FrontPage extends FrontEndUIs {
             $friendReqHTML = "none";
         }
         
+        if(isset($_POST['saveUserStatus'])){
+            //Save the users status, this is going to be done in User.php & Graph.php.
+            $statusModule = new Status();
+            
+            $statusProperties = $_POST;
+            $statusProperties['type'] = 'user';
+            $statusProperties['oid'] = $_SESSION['uid'];
+            
+            $statusModule->createStatus($statusProperties);
+            $statusHtml = "New Status Stored!";
+        }else{
+            $statusHtml = "";
+        }
+        
         return '<div class="container">
                     <b>'.$this->_language->_frontPage["logged-in-as"].' '.$userInfo['firstname'].' '.$userInfo['lastname'].'</b> (<a href="user.php?username='.$userInfo['username'].'">'.$this->_language->_frontPage["my-profile"].'</a> | <a href="accountdetails.php">'.$this->_language->_frontPage["my-details"].'</a> | <a href="?logout=true">Logout</a>)<br />
+                    <hr>
+                    <form method="POST" action="'.$_SERVER["PHP_SELF"].'">
+                        <input type="hidden" name="saveUserStatus" value="true">
+                        <b>'.$this->_language->_frontPage["post-a-new-status"].'</b><br />
+                        '.$statusHtml.'
+                        <input type="text" name="statusData" class="form-control" placeholder="'.$this->_language->_frontPage['post-a-new-status'].'">
+                        <input type="submit" name="save" value="Save Status">
+                    </form>
+                    <hr>
                     '.$this->_language->_frontPage["followers"].': '.$userInfo['followerCount'].'<br>
                     '.$this->_language->_frontPage["friends"].': '.$userInfo['friendCount'].'<br />
                     <hr>

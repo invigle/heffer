@@ -43,7 +43,8 @@ class EN_GB extends Language
             'my-details' => "My Details",
             'followers' => "Followers",
             'friends' => "Friends",
-            'my-profile' => "My Profile",   
+            'my-profile' => "My Profile",
+            'post-a-new-status' => "Post a new Status",
         );
         
         $this->_accountdetails = array(

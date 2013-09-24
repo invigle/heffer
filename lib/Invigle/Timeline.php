@@ -33,6 +33,10 @@ class Timeline{
             'addedGroup',
         );
         
+        $statusActions = array(
+            'newStatus',
+        );
+        
         //Now lets see which one the action falls into.
         if(in_array($action, $userActions)){
             return 'user';
@@ -45,6 +49,9 @@ class Timeline{
         }
         if(in_array($action, $groupActions)){
             return 'group';
+        }
+        if(in_array($action, $statusActions)){
+            return 'status';
         }
     
     //Not found, return error for you to decide what todo with it.
@@ -79,6 +86,15 @@ class Timeline{
                     'lastname'=>$userNode['lastname'],
                     'username'=>$userNode['username'],
                 );
+            
+            }elseif($this->getActionType($actionNode['actionType']) === "status"){
+                //This is a STATUS update that we are showing... Lets do it...
+                $rtn[] = array(
+                    'tlType'=>'status',
+                    'timestamp'=>$actionNode['timestamp'],
+                    'actuibType'=>$actionNode['actionType'],
+                    'statusData'=>$actionNode['statusData'],
+                );
             }
         }
         
@@ -90,6 +106,13 @@ class Timeline{
          //Temporary Vars because language isnt working.
          $this->_language->_timeline['started-following'] = "started following";
          $this->_language->_timeline['is-friends-with'] = "is now friends with";
+         $this->_language->_timeline['updated-status'] = "updated their status";
+
+         //Sort $rtn by $rtn[]['timestamp'];
+         usort($rtn, function($a, $b) {
+            return $a['timestamp'] - $b['timestamp'];
+         });
+         $rtn = array_reverse($rtn, true);
 
          $html = '';
          foreach($rtn as $act){
@@ -100,6 +123,8 @@ class Timeline{
                 }elseif($act['actionType'] === "friendOf"){
                     $html.= ''.$user['firstname'].' '.$this->_language->_timeline['is-friends-with'].' <a href="user.php?username='.$act['username'].'">'.$act['firstname'].' '.$act['lastname'].'</a>';
                 }
+            }elseif($act['tlType'] === "status"){
+                $html.= ''.$user['firstname'].' '.$this->_language->_timeline['updated-status'].'<br />'.$act['statusData'].'';
             }
          $html.= '<hr>';
          }
