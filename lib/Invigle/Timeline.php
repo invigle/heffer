@@ -105,6 +105,7 @@ class Timeline{
                     'tlType' =>'event',
                     'timestamp' => $eventData['timestamp'],
                     'actionType' => 'addEvent',
+                    'eventid' => $actionNode['uid'],
                 );
                 
                 
@@ -144,7 +145,7 @@ class Timeline{
             
             }elseif($act['tlType'] === "event"){
                 
-                $html.= ''.$user['firstname'].' '.$this->_language->_timeline['started-event'].' <a href="#">'.$act['name'].'</a>';
+                $html.= ''.$user['firstname'].' '.$this->_language->_timeline['started-event'].' <a href="event.php?eventid='.$act['eventid'].'">'.$act['name'].'</a>';
             }
          $html.= '<hr>';
          }

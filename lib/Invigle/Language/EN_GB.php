@@ -147,6 +147,15 @@ class EN_GB extends Language
             'private' => "Private",
             'show-on-timeline' => "Show on Timeline",
             'save_button' => "Save Button",
+            'invited' => "Invited",
+            'attending' => "Attending",
+            'organised-by' => "Organised By",
+            'attend-options' => "Attend Options",
+            'attending-this-event' => "You are attending this event",
+            'attendees' => "People Attending",
+            'invite-people' => "Invite your Friends",
+            'invite' => "Invite",
+            'friend-invited' => "Invite sent Successfully.",
         );
     }
 }
