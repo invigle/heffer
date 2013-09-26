@@ -502,10 +502,10 @@ class User
         $actionIdD = $graphModule->createNode('Action', $friendProperties2);
 
 		//Add a relationship from follower to action node.
-        $userModule->updateUserTimeline($uID1, $actionId);
+        $this->updateUserTimeline($uID1, $actionId);
 
 		//Add a relationship from friend->user to action node.
-        $userModule->updateUserTimeline($uID2, $actionIdD);
+        $this->updateUserTimeline($uID2, $actionIdD);
 
 		//Update the Users last action timestamp.
 		$this->updateUserTimestamp($uID1);
