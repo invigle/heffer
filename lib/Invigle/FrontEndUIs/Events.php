@@ -3,6 +3,7 @@ namespace Invigle\FrontEndUIs;
  
 use Invigle\FrontEndUIs,
     Invigle\Language,
+    Invigle\Graph,
     Invigle\User,
     Invigle\Validation,
     Invigle\Status,
@@ -44,18 +45,18 @@ class Events extends FrontEndUIs {
         echo '<body>';
         echo $this->renderTopNav();
         echo '<div class="container">';
-            if($_GET['a'] === "new"){
-                if(isset($_POST['saveNewEvent'])){
-                    $eventsModule = new Event();
-                    $add = $eventsModule->addEvent($_POST);
-                    print '<pre>';
-                    print_r($add);
-                    print '</pre>';
-                }else{
-                    echo $this->renderNewEventForm();
+            if(isset($_GET['a'])){
+                if($_GET['a'] === "new"){
+                    if(isset($_POST['saveNewEvent'])){
+                        $eventsModule = new Event();
+                        $newEventId = $eventsModule->addEvent($_POST);
+                        echo '<script>window.location.href = "event.php?eventid='.$newEventId.'";</script>';
+                    }else{
+                        echo $this->renderNewEventForm();
+                    }
                 }
             }else{
-                echo $this->renderEventPage($_GET['eventId']);
+                echo $this->renderEventPage($_GET['eventid']);
             }
         echo '</div>';
         echo $this->renderJSLinks();
@@ -66,11 +67,6 @@ class Events extends FrontEndUIs {
         return '<script src="/assets/bootstrap/js/jquery.js"></script>
                 <script src="http://getbootstrap.com/dist/js/bootstrap.min.js"></script>';
                 //'<script src="/assets/bootstrap/js/collapse.js"></script>';
-    }
-    
-    public function renderEventPage()
-    {
-        //To be added
     }
     
     public function renderNewEventForm()
@@ -96,8 +92,8 @@ class Events extends FrontEndUIs {
                                 </div>
                                 <div class="col-md-6">
                                     <label>'.$this->_language->_events['fee-type'].'</label><br />
-                                    <input type="radio" name="paymentType" value="1" id="oneTime"> <label for="oneTime">'.$this->_language->_events['one-time'].'</label>
-                                    <input type="radio" name="paymentType" value="0" id="feeRecurring"> <label for="feeRecurring">'.$this->_language->_events['recurring'].'</label>
+                                    <input type="radio" name="paymentType" value="onetime" id="oneTime"> <label for="oneTime">'.$this->_language->_events['one-time'].'</label>
+                                    <input type="radio" name="paymentType" value="recurring" id="feeRecurring"> <label for="feeRecurring">'.$this->_language->_events['recurring'].'</label>
                                 </div>
                             </div>
                             <label for="location">'.$this->_language->_events['location'].'</label>
@@ -148,7 +144,173 @@ class Events extends FrontEndUIs {
                     
                 </form>';
     }
+
+    public function checkAttendeeStatus($userId, $eventId)
+    {
+        $graphModule = new Graph();
+        $rels = $graphModule->neo4japi('node/'.$userId.'/relationships/out/attendeeOf', 'GET');
+        foreach ($rels as $rel)
+		{
+			$en = explode("/", $rel['end']);
+			if (end($en) === $eventId)
+			{
+				return true;
+				break;
+			}
+		}
+		return false;
+    }
     
+    public function checkInviteStatus($userId, $eventId)
+    {
+        $graphModule = new Graph();
+        $rels = $graphModule->neo4japi('node/'.$userId.'/relationships/out/invitedTo', 'GET');
+        foreach ($rels as $rel)
+		{
+			$en = explode("/", $rel['end']);
+			if (end($en) === $eventId)
+			{
+				return true;
+				break;
+			}
+		}
+		return false;
+    }
+    
+    public function countInvitesSent($eventId)
+    {
+        $graphModule = new Graph();
+        $rels = $graphModule->neo4japi('node/'.$eventId.'/relationships/in/invitedTo', 'GET');
+    return count($rels);
+    }
+
+    public function renderEventPage($eventId)
+    {
+        $graphModule = new Graph();
+        $userModule = new User();
+        
+        $eventData = $graphModule->selectNodeById($eventId);
+        $event = $eventData['data'][0][0]['data'];
+        
+        $html = "";
+        if(isset($_GET['b'])){
+            if($_GET['b'] === "attend"){
+                if(!$this->checkAttendeeStatus($_SESSION['uid'], $eventId)){
+                    $graphModule->addConnection($_SESSION['uid'], $eventId, 'attendeeOf');
+                    $html.= $this->_language->_events['attending-this-event'];
+                }
+            
+            }elseif($_GET['b'] === "invite"){
+                if(!$this->checkInviteStatus($_GET['friendId'], $eventId)) {
+                    $graphModule->addConnection($_GET['friendId'], $eventId, 'invitedTo');
+                    $html.= $this->_language->_events['friend-invited'];
+                }
+            }    
+        }
+        
+        //Get the locations coordinates for plotting a map.
+        $lonlat = explode(",", $event['location']);
+        $lat = $lonlat[0];
+        $lon = $lonlat[1];
+        
+        $map = '<iframe height="210" width="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?q='.$lat.','.$lon.'&hl=es;z=14&amp;output=embed"></iframe>';
+        
+        $cats = explode(" ", $event['categories']);
+        $categories = "";
+        foreach($cats as $cat){
+            $categories.= "<a href='event.php?a=search&b=category&c=$cat'>#$cat</a> ";
+        }
+        
+        if($this->_loggedin){
+            if($event['privacy'] === "public"){
+                if(!$this->checkAttendeeStatus($_SESSION['uid'], $eventId)){
+                    $eventLinks = '<a href="event.php?eventid='.$eventId.'&b=attend">Count me In!</a>';
+                }else{
+                    $eventLinks = $this->_language->_events['attending-this-event'];
+                }
+            }else{
+                $eventLinks = "Closed Event";
+            }
+        }else{
+            $eventLinks = "";
+        }
+        
+        $attendees = "";
+        $attendeeEdges = $graphModule->neo4japi('node/'.$eventId.'/relationships/in/attendeeOf', 'GET');
+        foreach($attendeeEdges as $att){
+            $atstart = explode("/", $att['start']);
+            $userId = end($atstart);
+            $user = $userModule->userDetailsById($userId);
+            $attendees.= "<a href='user.php?username=$user[username]'>$user[firstname] $user[lastname]</a><br />";
+        }
+        
+        $friendsList = "";
+        $friends = $userModule->getFriendsList($_SESSION['uid']);
+        foreach($friends as $friend){
+            if(!$this->checkAttendeeStatus($friend['userid'], $eventId)){
+                $friendsList.= '<a href="user.php?username='.$friend['username'].'">'.$friend['firstname'].' '.$friend['lastname'].'</a> [';
+                if(!$this->checkInviteStatus($friend['userid'], $eventId)){
+                    $friendsList.= '<a href="event.php?eventid='.$eventId.'&b=invite&friendId='.$friend['userid'].'">'.$this->_language->_events['invite'].'</a>';
+                }else{
+                    $friendsList.= $this->_language->_events['invited'];
+                }
+                $friendsList.= ']<br />';
+            }
+        }
+        
+        $html.= '<div class="row">
+                    <div class="col-md-9">
+                     <div class="row">
+                        <div class="col-md-8">
+                            <h2>'.$event['name'].' ('.$event['date'].')</h2>
+                            <p><b>'.$this->_language->_events['attend-options'].':</b> '.$eventLinks.'</p>
+                        </div>
+                        <div class="col-md-2">
+                            <label>'.$this->_language->_events['invited'].'</label><br />
+                            '.$this->countInvitesSent($eventId).'
+                        </div>
+                        <div class="col-md-2">
+                            <label>'.$this->_language->_events['attending'].'</label><br />
+                            '.count($attendeeEdges).'
+                        </div>
+                     </div>
+                     <div class="row">
+                        <div class="col-md-8">
+                            '.$event['description'].'   
+                        </div>
+                        <div class="col-md-4">
+                            '.$map.'
+                        </div>
+                     </div>
+                     <hr>
+                     <div class="row">
+                        <div class="col-md-8">
+                     
+                     '.$this->_language->_events['organised-by'].' ';
+                 
+        if($event['ownerType'] === "user"){
+            $user = $userModule->userDetailsById($event['OwnerID']);
+            $html.= '<a href="user.php?username='.$user['username'].'">'.$user['firstname'].' '.$user['lastname'].'</a>';
+        }
+        
+        $html.= ' on '.date(CONF_DATEFORMAT, $event['timestamp']).'.
+                    </div>
+                    <div class="col-md-4">
+                        '.$categories.'
+                    </div>
+                </div>
+               </div>
+               <div class="col-md-3">
+                    <b>'.$this->_language->_events['attendees'].'</b><br />
+                    '.$attendees.'
+                    <hr>
+                    <b>'.$this->_language->_events['invite-people'].'</b><br />
+                    '.$friendsList.'
+               </div>
+            </div>';
+        
+    return $html;
+    }
     
     
  }
