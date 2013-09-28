@@ -120,6 +120,106 @@ class Event
 		return $eventId;
 	}
 
+    /** Function to return an array of a users invites.
+     *
+     */
+    public function userInvites($uID)
+    {
+        $graphModule = new Graph();
+		$rels = $graphModule->neo4japi('node/'.$uID.'/relationships/out/invitedTo', 'GET');
+
+		$i = 0;
+		foreach ($rels as $ev)
+		{
+			$st = explode('/', $ev['end']);            
+            $eventData = $graphModule->selectNodeById(end($st));
+            $event = $eventData['data'][0][0]['data'];
+
+			$rtn[$i]['eventid'] = end($st);
+			$rtn[$i]['name'] = $event['name'];
+            $rtn[$i]['date'] = $event['date'];
+            
+            unset($event);
+			$i++;
+		}
+
+		if (isset($rtn))
+		{
+			return $rtn;
+		}
+    }
+    
+    /**
+     * Function to check follower status
+     */
+    public function checkFollowStatus($follower, $followee)
+	{
+		$graphModule = new Graph();
+		$rels = $graphModule->neo4japi('node/'.$follower.'/relationships/out/followerOf', 'GET');
+		foreach ($rels as $rel)
+		{
+			$en = explode("/", $rel['end']);
+			if (end($en) === $followee)
+			{
+				return true;
+				break;
+			}
+		}
+		return false;
+	}
+    
+	public function getNumberOfFollowers($uID)
+	{
+		$graphModule = new Graph();
+		$apiCall = $graphModule->selectNodeById($uID);
+		$user = $apiCall['data'][0][0]['data'];
+
+		return $user['followerCount'];
+	}
+
+	public function setNumberOfFollowers($uID, $count)
+	{
+		$graphModule = new Graph();
+		$this->_followerCount = $count;
+        
+        $properties['followerCount'] = $count;
+        $graphModule->updateNodeById($uID, $properties);
+	}
+
+	public function increaseFollowersCount($uID)
+	{
+		$followers = $this->getNumberOfFollowers($uID) + 1;
+		$this->setNumberOfFollowers($uID, $followers);
+	}
+    
+    /**
+     * Function to follow an event.
+     */
+    public function followEvent($userId, $eventId)
+    {
+		$graphModule = new Graph();
+
+		//Add the relationship between follower and followee.
+		$api = $graphModule->addConnection($userId, $eventId, 'followerOf');
+        
+        $createProperties = array(
+            'actionType'=>'followerOf',
+            'timestamp'=>time(),
+            'uid'=>$eventId,
+        );
+        
+        $actionId = $graphModule->createNode('Action', $createProperties);
+                
+		//Add a relationship from follower to action node.
+        $this->updateUserTimeline($userId, $actionId);
+
+		//Update the Users last action timestamp.
+		$this->updateUserTimestamp($userId);
+
+		//Update Number of Followers
+		$this->increaseFollowersCount($eventId);
+    }
+
 	/** Function to delete an event node given an ID.
 	 * @access private
 	 * @param eID

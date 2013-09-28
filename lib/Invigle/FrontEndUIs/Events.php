@@ -188,6 +188,7 @@ class Events extends FrontEndUIs {
     {
         $graphModule = new Graph();
         $userModule = new User();
+        $eventModule = new Event();
         
         $eventData = $graphModule->selectNodeById($eventId);
         $event = $eventData['data'][0][0]['data'];
@@ -204,6 +205,12 @@ class Events extends FrontEndUIs {
                 if(!$this->checkInviteStatus($_GET['friendId'], $eventId)) {
                     $graphModule->addConnection($_GET['friendId'], $eventId, 'invitedTo');
                     $html.= $this->_language->_events['friend-invited'];
+                }
+            
+            }elseif($_GET['b'] === "follow"){
+                if(!$eventModule->checkFollowStatus($_SESSION['uid'], $eventId)){
+                    $graphModule->addConnection($_SESSION['uid'], $eventId, 'followerOf');
+                    $html.= $this->_language->_events['following-event'];
                 }
             }    
         }
@@ -224,9 +231,14 @@ class Events extends FrontEndUIs {
         if($this->_loggedin){
             if($event['privacy'] === "public"){
                 if(!$this->checkAttendeeStatus($_SESSION['uid'], $eventId)){
-                    $eventLinks = '<a href="event.php?eventid='.$eventId.'&b=attend">Count me In!</a>';
+                    $eventLinks = '[<a href="event.php?eventid='.$eventId.'&b=attend">Count me In!</a>]';
                 }else{
-                    $eventLinks = $this->_language->_events['attending-this-event'];
+                    $eventLinks = ' ['.$this->_language->_events['attending-this-event'].']';
+                }
+                if(!$eventModule->checkFollowStatus($_SESSION['uid'], $eventId)){
+                    $eventLinks.= ' [<a href="event.php?eventid='.$eventId.'&b=follow">Follow</a>]';
+                }else{
+                    $eventLinks.= ' ['.$this->_language->_events['following-event'].']';
                 }
             }else{
                 $eventLinks = "Closed Event";

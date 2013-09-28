@@ -352,11 +352,13 @@ class User
 			$st = explode('/', $follower['end']);
 			$user = $this->userDetailsById(end($st));
 
-			$rtn[$i]['userid'] = end($st);
-			$rtn[$i]['username'] = $user['username'];
-			$rtn[$i]['firstname'] = $user['firstname'];
-			$rtn[$i]['lastname'] = $user['lastname'];
-			$i++;
+			if(isset($user['username'])){
+                $rtn[$i]['userid'] = end($st);
+    			$rtn[$i]['username'] = $user['username'];
+    			$rtn[$i]['firstname'] = $user['firstname'];
+    			$rtn[$i]['lastname'] = $user['lastname'];
+    			$i++;
+            }
 		}
 
 		if (isset($rtn))
