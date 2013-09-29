@@ -81,6 +81,8 @@ class Event
             'LID'=>'',
             'attendeeCount'=>'0',
             'invitedCount'=>'0',
+            'isPaid'=>"",
+            'paymentType'=>"",
         );
         
         if(isset($eArray['isPaid'])){

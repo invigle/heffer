@@ -30,7 +30,7 @@ class Timeline{
         );
         
         $groupActions = array(
-            'addedGroup',
+            'newGroup',
         );
         
         $statusActions = array(
@@ -67,7 +67,7 @@ class Timeline{
 	public function createTimeline($userId) {
         $timelineEdges = $this->_graphModule->transverseNodes($userId, 'timeline', '1', '10');
         
-        foreach($timelineEdges as $edgeArr){
+        foreach($timelineEdges as $edgeArr){          
             $edge = $edgeArr[0];
             $actionNode = $edge['data']; 
             
@@ -110,6 +110,22 @@ class Timeline{
                 
                 
                 $rtn[] = array_merge($event, $eventData);
+                
+            }elseif($this->getActionType($actionNode['actionType']) === "group"){
+                //This is EVENT related...
+                //Get the Event Node
+                $groupNode = $this->_graphModule->selectNodeById($actionNode['uid']);
+                $groupData = $groupNode['data'][0][0]['data'];
+                
+                $group = array(
+                    'tlType' =>'group',
+                    'timestamp' => $groupData['timestamp'],
+                    'actionType' => 'addEvent',
+                    'groupid' => $actionNode['uid'],
+                );
+                
+                
+                $rtn[] = array_merge($group, $groupData);
             }
         }
 
@@ -124,6 +140,7 @@ class Timeline{
          $this->_language->_timeline['updated-his-status'] = "updated his status";
          $this->_language->_timeline['updated-her-status'] = "updated her status";
          $this->_language->_timeline['started-event'] = "Started Event: ";
+         $this->_language->_timeline['started-group'] = "Started Group: ";
 
          $html = '';
          foreach($rtn as $act){
@@ -143,9 +160,12 @@ class Timeline{
                     $html.= ''.$user['firstname'].' '.$this->_language->_timeline['updated-her-status'].'<br />'.$act['statusData'].'';
                 }
             
-            }elseif($act['tlType'] === "event"){
-                
+            }elseif($act['tlType'] === "event"){   
                 $html.= ''.$user['firstname'].' '.$this->_language->_timeline['started-event'].' <a href="event.php?eventid='.$act['eventid'].'">'.$act['name'].'</a>';
+            
+            }elseif($act['tlType'] === "group"){   
+                $html.= ''.$user['firstname'].' '.$this->_language->_timeline['started-group'].' <a href="group.php?groupid='.$act['groupid'].'">'.$act['name'].'</a>';
+            
             }
          $html.= '<hr>';
          }

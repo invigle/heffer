@@ -118,6 +118,7 @@ class EN_GB extends Language
             'is-friends-with' => "Is now friends with",
             'started-following' => "Started following",
             'started-event' => "Started event: ",
+            'started-group' => "Started Group: ",
         );
         
         $this->_events = array(
@@ -136,7 +137,7 @@ class EN_GB extends Language
             'location' => "Location",
             'location-placeholder' => "LATITUDE:LONGTITUDE (This will be replaced with postcode search)",
             'category' => "Categories of Event",
-            'category-placeholder' => "i.e. #FoamParty #Gangbang #SkiTrip",
+            'category-placeholder' => "i.e. FoamParty Gangbang SkiTrip",
             'type' => "Event Type",
             'sport' => "Sport",
             'religion' => "Religion",
@@ -147,7 +148,7 @@ class EN_GB extends Language
             'public' => "Public",
             'private' => "Private",
             'show-on-timeline' => "Show on Timeline",
-            'save_button' => "Save Button",
+            'save_button' => "Save Event",
             'invited' => "Invited",
             'attending' => "Attending",
             'organised-by' => "Organised By",
@@ -158,6 +159,39 @@ class EN_GB extends Language
             'invite' => "Invite",
             'friend-invited' => "Invite sent Successfully.",
             'following-event' => "Following Event",
+        );
+        
+        $this->_groups = array(
+            'pageTitle' => "Group",
+            'add-new-group' => "Add New Group",
+            'name' => "Group Name",
+            'name-placeholder' => "Enter a name for your Group",
+            'description' => "Description of Group",
+            'desc-placeholder' => "Enter a short description about your group.",
+            'fee-required' => "Fee Required",
+            'yes' => "Yes",
+            'no' => "No",
+            'fee-type' => "Fee Frequency",
+            'one-time' => "One Time",
+            'recurring' => "Recurring",
+            'location' => "Location",
+            'location-placeholder' => "LATITUDE:LONGTITUDE (This will be replaced with postcode search)",
+            'category' => "Categories of Group",
+            'category-placeholder' => "i.e. FoamParty Gangbang SkiTrip",
+            'type' => "Group Type",
+            'sport' => "Sport",
+            'religion' => "Religion",
+            'business' => "Business",
+            'party' => "Party",
+            'privacy' => "Privacy",
+            'public' => "Public",
+            'private' => "Private",
+            'show-on-timeline' => "Show on Timeline",
+            'save_button' => "Save Group",
+            'slogan' => "Slogan",
+            'slogan-placeholder' => "Place a group slogan here.",
+            'website' => "Website",
+            'website-placeholder' => "i.e. http://www.example.com/myGroupName",
         );
     }
 }

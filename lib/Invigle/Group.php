@@ -76,22 +76,54 @@ class Group
 	 */
 	public function addGroup($gArray)
 	{
-		//Create the new group in neo4j
-		$graph = new Graph();
-		$queryString = "";
-		foreach ($gArray as $key => $value)
-		{
-			$queryString .= "$key : \"$value\", ";
-		}
-		$queryString = substr($queryString, 0, -2);
-		$event['query'] = "CREATE (n:Group {" . $queryString . "}) RETURN n;";
-		$apiCall = $graph->neo4japi('cypher', 'JSONPOST', $group);
-
-		//return the new group ID.
-		$bit = explode("/", $apiCall['data'][0][0]['self']);
-		$groupId = end($bit);
-		$this->_gID = $groupId;
-		return $groupId;
+		$graphModule = new Graph();
+        
+        $groupData = array(
+            'name'=>$gArray['name'],
+            'categories'=>$gArray['categories'],
+            'description'=>$gArray['description'],
+            'slogan'=>$gArray['slogan'],
+            'website'=>$gArray['website'],
+            'location'=>$gArray['location'],
+            'institution'=>$gArray['institution'],
+            'privacy'=>$gArray['privacy'],
+            'type'=>$gArray['type'],
+            'ProfilePicID'=>"",
+            'followerCount'=>"0",
+            'memberCount'=>"0",
+            'isPaid'=>"",
+            'paymentType'=>"",
+            'timestamp'=>time(),
+        );
+        
+        if(isset($gArray['isPaid'])){
+            $newEventArray['isPaid'] = $gArray['isPaid'];
+            $newEventArray['paymentType'] = $gArray['paymentType'];
+        }
+        
+        $groupId = $graphModule->createNode('Group', $groupData);
+        
+        //Update Users Timeline if Selected.
+        $creatorId = $_SESSION['uid'];
+        if(isset($gArray['timeline'])){
+            //Add to users Timeline
+            $createActionProperties = array(
+                'actionType'=>'newGroup',
+                'timestamp'=>time(),
+                'uid'=>$groupId,
+            );
+            
+            $newGroupActionId = $graphModule->createNode('Action', $createActionProperties);
+            
+            $userModule = new User();
+            $userModule->updateUserTimeline($_SESSION['uid'], $newGroupActionId);
+        }
+        
+        //Add the adminOf Connection.
+        $graphModule->addConnection($creatorId, $groupId, 'adminOf');
+        
+    $this->_gID = $groupId;
+    return $groupId;
 	}
 
 	/** Function to delete a group node given an ID.
