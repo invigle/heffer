@@ -10,9 +10,9 @@ use Invigle\Graph;
 class Group
 {
 	private $_name;
-	private $_category;
-	private $_shortDescription;
-	private $_slogan;
+    private $_shortDescription;
+    private $_category;
+    private $_slogan;
 	private $_website;
 	private $_location;
 	private $_memberCount;
@@ -21,7 +21,7 @@ class Group
 	private $_paymentType;
 	private $_privacy;
 	private $_followerCount;
-	private $_groupType;
+	private $_type;
 	private $_profilePicID;
 	private $_nodeType;
 	private $_eID;
@@ -37,20 +37,74 @@ class Group
 		$this->_slogan = null;
 		$this->_website = null;
 		$this->_location = null;
-		$this->_memberCount = null;
 		$this->_institution = null;
 		$this->_isPaid = null;
 		$this->_paymentType = null;
 		$this->_privacy = null;
 		$this->_followerCount = null;
-		$this->_groupType = null;
+        $this->_memberCount = null;
+        $this->_memberCount = null;
+		$this->_type = null;
 		$this->_profilePicID = null;
 		$this->_nodeType = 'Group';
 		$this->_eID = null;
-		$this->_gID = null;
 		$this->_pHID = null;
 	}
 
+    /**
+     * This method takes as input an array with all the information of an event and
+     * adds this event to the GD as an 'event node'.
+     * @access public
+     * @param eArray
+     * @return integer
+     */
+    public function addGroup($gArray)
+    {
+        $graphModule = new Graph();
+
+        $newGroupArray = array(
+            'name'=>$gArray['name'],
+            'shortDescription'=>$gArray['shortDescription'],
+            'category'=>$gArray['category'],
+            'slogan'=>$gArray['slogan'],
+            'website'=>$gArray['website'],
+            'location'=>$gArray['location'],
+            'institution'=>$gArray['institution'],
+            'privacy'=>$gArray['privacy'],
+            'followerCount'=>'0',
+            'memberCount'=>$gArray['memberCount'],
+            'type'=>$gArray['type'],
+            'profilePicID'=>'',
+            'eID'=>'',
+            'phID'=>'',
+        );
+
+        // If the event is paid, the array of the new event is populated
+        // with the field isPaid and the payment type.
+        if(isset($gArray['isPaid'])){
+            $newGroupArray['isPaid'] = $gArray['isPaid'];
+            $newGroupArray['paymentType'] = $gArray['paymentType'];
+        }
+
+        // The array of the new group gets the admin of the group and her/his ID.
+        if($gArray['adminGroupAs'] === "user"){
+            $newGroupArray['ownerType'] = "user";
+            $newGroupArray['OwnerID'] = $_SESSION['uid'];
+        }
+
+        // Creating the group node.
+        $groupId = $graphModule->createNode('Group', $newGroupArray);
+
+        if($gArray['adminGroupAs'] === "user"){
+            // Get the ID of the admin of the group.
+            $adminId = $_SESSION['uid'];
+        }
+
+        $this->_eID = $eventId;
+        // Add a connection from the admin node to the group node.
+        $graphModule->addConnection($adminId, $this->_gID, 'adminOf');
+    }
+//    todo: continue from here
 	/**
 	 * Find the ID of a category using cypher indexBy and indexValue
 	 */
@@ -667,9 +721,9 @@ class Group
 	 * @access public
 	 * @return string
 	 */
-	public function getGroupType()
+	public function getType()
 	{
-		return $this->_groupType;
+		return $this->_type;
 	}
 
 	/**
@@ -678,9 +732,9 @@ class Group
 	 * @param type (string))
 	 * @return boolean
 	 */
-	public function setGroupType($type)
+	public function setType($type)
 	{
-		$this->_groupType = $type;
+		$this->_type = $type;
 	}
 }
 
