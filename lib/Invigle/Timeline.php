@@ -59,19 +59,18 @@ class Timeline{
     }
 
 	/**
-     * Generate a users timeline
-	 * 
+     * Generate a users timeline.
      * @param $userId
      * @return html output
 	 */
 	public function createTimeline($userId) {
-        $timelineEdges = $this->_graphModule->transverseNodes($userId, 'timeline', '1', '10');
+
+        $timelineEdges = $this->_graphModule->traverseNodes($userId, 'timeline', '1', '10');
         
         foreach($timelineEdges as $edgeArr){
             $edge = $edgeArr[0];
             $actionNode = $edge['data']; 
-            
-            
+
             if($this->getActionType($actionNode['actionType']) === "user"){
                 //We have determined that this is a user-related action, so grab the destination users details and return a nice array.
                 $userNode = $this->_userModule->userDetailsById($actionNode['uid']);
@@ -107,12 +106,36 @@ class Timeline{
                     'actionType' => 'addEvent',
                     'eventid' => $actionNode['uid'],
                 );
-                
-                
                 $rtn[] = array_merge($event, $eventData);
-            }
-        }
+            }elseif($this->getActionType($actionNode['actionType']) === "page"){
+                //This is PAGE related...
+                //Get the Page Node
+                $pageNode = $this->_graphModule->selectNodeById($actionNode['uid']);
+                $pageData = $pageNode['data'][0][0]['data'];
 
+                $page = array(
+                    'tlType' =>'page',
+                    'timestamp' => $pageData['timestamp'],
+                    'actionType' => 'addPage',
+                    'pageid' => $actionNode['uid'],
+                );
+                $rtn[] = array_merge($page, $pageData);
+            }elseif($this->getActionType($actionNode['actionType']) === "group"){
+                //This is GROUP related...
+                //Get the Group Node
+                $groupNode = $this->_graphModule->selectNodeById($actionNode['uid']);
+                $groupData = $groupNode['data'][0][0]['data'];
+
+                $page = array(
+                    'tlType' =>'group',
+                    'timestamp' => $groupData['timestamp'],
+                    'actionType' => 'groupPage',
+                    'groupid' => $actionNode['uid'],
+                );
+                $rtn[] = array_merge($page, $groupData);
+            }
+
+        }
         $user = $this->_userModule->userDetailsById($userId);
     
         /*********************************************************
@@ -124,6 +147,8 @@ class Timeline{
          $this->_language->_timeline['updated-his-status'] = "updated his status";
          $this->_language->_timeline['updated-her-status'] = "updated her status";
          $this->_language->_timeline['started-event'] = "Started Event: ";
+         $this->_language->_timeline['added-page'] = "Added Page: ";
+         $this->_language->_timeline['added-group'] = "Added Group: ";
 
          $html = '';
          foreach($rtn as $act){
@@ -147,7 +172,13 @@ class Timeline{
                 
                 $html.= ''.$user['firstname'].' '.$this->_language->_timeline['started-event'].' <a href="event.php?eventid='.$act['eventid'].'">'.$act['name'].'</a>';
             }
-         $html.= '<hr>';
+            elseif($act['tlType'] === "page"){
+                $html.= ''.$user['firstname'].' '.$this->_language->_timeline['added-page'].' <a href="event.php?eventid='.$act['pageid'].'">'.$act['name'].'</a>';
+            }
+            elseif($act['tlType'] === "group"){
+                $html.= ''.$user['firstname'].' '.$this->_language->_timeline['added-group'].' <a href="event.php?eventid='.$act['groupid'].'">'.$act['name'].'</a>';
+            }
+                $html.= '<hr>';
          }
   
     return $html;
@@ -156,8 +187,8 @@ class Timeline{
 	/**
 	 * @access public
 	 */
-	public function updateTimeline() {
-		// Not yet implemented
+	public function updateTimeline($userId) {
+        // to be implemented
 	}
 }
 ?>

@@ -170,6 +170,7 @@ class Graph
 		//Update the nodes Properties
 		$nodePath = "node/$nodeId/properties";
 		$setApi = $this->neo4japi($nodePath, 'PUT', $newParams);
+        return $setApi;
 	}
 
 	// An edge has two properties: type and uID
@@ -248,6 +249,7 @@ class Graph
 		//Delete the Node
 		$path = "node/$aID";
 		$api = $this->neo4japi($path, 'DELETE');
+        return $api;
 	}
 
 	/**
@@ -324,9 +326,9 @@ class Graph
 			$queryString .= "$key : \"$value\", ";
 		}
 		$queryString = substr($queryString, 0, -2);
-		$user['query'] = "CREATE (n:$nodeType {" . $queryString . "}) RETURN n;";
+		$node['query'] = "CREATE (n:$nodeType {" . $queryString . "}) RETURN n;";
 
-		$apiCall = $this->neo4japi('cypher', 'JSONPOST', $user);
+		$apiCall = $this->neo4japi('cypher', 'JSONPOST', $node);
         
         $bit = explode("/", $apiCall['data'][0][0]['self']);
 		$nodeId = end($bit);
@@ -407,7 +409,7 @@ class Graph
      * @param $endRow [Last row to return].
      * @return array()
      */
-    public function transverseNodes($startNode, $edgeType, $startRow='1', $endRow='10')
+    public function traverseNodes($startNode, $edgeType, $startRow='1', $endRow='10')
     {
         $a['query'] = "START n=node($startNode) MATCH n-[:$edgeType*$startRow..$endRow]-o RETURN o;";
         $api = $this->neo4japi('cypher', 'JSONPOST', $a);

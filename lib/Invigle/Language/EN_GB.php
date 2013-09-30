@@ -45,7 +45,6 @@ class EN_GB extends Language
             'friends' => "Friends",
             'my-profile' => "My Profile",
             'post-a-new-status' => "Post a new Status",
-            'your-invited-to' => "You're invited to",
         );
         
         $this->_accountdetails = array(
@@ -157,7 +156,6 @@ class EN_GB extends Language
             'invite-people' => "Invite your Friends",
             'invite' => "Invite",
             'friend-invited' => "Invite sent Successfully.",
-            'following-event' => "Following Event",
         );
     }
 }

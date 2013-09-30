@@ -10,30 +10,34 @@ use Invigle\Graph;
 class Event
 {
 	private $_name;
+    private $_description;
+    private $_location;
+    private $_category;
 	private $_date;
-	private $_category;
-	private $_description;
 	private $_privacy;
 	private $_institution;
 	private $_isPaid;
 	private $_paymentType;
-	private $_location;
 	private $_attendeeCount;
 	private $_invitedCount;
 	private $_followerCount;
 	private $_eventType;
-	private $_pHID;
+ 	private $_pHID;
 	private $_profilePicID;
 	private $_timestamp;
 	private $_nodeType;
 	private $_eID;
 	private $_uID;
 	private $_gID;
+    private $_pID;
+    private $_organiser;
 
 	/* The Class Constructor*/
 	public function __construct()
 	{
 		$this->_name = null;
+        $this->_description = null;
+        $this->_location = null;
 		$this->_date = null;
 		$this->_category = null;
 		$this->_description = null;
@@ -41,7 +45,6 @@ class Event
 		$this->_institution = null;
 		$this->_isPaid = null;
 		$this->_paymentType = null;
-		$this->_location = null;
 		$this->_attendeeCount = null;
 		$this->_invitedCount = null;
 		$this->_followerCount = null;
@@ -54,6 +57,7 @@ class Event
 		$this->_eID = null;
 		$this->_uID = null;
 		$this->_gID = null;
+        $this->_organiser = null;
 	}
 
 	/**
@@ -82,143 +86,66 @@ class Event
             'attendeeCount'=>'0',
             'invitedCount'=>'0',
         );
-        
+
+        // If the event is paid, the array of the new event is populated
+        // with the field isPaid and the payment type.
         if(isset($eArray['isPaid'])){
             $newEventArray['isPaid'] = $eArray['isPaid'];
             $newEventArray['paymentType'] = $eArray['paymentType'];
         }
-        
+
+        // The array of the new event gets the creator of the event and her/his ID.
         if($eArray['createEventAs'] === "user"){
             $newEventArray['ownerType'] = "user";
             $newEventArray['OwnerID'] = $_SESSION['uid'];
         }
-        
+
+        // Creating the event node.
         $eventId = $graphModule->createNode('Event', $newEventArray);
-		
-        //Add a connection from the creator to the event.
+
+        // todo: do we need the following or all have been already assigned by the above?
+//        $this->setEventName($eventId, $eArray['name']);
+//        $this->setEventDate($eventId, $eArray['description']);
+//        $this->setEventLocation($eventId, $eArray['location']);
+//        $this->setEventCategory($eventId, $eArray['categories']);
+//        $this->setEventType($eventId, $eArray['type']);
+//        $this->setEventDate($eventId, "$eArray[date_day]-$eArray[date_month]-$eArray[date_year]");
+//        $this->setEventPrivacy($eventId, $eArray['privacy']);
+//        $this->setEventTimestamp($eventId, time());
+//        $this->setEventProfPicId($eventId, '');
+//        $this->setNumberOfEventAttendees($eventId, '0');
+//        $this->setNumberOfEventInvitees($eventId, '0');
+//        $this->setNumberOfEventFollowers($eventId, '0');
+//        $this->setEventPaidState($eventId, $eArray['isPaid']);
+//        $this->setEventPaymentType($eventId, $eArray['paymentType']);
+
         if($eArray['createEventAs'] === "user"){
+            // Get the ID of the creator of the event.
             $creatorId = $_SESSION['uid'];
+            // Set the properties of the createActionProperties array.
             if(isset($eArray['timeline'])){
-                //Add to users Timeline
                 $createActionProperties = array(
                     'actionType'=>'newEvent',
                     'timestamp'=>time(),
                     'uid'=>$eventId,
                 );
-                
+
+                // Create the action node.
                 $newEventActionId = $graphModule->createNode('Action', $createActionProperties);
-                
-                
+
+                // Create a new user (the creator of the event) in order to update his/her timeline.
                 $userModule = new User();
+
+                // Update the user's timeline by connecting the ID of the creator with the ID of the new action which
+                // shows the creation of a new event.
                 $userModule->updateUserTimeline($_SESSION['uid'], $newEventActionId);
             }
         }
-        
-        $graphModule->addConnection($creatorId, $eventId, 'organiserOf');
-        
+
         $this->_eID = $eventId;
-		return $eventId;
+        // Add a connection from the creator to the event.
+        $graphModule->addConnection($creatorId, $this->_eID, 'organiserOf');
 	}
-
-    /** Function to return an array of a users invites.
-     *
-     */
-    public function userInvites($uID)
-    {
-        $graphModule = new Graph();
-		$rels = $graphModule->neo4japi('node/'.$uID.'/relationships/out/invitedTo', 'GET');
-
-		$i = 0;
-		foreach ($rels as $ev)
-		{
-			$st = explode('/', $ev['end']);            
-            $eventData = $graphModule->selectNodeById(end($st));
-            $event = $eventData['data'][0][0]['data'];
-
-			$rtn[$i]['eventid'] = end($st);
-			$rtn[$i]['name'] = $event['name'];
-            $rtn[$i]['date'] = $event['date'];
-            
-            unset($event);
-			$i++;
-		}
-
-		if (isset($rtn))
-		{
-			return $rtn;
-		}
-    }
-    
-    /**
-     * Function to check follower status
-     */
-    public function checkFollowStatus($follower, $followee)
-	{
-		$graphModule = new Graph();
-		$rels = $graphModule->neo4japi('node/'.$follower.'/relationships/out/followerOf', 'GET');
-		foreach ($rels as $rel)
-		{
-			$en = explode("/", $rel['end']);
-			if (end($en) === $followee)
-			{
-				return true;
-				break;
-			}
-		}
-		return false;
-	}
-    
-	public function getNumberOfFollowers($uID)
-	{
-		$graphModule = new Graph();
-		$apiCall = $graphModule->selectNodeById($uID);
-		$user = $apiCall['data'][0][0]['data'];
-
-		return $user['followerCount'];
-	}
-
-	public function setNumberOfFollowers($uID, $count)
-	{
-		$graphModule = new Graph();
-		$this->_followerCount = $count;
-        
-        $properties['followerCount'] = $count;
-        $graphModule->updateNodeById($uID, $properties);
-	}
-
-	public function increaseFollowersCount($uID)
-	{
-		$followers = $this->getNumberOfFollowers($uID) + 1;
-		$this->setNumberOfFollowers($uID, $followers);
-	}
-    
-    /**
-     * Function to follow an event.
-     */
-    public function followEvent($userId, $eventId)
-    {
-		$graphModule = new Graph();
-
-		//Add the relationship between follower and followee.
-		$api = $graphModule->addConnection($userId, $eventId, 'followerOf');
-        
-        $createProperties = array(
-            'actionType'=>'followerOf',
-            'timestamp'=>time(),
-            'uid'=>$eventId,
-        );
-        
-        $actionId = $graphModule->createNode('Action', $createProperties);
-                
-		//Add a relationship from follower to action node.
-        $this->updateUserTimeline($userId, $actionId);
-
-		//Update the Users last action timestamp.
-		$this->updateUserTimestamp($userId);
-
-		//Update Number of Followers
-		$this->increaseFollowersCount($eventId);
-    }
 
 	/** Function to delete an event node given an ID.
 	 * @access private
@@ -226,13 +153,17 @@ class Event
 	 */
 	public function deleteEvent($eID)
 	{
-		$graph = new Graph();
-		$succ = $graph->deleteNodeByID($eID);
-		if (!$succ)
-		{
-			throw new Exception("Event $eID could not be deleted.");
-		}
-		$this->_eID = null;
+        $graphModule = new Graph();
+        $this->_eID = $eID;
+        if(!filter_var($this->_eID, FILTER_VALIDATE_INT))
+        {
+            echo("Event ID is not valid");
+        }
+        else
+        {
+            $graphModule->deleteNodeByID($this->_eID);
+
+        }
 	}
 
 	/**
@@ -244,26 +175,46 @@ class Event
 	 */
 	public function editEvent($eArray)
 	{
-		$graph = new Graph();
-		$succ = $graph->editNodeProperties($eArray);
-		return $succ;
+        $graphModule = new Graph();
+
+        $newEventArray = array(
+            'name'=>$eArray['name'],
+            'description'=>$eArray['description'],
+            'location'=>$eArray['location'],
+            'categories'=>$eArray['categories'],
+            'type'=>$eArray['type'],
+            'date'=>$eArray['date'],
+            'privacy'=>$eArray['privacy'],
+            'timestamp'=>time(),
+            'profilePicID'=>$eArray['profilePicID'],
+            'INID'=>$eArray['INID'],
+            'LID'=>$eArray['LID'],
+            'attendeeCount'=>$eArray['attendeeCount'],
+            'invitedCount'=>$eArray['invitedCount'],
+            'isPaid'=>$eArray['isPaid'],
+            'paymentType'=>$eArray['paymentType'],
+        );
+		$graphModule->editNodeProperties($newEventArray);
 	}
 
 	/**
-	 * This method takes as inputs a photo ID, the ID of an event and adds a RELATED_TO edge to neo4j.
+	 * This method takes as inputs a photo ID, the ID of an event and adds a relatedTo edge to neo4j.
 	 * @access public
 	 * @param phID, eID
 	 */
 	public function addEventPhoto($phID, $eID)
 	{
-		$graph = new Graph();
-		$connectionType = 'RELATED_TO';
-		$succ = $graph->addConnection($phID, $eID, $connectionType);
-		if (!$succ)
-		{
-			throw new Exception("New photo $phID could not be added to event $eID.");
-		}
-		$this->_pHID = $phID;
+        $graphModule = new Graph();
+        $this->_pHID = $phID;
+        if(!filter_var($this->_pHID, FILTER_VALIDATE_INT))
+        {
+            echo("Photo ID is not valid");
+        }
+        else
+        {
+            $connectionType = 'relatedTo';
+            $graphModule->addConnection($this->_pHID, $eID, $connectionType);
+        }
 	}
 
 	/**
@@ -273,14 +224,17 @@ class Event
 	 */
 	public function deleteEventPhoto($phID, $eID)
 	{
-		$graph = new Graph();
-		$connectionType = 'RELATED_TO';
-		$succ = $graph->deleteConnection($phID, $eID, $connectionType);
-		if (!$succ)
-		{
-			throw new Exception("Photo $phID could not be deleted from event $phID.");
-		}
-		$this->_phID = null;
+        $graphModule = new Graph();
+        $this->_pHID = $phID;
+        if(!filter_var($this->_pHID, FILTER_VALIDATE_INT))
+        {
+            echo("Photo ID is not valid");
+        }
+        else
+        {
+		    $connectionType = 'relatedTo';
+		    $graphModule->deleteConnection($this->_pHID, $eID, $connectionType);
+        }
 	}
 
 	/**
@@ -290,14 +244,22 @@ class Event
 	 */
 	public function addEventLocation($eID, $locID)
 	{
-		$graph = new Graph();
-		$connectionType = 'LOCATED_AT';
-		$succ = $graph->addConnection($eID, $locID, $connectionType);
-		if (!$succ)
-		{
-			throw new Exception("Location $locID could not be added to event $eID.");
-		}
-		$this->_location = $locID;
+        $graphModule = new Graph();
+        $this->_eID = $eID;
+        $this->_location = $locID;
+        if(!filter_var($this->_eID, FILTER_VALIDATE_INT))
+        {
+            echo("Event ID is not valid");
+        }
+        elseif(!filter_var($this->_location, FILTER_VALIDATE_INT))
+        {
+            echo("Location ID is not valid");
+        }
+        else
+        {
+            $connectionType = 'locatedAt';
+            $graphModule->addConnection($this->_eID, $this->_location, $connectionType);
+        }
 	}
 
 	/**
@@ -307,15 +269,47 @@ class Event
 	 */
 	public function deleteEventLocation($eID, $locID)
 	{
-		$graph = new Graph();
-		$connectionType = 'LOCATED_AT';
-		$succ = $graph->deleteConnection($eID, $locID, $connectionType);
-		if (!$succ)
-		{
-			throw new Exception("Location $locID could not be deleted from event $phID.");
-		}
-		$this->_location = null;
+        $graphModule = new Graph();
+        $this->_eID = $eID;
+        $this->_location = $locID;
+        if(!filter_var($this->_eID, FILTER_VALIDATE_INT))
+        {
+            echo("Event ID is not valid");
+        }
+        elseif(!filter_var($this->_location, FILTER_VALIDATE_INT))
+        {
+            echo("Location ID is not valid");
+        }
+        else
+        {
+            $connectionType = 'locatedAt';
+            $graphModule->deleteConnection($this->_eID, $this->_location, $connectionType);
+        }
 	}
+
+    public function changeEventLocation($locID, $locID2, $eID)
+    {
+        $this->_eID = $eID;
+        if(!filter_var($locID, FILTER_VALIDATE_INT))
+        {
+            echo("Previous Location ID is not valid");
+        }
+        elseif(!filter_var($locID2, FILTER_VALIDATE_INT))
+        {
+            echo("New Location ID is not valid");
+        }
+        elseif(!filter_var($this->_eID, FILTER_VALIDATE_INT))
+        {
+            echo("Event ID is not valid");
+        }
+        else
+        {
+            $this->deleteEventLocation($locID, $eID);
+            $this->addEventLocation($locID2, $eID);
+            $this->setEventLocation($eID, $locID2);
+        }
+    }
+
 
 	/**
 	 * This method takes as input the date of the event and returns the forecasted weather for that day.
@@ -324,7 +318,7 @@ class Event
 	 */
 	public function getWeather($aDate)
 	{
-		// Not yet implemented
+		// TODO: getWeather to be implemented
 	}
 
 	/**
@@ -335,7 +329,7 @@ class Event
 	 */
 	public function getDirections($aFromLocation, $aToLocation)
 	{
-		// Not yet implemented
+        // TODO: getDirections to be implemented
 	}
 
 	/**
@@ -346,18 +340,47 @@ class Event
 	 */
 	public function addEventFollower($uID, $eID)
 	{
-		$graph = new Graph();
-		$connectionType = 'FOLLOWER_OF';
-		$succ = $graph->addConnection($uID, $eID, $connectionType);
-		return $succ;
+        $graphModule = new Graph();
+        $currEventFollowers = $this->getNumberOfEventFollowers($eID);
+        $this->_uID = $uID;
+        $this->_eID = $eID;
+        if(!filter_var($this->_uID, FILTER_VALIDATE_INT))
+        {
+            echo("Follower ID is not valid");
+        }
+        elseif(!filter_var($this->_eID, FILTER_VALIDATE_INT))
+        {
+            echo("Event ID is not valid");
+        }
+        else
+        {
+            $connectionType = 'followerOf';
+            $graphModule->addConnection($this->_uID, $this->_eID, $connectionType);
+
+            $this->setNumberOfEventFollowers($eID, $currEventFollowers+1);
+        }
 	}
 
 	public function deleteEventFollower($uID, $eID)
 	{
-		$graph = new Graph();
-		$connectionType = 'FOLLOWER_OF';
-		$succ = $graph->deleteConnection($uID, $eID, $connectionType);
-		return $succ;
+        $graphModule = new Graph();
+        $currEventFollowers = $this->getNumberOfEventFollowers($eID);
+        $this->_uID = $uID;
+        $this->_eID = $eID;
+        if(!filter_var($this->_uID, FILTER_VALIDATE_INT))
+        {
+            echo("Follower ID is not valid");
+        }
+        elseif(!filter_var($this->_eID, FILTER_VALIDATE_INT))
+        {
+            echo("Event ID is not valid");
+        }
+        else
+        {
+            $connectionType = 'followerOf';
+            $graphModule->deleteConnection($this->_uID, $this->_eID, $connectionType);
+            $this->setNumberOfEventFollowers($eID, $currEventFollowers-1);
+        }
 	}
 
 	/**
@@ -368,26 +391,67 @@ class Event
 	 */
 	public function addEventOrganiser($uID, $eID)
 	{
-		$graph = new Graph();
-		$connectionType = 'ORGANISER_OF';
-		$succ = $graph->addConnection($uID, $eID, $connectionType);
-		return $succ;
+        $graphModule = new Graph();
+        $this->_uID = $uID;
+        $this->_eID = $eID;
+        if(!filter_var($this->_uID, FILTER_VALIDATE_INT))
+        {
+            echo("Organiser ID is not valid");
+        }
+        elseif(!filter_var($this->_eID, FILTER_VALIDATE_INT))
+        {
+            echo("Event ID is not valid");
+        }
+        else
+        {
+            $connectionType = 'organiserOf';
+            $graphModule->addConnection($this->_uID, $this->_eID, $connectionType);
+            $this->setEventOrganiserId($eID, $uID);
+        }
 	}
 
 	public function deleteEventOrganiser($uID, $eID)
 	{
-		$graph = new Graph();
-		$connectionType = 'ORGANISER_OF';
-		$succ = $graph->deleteConnection($uID, $eID, $connectionType);
-		return $succ;
+        $graphModule = new Graph();
+        $this->_uID = $uID;
+        $this->_eID = $eID;
+        if(!filter_var($this->_uID, FILTER_VALIDATE_INT))
+        {
+            echo("Organiser ID is not valid");
+        }
+        elseif(!filter_var($this->_eID, FILTER_VALIDATE_INT))
+        {
+            echo("Event ID is not valid");
+        }
+        else
+        {
+            $connectionType = 'organiserOf';
+            $graphModule->deleteConnection($this->_uID, $this->_eID, $connectionType);
+            $this->setEventOrganiserId($eID, null);
+        }
 	}
 
-	public function changeEventOrganiser($uID, $uID2, $pID)
+	public function changeEventOrganiser($uID, $uID2, $eID)
 	{
-		$graph = new Graph();
-		$succ = $this->deleteEventOrganiser($uID, $pID);
-		if ($succ == 1)
-			$succ2 = $this->addEventOrganiser($uID2, $pID);
+        $this->_eID = $eID;
+        if(!filter_var($uID, FILTER_VALIDATE_INT))
+        {
+            echo("Previous Organiser ID is not valid");
+        }
+        elseif(!filter_var($uID2, FILTER_VALIDATE_INT))
+        {
+            echo("New Organiser ID is not valid");
+        }
+        elseif(!filter_var($this->_eID, FILTER_VALIDATE_INT))
+        {
+            echo("Event ID is not valid");
+        }
+        else
+        {
+            $this->deleteEventOrganiser($uID, $eID);
+            $this->addEventOrganiser($uID2, $eID);
+            $this->setEventOrganiserId($eID, $uID2);
+        }
 	}
 
 	/**
@@ -398,18 +462,46 @@ class Event
 	 */
 	public function addEventAttendee($uID, $eID)
 	{
-		$graph = new Graph();
-		$connectionType = 'ATTENDEE_OF';
-		$succ = $graph->addConnection($uID, $eID, $connectionType);
-		return $succ;
+        $graphModule = new Graph();
+        $currEventAttendees = $this->getNumberOfEventAttendees($eID);
+        $this->_uID = $uID;
+        $this->_eID = $eID;
+        if(!filter_var($this->_uID, FILTER_VALIDATE_INT))
+        {
+            echo("Attendee ID is not valid");
+        }
+        elseif(!filter_var($this->_eID, FILTER_VALIDATE_INT))
+        {
+            echo("Event ID is not valid");
+        }
+        else
+        {
+            $connectionType = 'attendeeOf';
+            $graphModule->addConnection($this->_uID, $this->_eID, $connectionType);
+            $this->setNumberOfEventAttendees($eID, $currEventAttendees+1);
+        }
 	}
 
 	public function deleteEventAttendee($uID, $eID)
 	{
-		$graph = new Graph();
-		$connectionType = 'ATTENDEE_OF';
-		$succ = $graph->deleteConnection($uID, $eID, $connectionType);
-		return $succ;
+        $graphModule = new Graph();
+        $currEventAttendees = $this->getNumberOfEventAttendees($eID);
+        $this->_uID = $uID;
+        $this->_eID = $eID;
+        if(!filter_var($this->_uID, FILTER_VALIDATE_INT))
+        {
+            echo("Attendee ID is not valid");
+        }
+        elseif(!filter_var($this->_eID, FILTER_VALIDATE_INT))
+        {
+            echo("Event ID is not valid");
+        }
+        else
+        {
+            $connectionType = 'attendeeOf';
+            $graphModule->deleteConnection($this->_uID, $this->_eID, $connectionType);
+            $this->setNumberOfEventAttendees($eID, $currEventAttendees-1);
+        }
 	}
 
 	/**
@@ -420,65 +512,259 @@ class Event
 	 */
 	public function addUserEventInvitation($uID, $eID)
 	{
-		$graph = new Graph();
-		$connectionType = 'INVITED_TO';
-		$succ = $graph->addConnection($uID, $eID, $connectionType);
-		return $succ;
+        $graphModule = new Graph();
+        $currEventInvitees = $this->getNumberOfEventInvitees($eID);
+        $this->_uID = $uID;
+        $this->_eID = $eID;
+        if(!filter_var($this->_uID, FILTER_VALIDATE_INT))
+        {
+            echo("User ID is not valid");
+        }
+        elseif(!filter_var($this->_eID, FILTER_VALIDATE_INT))
+        {
+            echo("Event ID is not valid");
+        }
+        else
+        {
+            $connectionType = 'invitedTo';
+            $graphModule->addConnection($this->_uID, $this->_eID, $connectionType);
+            $this->setNumberOfEventInvitees($eID, $currEventInvitees+1);
+        }
 	}
 
-	/**********************************************************/
+    public function addEventPage($pID, $eID)
+    {
+        $graphModule = new Graph();
+        $this->_pID = $pID;
+        $this->_eID = $eID;
+        if(!filter_var($this->_pID, FILTER_VALIDATE_INT))
+        {
+            echo("Page ID is not valid");
+        }
+        elseif(!filter_var($this->_eID, FILTER_VALIDATE_INT))
+        {
+            echo("Event ID is not valid");
+        }
+        else
+        {
+            $connectionType = 'organiserOf';
+            $graphModule->addConnection($this->_pID, $this->_eID, $connectionType);
+            $this->setEventPageId($eID, $pID);
+
+        }
+    }
+
+    public function deleteEventPage($pID, $eID)
+    {
+        $graphModule = new Graph();
+        $this->_pID = $pID;
+        $this->_eID = $eID;
+        if(!filter_var($this->_pID, FILTER_VALIDATE_INT))
+        {
+            echo("Page ID is not valid");
+        }
+        elseif(!filter_var($this->_eID, FILTER_VALIDATE_INT))
+        {
+            echo("Event ID is not valid");
+        }
+        else
+        {
+            $connectionType = 'organiserOf';
+            $graphModule->deleteConnection($this->_pID, $this->_eID, $connectionType);
+            $this->setEventPageId($eID, null);
+        }
+    }
+
+
+    public function changeEventPage($pID, $pID2, $eID)
+    {
+        $this->_eID = $eID;
+        if(!filter_var($pID, FILTER_VALIDATE_INT))
+        {
+            echo("Previous Page ID is not valid");
+        }
+        elseif(!filter_var($pID2, FILTER_VALIDATE_INT))
+        {
+            echo("New Page ID is not valid");
+        }
+        elseif(!filter_var($this->_eID, FILTER_VALIDATE_INT))
+        {
+            echo("Event ID is not valid");
+        }
+        else
+        {
+            $this->deleteEventPage($pID, $eID);
+            $this->addEventPage($pID2, $eID);
+            $this->setEventPageId($eID, $pID2);
+        }
+    }
+
+    public function addEventGroup($gID, $eID)
+    {
+        $graphModule = new Graph();
+        $this->_gID = $gID;
+        $this->_eID = $eID;
+        if(!filter_var($this->_gID, FILTER_VALIDATE_INT))
+        {
+            echo("Group ID is not valid");
+        }
+        elseif(!filter_var($this->_eID, FILTER_VALIDATE_INT))
+        {
+            echo("Event ID is not valid");
+        }
+        else
+        {
+            $connectionType = 'organiserOf';
+            $graphModule->addConnection($this->_gID, $this->_eID, $connectionType);
+            $this->setEventGroupId($eID, $gID);
+        }
+    }
+
+    public function deleteEventGroup($gID, $eID)
+    {
+        $graphModule = new Graph();
+        $this->_gID = $gID;
+        $this->_eID = $eID;
+        if(!filter_var($this->_gID, FILTER_VALIDATE_INT))
+        {
+            echo("Group ID is not valid");
+        }
+        elseif(!filter_var($this->_eID, FILTER_VALIDATE_INT))
+        {
+            echo("Event ID is not valid");
+        }
+        else
+        {
+            $connectionType = 'organiserOf';
+            $graphModule->deleteConnection($this->_gID, $this->_eID, $connectionType);
+            $this->setEventGroupId($eID, null);
+        }
+    }
+
+    public function changeEventGroup($gID, $gID2, $eID)
+    {
+        $this->_eID = $eID;
+        if(!filter_var($gID, FILTER_VALIDATE_INT))
+        {
+            echo("Previous Group ID is not valid");
+        }
+        elseif(!filter_var($gID2, FILTER_VALIDATE_INT))
+        {
+            echo("New Group ID is not valid");
+        }
+        elseif(!filter_var($this->_eID, FILTER_VALIDATE_INT))
+        {
+            echo("Event ID is not valid");
+        }
+        else
+        {
+            $this->deleteEventGroup($gID, $eID);
+            $this->addEventGroup($gID2, $eID);
+            $this->setEventGroupId($eID, $gID2);
+        }
+    }
+
+    /**********************************************************/
 	/** SETS and GETS *****************************/
 	/**********************************************************/
-	/**
-	 * This method returns the name of the event.
-	 * @access public
-	 * @return string
-	 */
-	public function getEventName()
-	{
-		return $this->_name;
-	}
+    /**
+     * This method returns the name of the event.
+     * @access public
+     * @return string
+     */
+    public function getEventName($eID)
+    {
+        if(!filter_var($eID, FILTER_VALIDATE_INT))
+        {
+            echo("Event ID is not valid");
+            return false;
+        }
+        else{
+        $graphModule = new Graph();
+        $apiCall = $graphModule->selectNodeById($eID);
+        $event = $apiCall['data'][0][0]['data'];
+        return $event['name'];
+        }
+    }
 
-	/**
-	 * This method sets the name of the event.
-	 * @access public
-	 * @param name (string)
-	 * @return boolean
-	 */
-	public function setEventName($name)
-	{
-		$this->_name = $name;
-	}
+    /**
+     * This method sets the name of the event.
+     * @access public
+     * @param name (string)
+     * @return boolean
+     */
+    public function setEventName($eID, $name)
+    {
+        if(!filter_var($eID, FILTER_VALIDATE_INT))
+        {
+            echo("Event ID is not valid");
+        }
+        else{
+        $graphModule = new Graph();
+        $this->_name = $name;
+        $update['name'] = $name;
+        $graphModule->updateNodeById($eID, $update);
+        }
+    }
 
-	/**
-	 * This method returns the date of the event.
-	 * @access public
-	 * @return date
-	 */
-	public function getEventDate()
-	{
-		return $this->_date;
-	}
+    /**
+     * This method returns the date of the event.
+     * @access public
+     * @return date
+     */
+    public function getEventDate($eID)
+    {
+        if(!filter_var($eID, FILTER_VALIDATE_INT))
+        {
+            echo("Event ID is not valid");
+            return false;
+        }
+        else{
+        $graphModule = new Graph();
+        $apiCall = $graphModule->selectNodeById($eID);
+        $event = $apiCall['data'][0][0]['data'];
+        return $event['date'];
+        }
+    }
 
-	/**
-	 * This method sets the date of the event.
-	 * @access public
-	 * @param date (date)
-	 * @return boolean
-	 */
-	public function setEventDate($date)
-	{
-		$this->_date = $date;
-	}
+    /**
+     * This method sets the date of the event.
+     * @access public
+     * @param date (date)
+     * @return boolean
+     */
+    public function setEventDate($eID, $date)
+    {
+        if(!filter_var($eID, FILTER_VALIDATE_INT))
+        {
+            echo("Event ID is not valid");
+        }
+        else{
+        $graphModule = new Graph();
+        $this->_date = $date;
+        $update['date'] = $date;
+        $graphModule->updateNodeById($eID, $update);
+        }
+    }
 
 	/**
 	 * This method returns the event category (public or private).
 	 * @access public
 	 * @return string
 	 */
-	public function getEventCategory()
+	public function getEventCategory($eID)
 	{
-		return $this->_category;
+        if(!filter_var($eID, FILTER_VALIDATE_INT))
+        {
+            echo("Event ID is not valid");
+            return false;
+        }
+        else{
+        $graphModule = new Graph();
+        $apiCall = $graphModule->selectNodeById($eID);
+        $event = $apiCall['data'][0][0]['data'];
+        return $event['category'];
+        }
 	}
 
 	/**
@@ -487,9 +773,18 @@ class Event
 	 * @param category (string))
 	 * @return boolean
 	 */
-	public function setEventCategory($category)
+	public function setEventCategory($eID, $category)
 	{
-		$this->_category = $category;
+        if(!filter_var($eID, FILTER_VALIDATE_INT))
+        {
+            echo("Event ID is not valid");
+        }
+        else{
+        $graphModule = new Graph();
+        $this->_category = $category;
+        $update['category'] = $category;
+        $graphModule->updateNodeById($eID, $update);
+        }
 	}
 
 	/**
@@ -497,9 +792,19 @@ class Event
 	 * @access public
 	 * @return string
 	 */
-	public function getEventDescription()
+	public function getEventDescription($eID)
 	{
-		return $this->_description;
+        if(!filter_var($eID, FILTER_VALIDATE_INT))
+        {
+            echo("Event ID is not valid");
+            return false;
+        }
+        else{
+        $graphModule = new Graph();
+        $apiCall = $graphModule->selectNodeById($eID);
+        $event = $apiCall['data'][0][0]['data'];
+        return $event['description'];
+        }
 	}
 
 	/**
@@ -508,9 +813,18 @@ class Event
 	 * @param description (string)
 	 * @return boolean
 	 */
-	public function setEventDescription($description)
+	public function setEventDescription($eID, $description)
 	{
-		$this->_description = $description;
+        if(!filter_var($eID, FILTER_VALIDATE_INT))
+        {
+            echo("Event ID is not valid");
+        }
+        else{
+        $graphModule = new Graph();
+        $this->_description = $description;
+        $update['description'] = $description;
+        $graphModule->updateNodeById($eID, $update);
+        }
 	}
 
 	/**
@@ -518,9 +832,18 @@ class Event
 	 * @access public
 	 * @return boolean 
 	 */
-	public function getEventPrivacy()
+	public function getEventPrivacy($eID)
 	{
-		return $this->_privacy;
+        if(!filter_var($eID, FILTER_VALIDATE_INT))
+        {
+            echo("Event ID is not valid");
+        }
+        else{
+        $graphModule = new Graph();
+        $apiCall = $graphModule->selectNodeById($eID);
+        $event = $apiCall['data'][0][0]['data'];
+        return $event['privacy'];
+        }
 	}
 
 	/**
@@ -529,9 +852,18 @@ class Event
 	 * @param privacy (boolean)
 	 * @return boolean
 	 */
-	public function setEventPrivacy($privacy)
+	public function setEventPrivacy($eID, $privacy)
 	{
-		$this->_privacy = $privacy;
+        if(!filter_var($eID, FILTER_VALIDATE_INT))
+        {
+            echo("Event ID is not valid");
+        }
+        else{
+        $graphModule = new Graph();
+        $this->_privacy = $privacy;
+        $update['privacy'] = $privacy;
+        $graphModule->updateNodeById($eID, $update);
+        }
 	}
 
 	/**
@@ -541,7 +873,7 @@ class Event
 	 */
 	public function getEventId()
 	{
-		return $this->_eID;
+        // TODO: do we need this method ?
 	}
 
 	/**
@@ -550,9 +882,18 @@ class Event
 	 * @param id (integer)
 	 * @return boolean
 	 */
-	public function setEventId($id)
+	public function setEventId($eID, $id)
 	{
-		$this->_eID = $id;
+        if(!filter_var($eID, FILTER_VALIDATE_INT))
+        {
+            echo("Event ID is not valid");
+        }
+        else{
+        $graphModule = new Graph();
+        $this->_eID = $id;
+        $update['id'] = $id;
+        $graphModule->updateNodeById($eID, $update);
+        }
 	}
 
 	/**
@@ -560,9 +901,19 @@ class Event
 	 * @access public
 	 * @return string
 	 */
-	public function getEventInstitution()
+	public function getEventInstitution($eID)
 	{
-		return $this->_institution;
+        if(!filter_var($eID, FILTER_VALIDATE_INT))
+        {
+            echo("Event ID is not valid");
+            return false;
+        }
+        else{
+        $graphModule = new Graph();
+        $apiCall = $graphModule->selectNodeById($eID);
+        $event = $apiCall['data'][0][0]['data'];
+        return $event['institution'];
+        }
 	}
 
 	/**
@@ -571,9 +922,18 @@ class Event
 	 * @param institution (string)
 	 * @return boolean
 	 */
-	public function setEventInstitution($institution)
+	public function setEventInstitution($eID, $institution)
 	{
-		$this->_institution = $institution;
+        if(!filter_var($eID, FILTER_VALIDATE_INT))
+        {
+            echo("Event ID is not valid");
+        }
+        else{
+        $graphModule = new Graph();
+        $this->_institution = $institution;
+        $update['institution'] = $institution;
+        $graphModule->updateNodeById($eID, $update);
+        }
 	}
 
 	/**
@@ -581,9 +941,19 @@ class Event
 	 * @access public
 	 * @return integer
 	 */
-	public function getEventOrganiserId()
+	public function getEventOrganiserId($eID)
 	{
-		return $this->_uID;
+        if(!filter_var($eID, FILTER_VALIDATE_INT))
+        {
+            echo("Event ID is not valid");
+            return false;
+        }
+        else{
+        $graphModule = new Graph();
+        $apiCall = $graphModule->selectNodeById($eID);
+        $event = $apiCall['data'][0][0]['data'];
+        return $event['organiser'];
+        }
 	}
 
 	/**
@@ -592,9 +962,18 @@ class Event
 	 * @param id (integer)
 	 * @return boolean
 	 */
-	public function setEventOrganiserId($id)
+	public function setEventOrganiserId($eID, $organiser)
 	{
-		$this->_uID = $id;
+        if(!filter_var($eID, FILTER_VALIDATE_INT))
+        {
+            echo("Event ID is not valid");
+        }
+        else{
+        $graphModule = new Graph();
+        $this->_organiser = $organiser;
+        $update['organiser'] = $organiser;
+        $graphModule->updateNodeById($eID, $update);
+        }
 	}
 
 	/**
@@ -602,9 +981,19 @@ class Event
 	 * @access public
 	 * @return integer
 	 */
-	public function getEventGroupId()
+	public function getEventGroupId($eID)
 	{
-		return $this->_gID;
+        if(!filter_var($eID, FILTER_VALIDATE_INT))
+        {
+            echo("Event ID is not valid");
+            return false;
+        }
+        else{
+        $graphModule = new Graph();
+        $apiCall = $graphModule->selectNodeById($eID);
+        $event = $apiCall['data'][0][0]['data'];
+        return $event['gID'];
+        }
 	}
 
 	/**
@@ -613,9 +1002,18 @@ class Event
 	 * @param id (integer)
 	 * @return boolean
 	 */
-	public function setEventGroupId($id)
+	public function setEventGroupId($eID, $gID)
 	{
-		$this->_gID = $id;
+        if(!filter_var($eID, FILTER_VALIDATE_INT))
+        {
+            echo("Event ID is not valid");
+        }
+        else{
+        $graphModule = new Graph();
+        $this->_gID = $gID;
+        $update['gID'] = $gID;
+        $graphModule->updateNodeById($eID, $update);
+        }
 	}
 
 	/**
@@ -623,9 +1021,19 @@ class Event
 	 * @access public
 	 * @return boolean
 	 */
-	public function getEventPaidState()
+	public function getEventPaidState($eID)
 	{
-		return $this->_isPaid;
+        if(!filter_var($eID, FILTER_VALIDATE_INT))
+        {
+            echo("Event ID is not valid");
+            return false;
+        }
+        else{
+        $graphModule = new Graph();
+        $apiCall = $graphModule->selectNodeById($eID);
+        $event = $apiCall['data'][0][0]['data'];
+        return $event['isPaid'];
+        }
 	}
 
 	/**
@@ -634,9 +1042,18 @@ class Event
 	 * @param paid (boolean)
 	 * @return boolean
 	 */
-	public function setEventPaidState($paid)
+	public function setEventPaidState($eID, $isPaid)
 	{
-		$this->_isPaid = $paid;
+        if(!filter_var($eID, FILTER_VALIDATE_INT))
+        {
+            echo("Event ID is not valid");
+        }
+        else{
+        $graphModule = new Graph();
+        $this->_isPaid = $isPaid;
+        $update['isPaid'] = $isPaid;
+        $graphModule->updateNodeById($eID, $update);
+        }
 	}
 
 	/**
@@ -644,9 +1061,19 @@ class Event
 	 * @access public
 	 * @return integer
 	 */
-	public function getEventPaymentType()
+	public function getEventPaymentType($eID)
 	{
-		return $this->_paymentType;
+        if(!filter_var($eID, FILTER_VALIDATE_INT))
+        {
+            echo("Event ID is not valid");
+            return false;
+        }
+        else{
+        $graphModule = new Graph();
+        $apiCall = $graphModule->selectNodeById($eID);
+        $event = $apiCall['data'][0][0]['data'];
+        return $event['paymentType'];
+        }
 	}
 
 	/**
@@ -655,9 +1082,18 @@ class Event
 	 * @param payment (integer)
 	 * @return boolean
 	 */
-	public function setEventPaymentType($payment)
+	public function setEventPaymentType($eID, $payment)
 	{
-		$this->_paymentType = $payment;
+        if(!filter_var($eID, FILTER_VALIDATE_INT))
+        {
+            echo("Event ID is not valid");
+        }
+        else{
+        $graphModule = new Graph();
+        $this->_paymentType = $payment;
+        $update['paymentType'] = $payment;
+        $graphModule->updateNodeById($eID, $update);
+        }
 	}
 
 	/**
@@ -665,9 +1101,19 @@ class Event
 	 * @access public
 	 * @return string
 	 */
-	public function getEventLocation()
+	public function getEventLocation($eID)
 	{
-		return $this->_location;
+        if(!filter_var($eID, FILTER_VALIDATE_INT))
+        {
+            echo("Event ID is not valid");
+            return false;
+        }
+        else{
+        $graphModule = new Graph();
+        $apiCall = $graphModule->selectNodeById($eID);
+        $event = $apiCall['data'][0][0]['data'];
+        return $event['location'];
+        }
 	}
 
 	/**
@@ -676,9 +1122,18 @@ class Event
 	 * @param location (string)
 	 * @return boolean
 	 */
-	public function setEventLocation($location)
+	public function setEventLocation($eID, $location)
 	{
-		$this->_location = $location;
+        if(!filter_var($eID, FILTER_VALIDATE_INT))
+        {
+            echo("Event ID is not valid");
+        }
+        else{
+        $graphModule = new Graph();
+        $this->_location = $location;
+        $update['location'] = $location;
+        $graphModule->updateNodeById($eID, $update);
+        }
 	}
 
 	/**
@@ -686,9 +1141,19 @@ class Event
 	 * @access public
 	 * @return integer
 	 */
-	public function getNumberOfEventAttendees()
+	public function getNumberOfEventAttendees($eID)
 	{
-		return $this->$_attendeeCount;
+        if(!filter_var($eID, FILTER_VALIDATE_INT))
+        {
+            echo("Event ID is not valid");
+            return false;
+        }
+        else{
+        $graphModule = new Graph();
+        $apiCall = $graphModule->selectNodeById($eID);
+        $event = $apiCall['data'][0][0]['data'];
+        return $event['attendeeCount'];
+        }
 	}
 
 	/**
@@ -697,9 +1162,18 @@ class Event
 	 * @param attendees (integer)
 	 * @return boolean
 	 */
-	public function setNumberOfEventAttendees($attendees)
+	public function setNumberOfEventAttendees($eID, $attendees)
 	{
-		$this->_location = $attendees;
+        if(!filter_var($eID, FILTER_VALIDATE_INT))
+        {
+            echo("Event ID is not valid");
+        }
+        else{
+        $graphModule = new Graph();
+        $this->_attendeeCount = $attendees;
+        $update['attendeeCount'] = $attendees;
+        $graphModule->updateNodeById($eID, $update);
+        }
 	}
 
 	/**
@@ -707,9 +1181,19 @@ class Event
 	 * @access public
 	 * @return integer
 	 */
-	public function getNumberOfEventInvitees()
+	public function getNumberOfEventInvitees($eID)
 	{
-		return $this->_invitedCount;
+        if(!filter_var($eID, FILTER_VALIDATE_INT))
+        {
+            echo("Event ID is not valid");
+            return false;
+        }
+        else{
+        $graphModule = new Graph();
+        $apiCall = $graphModule->selectNodeById($eID);
+        $event = $apiCall['data'][0][0]['data'];
+        return $event['invitedCount'];
+        }
 	}
 
 	/**
@@ -718,9 +1202,18 @@ class Event
 	 * @param invitees (integer)
 	 * @return boolean
 	 */
-	public function setNumberOfEventInvitees($invitees)
+	public function setNumberOfEventInvitees($eID, $invitees)
 	{
-		$this->_invitedCount = $invitees;
+        if(!filter_var($eID, FILTER_VALIDATE_INT))
+        {
+            echo("Event ID is not valid");
+        }
+        else{
+        $graphModule = new Graph();
+        $this->_invitedCount = $invitees;
+        $update['invitedCount'] = $invitees;
+        $graphModule->updateNodeById($eID, $update);
+        }
 	}
 
 	/**
@@ -728,9 +1221,19 @@ class Event
 	 * @access public
 	 * @return string
 	 */
-	public function getEventType()
+	public function getEventType($eID)
 	{
-		return $this->_eventType;
+        if(!filter_var($eID, FILTER_VALIDATE_INT))
+        {
+            echo("Event ID is not valid");
+            return false;
+        }
+        else{
+        $graphModule = new Graph();
+        $apiCall = $graphModule->selectNodeById($eID);
+        $event = $apiCall['data'][0][0]['data'];
+        return $event['eventType'];
+        }
 	}
 
 	/**
@@ -739,9 +1242,18 @@ class Event
 	 * @param type (string)
 	 * @return boolean
 	 */
-	public function setEventType($type)
+	public function setEventType($eID, $type)
 	{
-		$this->_eventType = $type;
+        if(!filter_var($eID, FILTER_VALIDATE_INT))
+        {
+            echo("Event ID is not valid");
+        }
+        else{
+        $graphModule = new Graph();
+        $this->_eventType = $type;
+        $update['eventType'] = $type;
+        $graphModule->updateNodeById($eID, $update);
+        }
 	}
 
 	/**
@@ -749,9 +1261,19 @@ class Event
 	 * @access public
 	 * @return integer
 	 */
-	public function getEventPage()
+	public function getEventPageId($eID)
 	{
-		return $this->_pID;
+        if(!filter_var($eID, FILTER_VALIDATE_INT))
+        {
+            echo("Event ID is not valid");
+            return false;
+        }
+        else{
+        $graphModule = new Graph();
+        $apiCall = $graphModule->selectNodeById($eID);
+        $event = $apiCall['data'][0][0]['data'];
+        return $event['pID'];
+        }
 	}
 
 	/**
@@ -760,9 +1282,18 @@ class Event
 	 * @param id (integer)
 	 * @return boolean
 	 */
-	public function setEventPage($id)
+	public function setEventPageId($eID, $id)
 	{
-		$this->_pID = $id;
+        if(!filter_var($eID, FILTER_VALIDATE_INT))
+        {
+            echo("Event ID is not valid");
+        }
+        else{
+        $graphModule = new Graph();
+        $this->_pID = $id;
+        $update['pID'] = $id;
+        $graphModule->updateNodeById($eID, $update);
+        }
 	}
 
 	/**
@@ -770,9 +1301,19 @@ class Event
 	 * @access public
 	 * @return integer
 	 */
-	public function getEventProfPicId()
+	public function getEventProfPicId($eID)
 	{
-		return $this->_profilePicID;
+        if(!filter_var($eID, FILTER_VALIDATE_INT))
+        {
+            echo("Event ID is not valid");
+            return false;
+        }
+        else{
+        $graphModule = new Graph();
+        $apiCall = $graphModule->selectNodeById($eID);
+        $event = $apiCall['data'][0][0]['data'];
+        return $event['profilePicID'];
+        }
 	}
 
 	/**
@@ -781,9 +1322,18 @@ class Event
 	 * @param id (integer)
 	 * @return boolean
 	 */
-	public function setEventProfPicId($id)
+	public function setEventProfPicId($eID, $id)
 	{
-		$this->_profilePicID = $id;
+        if(!filter_var($eID, FILTER_VALIDATE_INT))
+        {
+            echo("Event ID is not valid");
+        }
+        else{
+        $graphModule = new Graph();
+        $this->_profilePicID = $id;
+        $update['profilePicID'] = $id;
+        $graphModule->updateNodeById($eID, $update);
+        }
 	}
 
 	/**
@@ -791,9 +1341,18 @@ class Event
 	 * @access public
 	 * @return date
 	 */
-	public function getEventTimestamp()
+	public function getEventTimestamp($eID)
 	{
-		return $this->_timestamp;
+        if(!filter_var($eID, FILTER_VALIDATE_INT))
+        {
+            echo("Event ID is not valid");
+        }
+        else{
+        $graphModule = new Graph();
+        $apiCall = $graphModule->selectNodeById($eID);
+        $event = $apiCall['data'][0][0]['data'];
+        return $event['timestamp'];
+        }
 	}
 
 	/**
@@ -802,19 +1361,38 @@ class Event
 	 * @param timestamp (date)
 	 * @return boolean
 	 */
-	public function setEventTimestamp($timestamp)
+	public function setEventTimestamp($eID, $timestamp)
 	{
-		$this->_timestamp = $timestamp;
+        if(!filter_var($eID, FILTER_VALIDATE_INT))
+        {
+            echo("Event ID is not valid");
+        }
+        else{
+        $graphModule = new Graph();
+        $this->_timestamp = $timestamp;
+        $update['timestamp'] = $timestamp;
+        $graphModule->updateNodeById($eID, $update);
+        }
 	}
 
 	/**
 	 * This method returns the number of followers of the event.
 	 * @return integer
 	 */
-	public function getNumberOfEventFollowers()
+	public function getNumberOfEventFollowers($eID)
 	{
-		return $this->$_followerCount;
-	}
+        if(!filter_var($eID, FILTER_VALIDATE_INT))
+        {
+            echo("Event ID is not valid");
+            return false;
+        }
+        else{
+        $graphModule = new Graph();
+        $apiCall = $graphModule->selectNodeById($eID);
+        $event = $apiCall['data'][0][0]['data'];
+        return $event['followerCount'];
+        }
+    }
 
 	/**
 	 * This method sets the number of followers of the event.
@@ -822,9 +1400,18 @@ class Event
 	 * @param count (integer)
 	 * @return boolean
 	 */
-	public function setNumberOfEventFollowers($count)
+	public function setNumberOfEventFollowers($eID, $count)
 	{
-		$this->_followerCount = $count;
+        if(!filter_var($eID, FILTER_VALIDATE_INT))
+        {
+            echo("Event ID is not valid");
+        }
+        else{
+        $graphModule = new Graph();
+        $this->_followerCount = $count;
+        $update['followerCount'] = $count;
+        $graphModule->updateNodeById($eID, $update);
+        }
 	}
 }
 
