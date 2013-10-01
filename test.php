@@ -33,5 +33,6 @@ if(isset($_GET['logout'])){
 print '<pre>';
 print_r($rtn);
 print '</pre>';
+echo test;
 
 ?>
