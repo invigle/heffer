@@ -9,6 +9,7 @@ use Invigle\Graph;
 class Group
 {
 	private $_name;
+    private $_manosIsGay;
     private $_shortDescription;
     private $_category;
     private $_slogan;
