@@ -5,7 +5,6 @@ use Invigle\Graph;
 
 /**
  * @access public
- * @author Manos
  */
 class Group
 {
@@ -81,13 +80,15 @@ class Group
 
         // If the event is paid, the array of the new event is populated
         // with the field isPaid and the payment type.
-        if(isset($gArray['isPaid'])){
+        if(isset($gArray['isPaid']))
+        {
             $newGroupArray['isPaid'] = $gArray['isPaid'];
             $newGroupArray['paymentType'] = $gArray['paymentType'];
         }
 
         // The array of the new group gets the admin of the group and her/his ID.
-        if($gArray['adminGroupAs'] === "user"){
+        if($gArray['adminGroupAs'] === "user")
+        {
             $newGroupArray['ownerType'] = "user";
             $newGroupArray['OwnerID'] = $_SESSION['uid'];
         }
@@ -95,19 +96,89 @@ class Group
         // Creating the group node.
         $groupId = $graphModule->createNode('Group', $newGroupArray);
 
-        if($gArray['adminGroupAs'] === "user"){
+        if($gArray['adminGroupAs'] === "user")
+        {
             // Get the ID of the admin of the group.
             $adminId = $_SESSION['uid'];
+            // Set the properties of the createActionProperties array.
+            if(isset($eArray['timeline']))
+            {
+                $createActionProperties = array(
+                    'actionType'=>'newGroup',
+                    'timestamp'=>time(),
+                    'uid'=>$groupId,
+                );
 
-            // todo: add action node
+                // Create the action node.
+                $newGroupActionId = $graphModule->createNode('Action', $createActionProperties);
 
+                // Create a new user (the admin of the group) in order to update his/her timeline.
+                $userModule = new User();
+
+                // Update the user's timeline by connecting the ID of the admin with the ID of the new action which
+                // shows the creation of a new group.
+                $userModule->updateUserTimeline($_SESSION['uid'], $newGroupActionId);
+            }
+            $this->_gID = $groupId;
+            // Add a connection from the admin node to the group node.
+            $graphModule->addConnection($adminId, $this->_gID, 'adminOf');
         }
-
-        $this->_eID = $eventId;
-        // Add a connection from the admin node to the group node.
-        $graphModule->addConnection($adminId, $this->_gID, 'adminOf');
     }
-//    todo: continue from here
+
+    /** Function to delete an group node given an ID.
+     * @access private
+     * @param gID
+     */
+    public function deleteGroup($gID)
+    {
+        $graphModule = new Graph();
+        $this->_gID = $gID;
+        if(!filter_var($this->_gID, FILTER_VALIDATE_INT))
+        {
+            echo("Group ID is not valid");
+        }
+        else
+        {
+            $graphModule->deleteNodeByID($this->_gID);
+        }
+    }
+
+    /**
+     * This method edits some of the properties of a group in the GD by updating the current node in
+     * the GD with information provided by the gArray which is the input to the editGroup method
+     * @access public
+     * @param gArray
+     * @return boolean
+     */
+    public function editGroup($gArray)
+    {
+        $graphModule = new Graph();
+
+        $newGroupArray = array(
+            'name'=>$gArray['name'],
+            'shortDescription'=>$gArray['shortDescription'],
+            'category'=>$gArray['category'],
+            'slogan'=>$gArray['slogan'],
+            'website'=>$gArray['website'],
+            'location'=>$gArray['location'],
+            'institution'=>$gArray['institution'],
+            'privacy'=>$gArray['privacy'],
+            'followerCount'=>$gArray['followerCount'],
+            'memberCount'=>$gArray['memberCount'],
+            'type'=>$gArray['type'],
+            'profilePicID'=>$gArray['profilePicID'],
+            'eID'=>$gArray['eID'],
+            'phID'=>$gArray['phID'],
+        );
+
+        $graphModule->editNodeProperties($newGroupArray);
+    }
+
+
+
+
+    //todo: continue from here
+
 	/**
 	 * Find the ID of a category using cypher indexBy and indexValue
 	 */
@@ -123,34 +194,6 @@ class Group
 		}
 		$this->_category = $categoryID;
 	}
-
-	/**
-	 * This method takes as input an array with all the information of a group and 
-	 * adds this group to the GD as an 'group node'.
-	 * @access public
-	 * @param gArray
-	 * @return integer
-	 */
-	public function addGroup($gArray)
-	{
-		//Create the new group in neo4j
-		$graph = new Graph();
-		$queryString = "";
-		foreach ($gArray as $key => $value)
-		{
-			$queryString .= "$key : \"$value\", ";
-		}
-		$queryString = substr($queryString, 0, -2);
-		$event['query'] = "CREATE (n:Group {" . $queryString . "}) RETURN n;";
-		$apiCall = $graph->neo4japi('cypher', 'JSONPOST', $group);
-
-		//return the new group ID.
-		$bit = explode("/", $apiCall['data'][0][0]['self']);
-		$groupId = end($bit);
-		$this->_gID = $groupId;
-		return $groupId;
-	}
-
 	/** Function to delete a group node given an ID.
 	 * @access private
 	 * @param gID
