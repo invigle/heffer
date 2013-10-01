@@ -174,6 +174,96 @@ class Group
         $graphModule->editNodeProperties($newGroupArray);
     }
 
+    /**
+     * This method takes as inputs a photo ID, the ID of a group and adds a relatedTo edge to neo4j.
+     * @access public
+     * @param phID, gID
+     */
+    public function addGroupPhoto($phID, $gID)
+    {
+        $graphModule = new Graph();
+        $this->_pHID = $phID;
+        if(!filter_var($this->_pHID, FILTER_VALIDATE_INT))
+        {
+            echo("Photo ID is not valid");
+        }
+        else
+        {
+            $connectionType = 'relatedTo';
+            $graphModule->addConnection($this->_pHID, $gID, $connectionType);
+        }
+    }
+
+    /**
+     * This method takes as inputs a photo ID, the ID of a group and deletes a relatedTo edge from neo4j.
+     * @access public
+     * @param phID, gID
+     */
+    public function deleteGroupPhoto($phID, $gID)
+    {
+        $graphModule = new Graph();
+        $this->_pHID = $phID;
+        if(!filter_var($this->_pHID, FILTER_VALIDATE_INT))
+        {
+            echo("Photo ID is not valid");
+        }
+        else
+        {
+            $connectionType = 'relatedTo';
+            $graphModule->deleteConnection($this->_pHID, $gID, $connectionType);
+        }
+    }
+
+    /**
+     * This method takes as inputs a group ID and a location ID and adds a locatedAt edge to neo4j.
+     * @access public
+     * @param gID, locID
+     */
+    public function addGroupLocation($gID, $locID)
+    {
+        $graphModule = new Graph();
+        $this->_gID = $gID;
+        $this->_location = $locID;
+        if(!filter_var($this->_gID, FILTER_VALIDATE_INT))
+        {
+            echo("Group ID is not valid");
+        }
+        elseif(!filter_var($this->_location, FILTER_VALIDATE_INT))
+        {
+            echo("Location ID is not valid");
+        }
+        else
+        {
+            $connectionType = 'locatedAt';
+            $graphModule->addConnection($this->_gID, $this->_location, $connectionType);
+        }
+    }
+
+    /**
+     * This method takes as inputs a group ID and a location ID and deletes a locatedAt edge from neo4j.
+     * @access public
+     * @param gID, locID
+     */
+    public function deleteGroupLocation($gID, $locID)
+    {
+        $graphModule = new Graph();
+        $this->_gID = $gID;
+        $this->_location = $locID;
+        if(!filter_var($this->_gID, FILTER_VALIDATE_INT))
+        {
+            echo("Group ID is not valid");
+        }
+        elseif(!filter_var($this->_location, FILTER_VALIDATE_INT))
+        {
+            echo("Location ID is not valid");
+        }
+        else
+        {
+            $connectionType = 'locatedAt';
+            $graphModule->deleteConnection($this->_gID, $this->_location, $connectionType);
+        }
+    }
+
 
 
 
