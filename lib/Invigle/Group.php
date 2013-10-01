@@ -98,6 +98,9 @@ class Group
         if($gArray['adminGroupAs'] === "user"){
             // Get the ID of the admin of the group.
             $adminId = $_SESSION['uid'];
+
+            // todo: add action node
+
         }
 
         $this->_eID = $eventId;
