@@ -5,14 +5,13 @@ use Invigle\Graph;
 
 /**
  * @access public
- * @author Manos
  */
 class Group
 {
 	private $_name;
-	private $_category;
-	private $_shortDescription;
-	private $_slogan;
+    private $_shortDescription;
+    private $_category;
+    private $_slogan;
 	private $_website;
 	private $_location;
 	private $_memberCount;
@@ -21,7 +20,7 @@ class Group
 	private $_paymentType;
 	private $_privacy;
 	private $_followerCount;
-	private $_groupType;
+	private $_type;
 	private $_profilePicID;
 	private $_nodeType;
 	private $_eID;
@@ -37,19 +36,238 @@ class Group
 		$this->_slogan = null;
 		$this->_website = null;
 		$this->_location = null;
-		$this->_memberCount = null;
 		$this->_institution = null;
 		$this->_isPaid = null;
 		$this->_paymentType = null;
 		$this->_privacy = null;
 		$this->_followerCount = null;
-		$this->_groupType = null;
+        $this->_memberCount = null;
+        $this->_memberCount = null;
+		$this->_type = null;
 		$this->_profilePicID = null;
 		$this->_nodeType = 'Group';
 		$this->_eID = null;
-		$this->_gID = null;
 		$this->_pHID = null;
 	}
+
+    /**
+     * This method takes as input an array with all the information of an event and
+     * adds this event to the GD as an 'event node'.
+     * @access public
+     * @param eArray
+     * @return integer
+     */
+    public function addGroup($gArray)
+    {
+        $graphModule = new Graph();
+
+        $newGroupArray = array(
+            'name'=>$gArray['name'],
+            'shortDescription'=>$gArray['shortDescription'],
+            'category'=>$gArray['category'],
+            'slogan'=>$gArray['slogan'],
+            'website'=>$gArray['website'],
+            'location'=>$gArray['location'],
+            'institution'=>$gArray['institution'],
+            'privacy'=>$gArray['privacy'],
+            'followerCount'=>'0',
+            'memberCount'=>$gArray['memberCount'],
+            'type'=>$gArray['type'],
+            'profilePicID'=>'',
+            'eID'=>'',
+            'phID'=>'',
+        );
+
+        // If the event is paid, the array of the new event is populated
+        // with the field isPaid and the payment type.
+        if(isset($gArray['isPaid']))
+        {
+            $newGroupArray['isPaid'] = $gArray['isPaid'];
+            $newGroupArray['paymentType'] = $gArray['paymentType'];
+        }
+
+        // The array of the new group gets the admin of the group and her/his ID.
+        if($gArray['adminGroupAs'] === "user")
+        {
+            $newGroupArray['ownerType'] = "user";
+            $newGroupArray['OwnerID'] = $_SESSION['uid'];
+        }
+
+        // Creating the group node.
+        $groupId = $graphModule->createNode('Group', $newGroupArray);
+
+        if($gArray['adminGroupAs'] === "user")
+        {
+            // Get the ID of the admin of the group.
+            $adminId = $_SESSION['uid'];
+            // Set the properties of the createActionProperties array.
+            if(isset($eArray['timeline']))
+            {
+                $createActionProperties = array(
+                    'actionType'=>'newGroup',
+                    'timestamp'=>time(),
+                    'uid'=>$groupId,
+                );
+
+                // Create the action node.
+                $newGroupActionId = $graphModule->createNode('Action', $createActionProperties);
+
+                // Create a new user (the admin of the group) in order to update his/her timeline.
+                $userModule = new User();
+
+                // Update the user's timeline by connecting the ID of the admin with the ID of the new action which
+                // shows the creation of a new group.
+                $userModule->updateUserTimeline($_SESSION['uid'], $newGroupActionId);
+            }
+            $this->_gID = $groupId;
+            // Add a connection from the admin node to the group node.
+            $graphModule->addConnection($adminId, $this->_gID, 'adminOf');
+        }
+    }
+
+    /** Function to delete an group node given an ID.
+     * @access private
+     * @param gID
+     */
+    public function deleteGroup($gID)
+    {
+        $graphModule = new Graph();
+        $this->_gID = $gID;
+        if(!filter_var($this->_gID, FILTER_VALIDATE_INT))
+        {
+            echo("Group ID is not valid");
+        }
+        else
+        {
+            $graphModule->deleteNodeByID($this->_gID);
+        }
+    }
+
+    /**
+     * This method edits some of the properties of a group in the GD by updating the current node in
+     * the GD with information provided by the gArray which is the input to the editGroup method
+     * @access public
+     * @param gArray
+     * @return boolean
+     */
+    public function editGroup($gArray)
+    {
+        $graphModule = new Graph();
+
+        $newGroupArray = array(
+            'name'=>$gArray['name'],
+            'shortDescription'=>$gArray['shortDescription'],
+            'category'=>$gArray['category'],
+            'slogan'=>$gArray['slogan'],
+            'website'=>$gArray['website'],
+            'location'=>$gArray['location'],
+            'institution'=>$gArray['institution'],
+            'privacy'=>$gArray['privacy'],
+            'followerCount'=>$gArray['followerCount'],
+            'memberCount'=>$gArray['memberCount'],
+            'type'=>$gArray['type'],
+            'profilePicID'=>$gArray['profilePicID'],
+            'eID'=>$gArray['eID'],
+            'phID'=>$gArray['phID'],
+        );
+
+        $graphModule->editNodeProperties($newGroupArray);
+    }
+
+    /**
+     * This method takes as inputs a photo ID, the ID of a group and adds a relatedTo edge to neo4j.
+     * @access public
+     * @param phID, gID
+     */
+    public function addGroupPhoto($phID, $gID)
+    {
+        $graphModule = new Graph();
+        $this->_pHID = $phID;
+        if(!filter_var($this->_pHID, FILTER_VALIDATE_INT))
+        {
+            echo("Photo ID is not valid");
+        }
+        else
+        {
+            $connectionType = 'relatedTo';
+            $graphModule->addConnection($this->_pHID, $gID, $connectionType);
+        }
+    }
+
+    /**
+     * This method takes as inputs a photo ID, the ID of a group and deletes a relatedTo edge from neo4j.
+     * @access public
+     * @param phID, gID
+     */
+    public function deleteGroupPhoto($phID, $gID)
+    {
+        $graphModule = new Graph();
+        $this->_pHID = $phID;
+        if(!filter_var($this->_pHID, FILTER_VALIDATE_INT))
+        {
+            echo("Photo ID is not valid");
+        }
+        else
+        {
+            $connectionType = 'relatedTo';
+            $graphModule->deleteConnection($this->_pHID, $gID, $connectionType);
+        }
+    }
+
+    /**
+     * This method takes as inputs a group ID and a location ID and adds a locatedAt edge to neo4j.
+     * @access public
+     * @param gID, locID
+     */
+    public function addGroupLocation($gID, $locID)
+    {
+        $graphModule = new Graph();
+        $this->_gID = $gID;
+        $this->_location = $locID;
+        if(!filter_var($this->_gID, FILTER_VALIDATE_INT))
+        {
+            echo("Group ID is not valid");
+        }
+        elseif(!filter_var($this->_location, FILTER_VALIDATE_INT))
+        {
+            echo("Location ID is not valid");
+        }
+        else
+        {
+            $connectionType = 'locatedAt';
+            $graphModule->addConnection($this->_gID, $this->_location, $connectionType);
+        }
+    }
+
+    /**
+     * This method takes as inputs a group ID and a location ID and deletes a locatedAt edge from neo4j.
+     * @access public
+     * @param gID, locID
+     */
+    public function deleteGroupLocation($gID, $locID)
+    {
+        $graphModule = new Graph();
+        $this->_gID = $gID;
+        $this->_location = $locID;
+        if(!filter_var($this->_gID, FILTER_VALIDATE_INT))
+        {
+            echo("Group ID is not valid");
+        }
+        elseif(!filter_var($this->_location, FILTER_VALIDATE_INT))
+        {
+            echo("Location ID is not valid");
+        }
+        else
+        {
+            $connectionType = 'locatedAt';
+            $graphModule->deleteConnection($this->_gID, $this->_location, $connectionType);
+        }
+    }
+
+
+
+
+    //todo: continue from here
 
 	/**
 	 * Find the ID of a category using cypher indexBy and indexValue
@@ -66,34 +284,6 @@ class Group
 		}
 		$this->_category = $categoryID;
 	}
-
-	/**
-	 * This method takes as input an array with all the information of a group and 
-	 * adds this group to the GD as an 'group node'.
-	 * @access public
-	 * @param gArray
-	 * @return integer
-	 */
-	public function addGroup($gArray)
-	{
-		//Create the new group in neo4j
-		$graph = new Graph();
-		$queryString = "";
-		foreach ($gArray as $key => $value)
-		{
-			$queryString .= "$key : \"$value\", ";
-		}
-		$queryString = substr($queryString, 0, -2);
-		$event['query'] = "CREATE (n:Group {" . $queryString . "}) RETURN n;";
-		$apiCall = $graph->neo4japi('cypher', 'JSONPOST', $group);
-
-		//return the new group ID.
-		$bit = explode("/", $apiCall['data'][0][0]['self']);
-		$groupId = end($bit);
-		$this->_gID = $groupId;
-		return $groupId;
-	}
-
 	/** Function to delete a group node given an ID.
 	 * @access private
 	 * @param gID
@@ -667,9 +857,9 @@ class Group
 	 * @access public
 	 * @return string
 	 */
-	public function getGroupType()
+	public function getType()
 	{
-		return $this->_groupType;
+		return $this->_type;
 	}
 
 	/**
@@ -678,9 +868,9 @@ class Group
 	 * @param type (string))
 	 * @return boolean
 	 */
-	public function setGroupType($type)
+	public function setType($type)
 	{
-		$this->_groupType = $type;
+		$this->_type = $type;
 	}
 }
 

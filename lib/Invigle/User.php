@@ -27,7 +27,8 @@ class User
 	 * @AttributeType string
 	 * This holds the email of the user
 	 */
-	private $_email;
+	private $_username;
+    private $_email;
 	private $_password;
 	private $_birthday;
 	private $_institution;
@@ -39,8 +40,28 @@ class User
 	private $_followerCount;
 	private $_friendCount;
 	private $_url;
-    
-    
+
+    /* The Class Constructor*/
+    public function __construct()
+    {
+        $this->_firstName = null;
+        $this->_lastName = null;
+        $this->_location = null;
+        $this->_username = null;
+        $this->_email = null;
+        $this->_password = null;
+        $this->_birthday = null;
+        $this->_institution = null;
+        $this->_relationshipStatus = null;
+        $this->_gender = null;
+        $this->_sexualPref = null;
+        $this->_uID = null;
+        $this->_profilePicID = null;
+        $this->_followerCount = null;
+        $this->_friendCount = null;
+        $this->_url = null;
+    }
+
 
 	/**
 	 * This method will check the graph database to ensure a username is unique.
@@ -50,11 +71,13 @@ class User
 	public function validateUsername($username)
 	{
 		$graphModule = new Graph();
+
 		$count = $graphModule->countNodes('User', 'username', $username);
         
 		if ($count) {
 			return false;
 		} else {
+            $this->_username = $username;
 			return true;
 		}
 	}
@@ -74,6 +97,7 @@ class User
 			return false;
 		} else
 		{
+            $this->_email = $email;
 			return true;
 		}
 	}
@@ -104,9 +128,24 @@ class User
 
 		//Email the new User their login credentials?
 
-		//Login the new User and forward them to a profile page.
+		//Login the new User
+        if (!$this->loginUser($aUserArray) == 0)
+        {
+            if ($this->loginUser($aUserArray) == 2)
+            {
+                return 'login-failed-wrong-username';
+            }
+            elseif ($this->loginUser($aUserArray) == 1)
+            {
+                return 'login-failed-wrong-password';
+            }
+        }
+        else{
+            // Forwarding new user to a profile page.
+        }
 
-		//return the New User ID.
+       //return the New User ID.
+        $this->_uID = $userId;
 		return $userId;
 	}
     
@@ -117,6 +156,7 @@ class User
 	public function loginUser(array $userInput)
 	{
 		$graphModule = new Graph();
+
         $login = $graphModule->matchNode('User', 'email', $userInput['email']);
 
 		if (isset($login['data'][0][0]['data']))
@@ -156,20 +196,21 @@ class User
                 );
                 $graphModule->updateNode('User', 'email', $userInput['email'], $nodeProperties);
 
-				return true;
+                $flag = 0;
+				return $flag;
 			} else
 			{
-				return false;
+                // login failed due to wrong password
+                $flag = 1;
 			}
-
 
 		} else
 		{
-			return false;
+            // login failed due to wrong username aka email address
+            $flag = 2;
 		}
 
-
-		return false;
+		return $flag;
 	}
 
 	/**
@@ -209,7 +250,6 @@ class User
 	{
 		$graphModule = new Graph();
         $api = $graphModule->matchNode('User', 'sessionid', $_SESSION['sid']);
-
 		return $api['data'][0][0]['data'];
 	}
 
@@ -245,22 +285,35 @@ class User
 	 * 
 	 * @ReturnType boolean
 	 */
-	public function deleteUser($aUID)
+	public function deleteUser($uID)
 	{
-		// Not yet implemented
+        $graphModule = new Graph();
+        $api = $graphModule->deleteNodeByID($uID);
+        if($api)
+        {
+            $this->_uID = null;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+
 	}
 
 	/**
-	 * This method edits some of the properties of a user in the GD by updating the current node in the GD with information provided by the userArray which is the input to the editUser method
+	 * This method edits some of the properties of a user in the GD by updating the current node in the GD with
+     * information provided by the userArray.
 	 * @access public
 	 * @param aUserArray
 	 * @return boolean
 	 * 
 	 * @ReturnType boolean
 	 */
-	public function editUser($aUserArray)
+	public function editUser($userArray)
 	{
-		// Not yet implemented
+        $graphModule = new Graph();
+        $graphModule->editNodeProperties($userArray);
 	}
 
 	/**
@@ -273,8 +326,10 @@ class User
 	public function updateUserTimestamp($userID)
 	{
 		$graphModule = new Graph();
-        
+
+        // returns the current time
         $update['lastupdate'] = time();
+
         $graphModule->updateNodeById($userID, $update);
 	}
 
@@ -284,7 +339,7 @@ class User
 	*********************************************************/
 
 	/**
-	 * Check if somebody is already following somebody
+	 * Checks if somebody is already following somebody
 	 * 
 	 * @params $follower, $followee
 	 * @return boolean
@@ -292,7 +347,9 @@ class User
 	public function checkFollowStatus($follower, $followee)
 	{
 		$graphModule = new Graph();
+
 		$rels = $graphModule->neo4japi('node/'.$follower.'/relationships/out/followerOf', 'GET');
+
 		foreach ($rels as $rel)
 		{
 			$en = explode("/", $rel['end']);
@@ -314,9 +371,11 @@ class User
 	public function userFollowersList($uID)
 	{
 		$graphModule = new Graph();
-		$rels = $graphModule->neo4japi('node/'.$uID.'/relationships/in/followerOf', 'GET');
+
+        $rels = $graphModule->neo4japi('node/'.$uID.'/relationships/in/followerOf', 'GET');
 
 		$i = 0;
+
 		foreach ($rels as $follower)
 		{
 			$st = explode('/', $follower['start']);
@@ -333,6 +392,10 @@ class User
 		{
 			return $rtn;
 		}
+        else
+        {
+            return false;
+        }
 	}
 
 	/**
@@ -344,7 +407,8 @@ class User
 	public function userFollowingList($uID)
 	{
 		$graphModule = new Graph();
-		$rels = $graphModule->neo4japi('node/'.$uID.'/relationships/out/followerOf', 'GET');
+
+        $rels = $graphModule->neo4japi('node/'.$uID.'/relationships/out/followerOf', 'GET');
 
 		$i = 0;
 		foreach ($rels as $follower)
@@ -363,6 +427,10 @@ class User
 		{
 			return $rtn;
 		}
+        else
+        {
+            return false;
+        }
 	}
 
 	/**
@@ -377,14 +445,16 @@ class User
 		$graphModule = new Graph();
 
 		//Add the relationship between follower and followee.
-		$api = $graphModule->addConnection($follower, $followee, 'followerOf');
-        
+		$graphModule->addConnection($follower, $followee, 'followerOf');
+
+        // As following a user is an action, create the properties of the action.
         $createProperties = array(
             'actionType'=>'followerOf',
             'timestamp'=>time(),
             'uid'=>$followee,
         );
-        
+
+        // Create the action node.
         $actionId = $graphModule->createNode('Action', $createProperties);
                 
 		//Add a relationship from follower to action node.
@@ -410,7 +480,7 @@ class User
 	{
 		$graphModule = new Graph();
 		$this->_followerCount = $count;
-        
+
         $properties['followerCount'] = $count;
         $graphModule->updateNodeById($uID, $properties);
 	}
@@ -421,13 +491,25 @@ class User
 		$this->setNumberOfFollowers($uID, $followers);
 	}
 
+    public function decreaseFollowersCount($uID)
+    {
+        $followers = $this->getNumberOfFollowers($uID) - 1;
+        $this->setNumberOfFollowers($uID, $followers);
+    }
+
 	public function unfollowUser($follower, $followee)
 	{
-		// to be implemented
+        $graphModule = new Graph();
+
+        // Delete the relationship between follower and followee.
+        $graphModule->deleteConnection($follower, $followee, 'followerOf');
+
+        //Update Number of Followers
+        $this->decreaseFollowersCount($followee);
 	}
 
 	/**
-	 * Check if somebody is already friends with somebody
+	 * Check if somebody is already friends with somebody.
 	 * 
 	 * @params $follower, $followee
 	 * @return boolean
@@ -435,8 +517,12 @@ class User
 	public function checkFriendStatus($follower, $followee)
 	{
 		$graphModule = new Graph();
-		$friends = $graphModule->neo4japi('node/'.$follower.'/relationships/all/friendOf', 'GET');
-		foreach ($friends as $rel)
+
+        // Get all friends of $follower
+        $friends = $graphModule->neo4japi('node/'.$follower.'/relationships/all/friendOf', 'GET');
+
+        // For each friend of $follower check if $followee is one of those.
+        foreach ($friends as $rel)
 		{
 			$en = explode("/", $rel['end']);
 			if (end($en) === $followee)
@@ -452,6 +538,7 @@ class User
 			$en = explode("/", $rel['end']);
 			if (end($en) === $followee)
 			{
+                // $followee is a friend of $follower.
 				return true;
 				break;
 			}
@@ -461,7 +548,7 @@ class User
 	}
 
 	/**
-	 * This method takes as inputs a two users' IDs and adds a FRIEND_OF edge to neo4j.
+	 * This method takes as inputs a two users' IDs and adds a friendRequest edge to neo4j.
 	 * @access public
 	 * @param uID = Source, uID2 = Destination
 	 * @return boolean
@@ -469,7 +556,7 @@ class User
 	public function addFriend($uID, $uID2)
 	{
 		$graphModule = new Graph();
-		$action = $graphModule->addConnection($uID, $uID2, 'friendRequest');
+		$graphModule->addConnection($uID, $uID2, 'friendRequest');
 	}
 
 	/**
@@ -502,10 +589,10 @@ class User
         $actionIdD = $graphModule->createNode('Action', $friendProperties2);
 
 		//Add a relationship from follower to action node.
-        $userModule->updateUserTimeline($uID1, $actionId);
+        $this->updateUserTimeline($uID1, $actionId);
 
 		//Add a relationship from friend->user to action node.
-        $userModule->updateUserTimeline($uID2, $actionIdD);
+        $this->updateUserTimeline($uID2, $actionIdD);
 
 		//Update the Users last action timestamp.
 		$this->updateUserTimestamp($uID1);
@@ -514,7 +601,6 @@ class User
 		//Update both users friend count.
 		$this->increaseFriendsCount($uID1);
 		$this->increaseFriendsCount($uID2);
-
 	}
 
 	public function getNumberOfFriends($uID)
@@ -569,6 +655,10 @@ class User
 		{
 			return $rtn;
 		}
+        else
+        {
+            return false;
+        }
 	}
 
 	/**
@@ -604,6 +694,9 @@ class User
 		{
 			return $rtn;
 		}
+        else{
+            return false;
+        }
 	}
 
 	/**
@@ -615,18 +708,16 @@ class User
 	public function addInstitutionAttendee($uID, $iID)
 	{
 		$graph = new Graph();
-		$connectionType = 'ATTENDEE_OF';
-		$succ = $graph->addConnection($uID, $iID, $connectionType);
-		return $succ;
+		$connectionType = 'attendeeOf';
+		$graph->addConnection($uID, $iID, $connectionType);
 	}
 
 	public function deleteInstitutionAttendee($uID, $iID)
 	{
 		$graph = new Graph();
-		$connectionType = 'ATTENDEE_OF';
-		$succ = $graph->deleteConnection($uID, $iID, $connectionType);
-		return $succ;
-	}
+		$connectionType = 'attendeeOf';
+	    $graph->deleteConnection($uID, $iID, $connectionType);
+    }
 
     /**
      * Update User Timeline
@@ -651,8 +742,6 @@ class User
         $graphModule->addConnection($userId, $newAction, 'timeline');
         $graphModule->addConnection($newAction, $oldConnectionId, 'timeline');
     }
-
 }
-
 
 ?>
