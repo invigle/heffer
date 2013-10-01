@@ -104,20 +104,20 @@ class Event
         $eventId = $graphModule->createNode('Event', $newEventArray);
 
         // todo: do we need the following or all have been already assigned by the above?
-//        $this->setEventName($eventId, $eArray['name']);
-//        $this->setEventDate($eventId, $eArray['description']);
-//        $this->setEventLocation($eventId, $eArray['location']);
-//        $this->setEventCategory($eventId, $eArray['categories']);
-//        $this->setEventType($eventId, $eArray['type']);
-//        $this->setEventDate($eventId, "$eArray[date_day]-$eArray[date_month]-$eArray[date_year]");
-//        $this->setEventPrivacy($eventId, $eArray['privacy']);
-//        $this->setEventTimestamp($eventId, time());
-//        $this->setEventProfPicId($eventId, '');
-//        $this->setNumberOfEventAttendees($eventId, '0');
-//        $this->setNumberOfEventInvitees($eventId, '0');
-//        $this->setNumberOfEventFollowers($eventId, '0');
-//        $this->setEventPaidState($eventId, $eArray['isPaid']);
-//        $this->setEventPaymentType($eventId, $eArray['paymentType']);
+        // $this->setEventName($eventId, $eArray['name']);
+        // $this->setEventDate($eventId, $eArray['description']);
+        // $this->setEventLocation($eventId, $eArray['location']);
+        // $this->setEventCategory($eventId, $eArray['categories']);
+        // $this->setEventType($eventId, $eArray['type']);
+        // $this->setEventDate($eventId, "$eArray[date_day]-$eArray[date_month]-$eArray[date_year]");
+        // $this->setEventPrivacy($eventId, $eArray['privacy']);
+        // $this->setEventTimestamp($eventId, time());
+        // $this->setEventProfPicId($eventId, '');
+        // $this->setNumberOfEventAttendees($eventId, '0');
+        // $this->setNumberOfEventInvitees($eventId, '0');
+        // $this->setNumberOfEventFollowers($eventId, '0');
+        // $this->setEventPaidState($eventId, $eArray['isPaid']);
+        // $this->setEventPaymentType($eventId, $eArray['paymentType']);
 
         if($eArray['createEventAs'] === "user"){
             // Get the ID of the creator of the event.
@@ -140,11 +140,10 @@ class Event
                 // shows the creation of a new event.
                 $userModule->updateUserTimeline($_SESSION['uid'], $newEventActionId);
             }
+            $this->_eID = $eventId;
+            // Add a connection from the creator to the event.
+            $graphModule->addConnection($creatorId, $this->_eID, 'organiserOf');
         }
-
-        $this->_eID = $eventId;
-        // Add a connection from the creator to the event.
-        $graphModule->addConnection($creatorId, $this->_eID, 'organiserOf');
 	}
 
 	/** Function to delete an event node given an ID.
