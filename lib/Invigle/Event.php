@@ -866,16 +866,6 @@ class Event
 	}
 
 	/**
-	 * This method returns the ID of the event.
-	 * @access public
-	 * @return integer
-	 */
-	public function getEventId()
-	{
-        // TODO: do we need this method ?
-	}
-
-	/**
 	 * This method sets the ID of the event.
 	 * @access public
 	 * @param id (integer)
