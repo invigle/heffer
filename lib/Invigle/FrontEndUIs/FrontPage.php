@@ -5,8 +5,7 @@ use Invigle\FrontEndUIs,
     Invigle\Language,
     Invigle\User,
     Invigle\Validation,
-    Invigle\Status,
-    Invigle\Event;
+    Invigle\Status;
 
  
 /**
@@ -76,7 +75,6 @@ class FrontPage extends FrontEndUIs {
     private function renderUserHomepage()
     {
         $userModule = new User();
-        $eventsModule = new Event();
         $userInfo = $userModule->userDetails();
         
         $friendReqHTML = "";
@@ -87,14 +85,6 @@ class FrontPage extends FrontEndUIs {
             }
         }else{
             $friendReqHTML = "none";
-        }
-        
-        $invitesHtml = "";
-        $inviteRequests = $eventsModule->userInvites($_SESSION['uid']);
-        if(isset($inviteRequests)){
-            foreach($inviteRequests as $invite){
-                $invitesHtml.= ''.$this->_language->_frontPage["your-invited-to"].' <a href="event.php?eventid='.$invite['eventid'].'">'.$invite['name'].'</a> on '.$invite['date'].' [<a href="event.php?eventid='.$invite['eventid'].'&b=attend">Accept</a>]<br>';
-            }
         }
         
         if(isset($_POST['saveUserStatus'])){
@@ -127,9 +117,6 @@ class FrontPage extends FrontEndUIs {
                     <hr>
                     <b>Friend Requests ('.count($friendRequests).')</b><br />
                     '.$friendReqHTML.'
-                    <hr>
-                    <b>Invitations ('.count($inviteRequests).')</b><br />
-                    '.$invitesHtml.'
                 </div>';
     }
     
