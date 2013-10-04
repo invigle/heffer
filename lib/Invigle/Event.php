@@ -72,6 +72,21 @@ class Event
         $graphModule = new Graph();
 
         $newEventArray = array(
+            'name'=>$eArray['name'],
+            'description'=>$eArray['description'],
+            'location'=>$eArray['location'],
+            'categories'=>$eArray['categories'],
+            'type'=>$eArray['type'],
+            'date'=>"$eArray[date_day]-$eArray[date_month]-$eArray[date_year]",
+            'privacy'=>$eArray['privacy'],
+            'timestamp'=>time(),
+            'profilePicID'=>'',
+            'INID'=>'',
+            'LID'=>'',
+            'attendeeCount'=>'0',
+            'invitedCount'=>'0',
+            'isPaid'=>"",
+            'paymentType'=>"",
             'name' => $eArray['name'],
             'description' => $eArray['description'],
             'location' => $eArray['location'],
@@ -508,7 +523,7 @@ class Event
     /**
      * This method returns the ID of the organiser of the event.
      * @access public
-     * @return integer
+     * @return integer\
      */
     public function getEventOrganiserId($eID)
     {
