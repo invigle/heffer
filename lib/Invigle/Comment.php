@@ -5,7 +5,7 @@ use Invigle\Graph;
 
 /**
  * @access public
- * @author Manos
+ * @author MP
  */
 class Comment
 {
