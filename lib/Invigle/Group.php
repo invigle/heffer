@@ -146,7 +146,7 @@ class Group
 
     /**
      * This method edits some of the properties of a group in the GD by updating the current node in
-     * the GD with information provided by the gArray which is the input to the editGroup method.
+     * the GD with information provided by the gArray.
      * @access public
      * @param gArray
      * @return boolean
