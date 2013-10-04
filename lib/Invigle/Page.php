@@ -161,80 +161,88 @@ class Page
         }
     }
 
-    //todo: manos to continue from here
-
     /**
      * This method takes as inputs a user ID and a page ID and adds a adminOf edge to neo4j.
      * @access public
      * @param uID, pID
      * @return boolean
      */
-    public function addGroupAdmin($uID, $pID)
+    public function addPageAdmin($uID, $pID)
     {
         $graphModule = new Graph();
         $this->_admin = $uID;
         $this->_pID = $pID;
         if (!filter_var($this->_admin, FILTER_VALIDATE_INT)) {
             echo("Admin ID is not valid");
-        } elseif (!filter_var($this->_gID, FILTER_VALIDATE_INT)) {
+        } elseif (!filter_var($this->_pID, FILTER_VALIDATE_INT)) {
             echo("Page ID is not valid");
         } else {
             $connectionType = 'adminOf';
             $graphModule->addConnection($this->_admin, $this->_pID, $connectionType);
-            $this->setGroupAdminId($pID, $this->_admin);
+            $this->setPageAdminId($pID, $this->_admin);
         }
     }
 
-
-    public function changeGroupAdmin($uID, $uID2, $gID)
+    public function changePageAdmin($uID, $uID2, $pID)
     {
-        $this->_gID = $gID;
+        $this->_pID = $pID;
         if (!filter_var($uID, FILTER_VALIDATE_INT)) {
             echo("Previous Admin ID is not valid");
         } elseif (!filter_var($uID2, FILTER_VALIDATE_INT)) {
             echo("New Admin ID is not valid");
         } elseif (!filter_var($this->_gID, FILTER_VALIDATE_INT)) {
-            echo("Group ID is not valid");
+            echo("Page ID is not valid");
         } else {
-            $this->deleteGroupAdmin($uID, $gID);
-            $this->addGroupAdmin($uID2, $gID);
-            $this->setGroupAdminId($gID, $uID2);
+            $this->deletePageAdmin($uID, $pID);
+            $this->addPageAdmin($uID2, $pID);
+            $this->setPageAdminId($pID, $uID2);
         }
     }
 
-    public function deleteGroupAdmin($uID, $gID)
+    public function deletePageAdmin($uID, $pID)
     {
         $graphModule = new Graph();
         $this->_admin = $uID;
-        $this->_gID = $gID;
+        $this->_pID = $pID;
         if (!filter_var($this->_admin, FILTER_VALIDATE_INT)) {
             echo("Admin ID is not valid");
-        } elseif (!filter_var($this->_gID, FILTER_VALIDATE_INT)) {
-            echo("Group ID is not valid");
+        } elseif (!filter_var($this->_pID, FILTER_VALIDATE_INT)) {
+            echo("Page ID is not valid");
         } else {
             $connectionType = 'adminOf';
-            $graphModule->deleteConnection($this->_admin, $this->_gID, $connectionType);
-            $this->setGroupAdminId($gID, null);
+            $graphModule->deleteConnection($this->_admin, $this->_pID, $connectionType);
+            $this->setPageAdminId($pID, null);
         }
     }
 
     /**
-     * This method returns the ID of the admin of the group.
+     * This method returns the ID of the admin of a page.
      * @access public
      * @return integer
      */
-    public function getGroupAdminId($gID)
+    public function getPageAdminId($pID)
     {
-        if (!filter_var($gID, FILTER_VALIDATE_INT)) {
-            echo("Group ID is not valid");
+        if (!filter_var($pID, FILTER_VALIDATE_INT)) {
+            echo("Page ID is not valid");
             return false;
         } else {
             $graphModule = new Graph();
-            $apiCall = $graphModule->selectNodeById($gID);
-            $group = $apiCall['data'][0][0]['data'];
-            return $group['admin'];
+            $apiCall = $graphModule->selectNodeById($pID);
+            $page = $apiCall['data'][0][0]['data'];
+            return $page['admin'];
         }
     }
+
+    //todo: manos to continue from here
+
+
+
+
+
+
+
+
+
 
     /**
      * This method sets the ID of the admin of the group.
