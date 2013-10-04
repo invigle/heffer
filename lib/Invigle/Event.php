@@ -5,7 +5,7 @@ use Invigle\Graph;
 
 /**
  * @access private
- * @author Manos
+ * @authors GH, MP
  */
 class Event
 {
@@ -846,7 +846,7 @@ class Event
             $graphModule->updateNodeById($eID, $update);
         }
     }
-    
+
     /*
      * This method returns the name of the event.
      * @access public
