@@ -846,12 +846,8 @@ class Event
             $graphModule->updateNodeById($eID, $update);
         }
     }
-
-
-    /**********************************************************/
-    /** SETS and GETS *****************************/
-    /**********************************************************/
-    /**
+    
+    /*
      * This method returns the name of the event.
      * @access public
      * @return string
