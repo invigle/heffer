@@ -5,7 +5,7 @@ use Invigle\Graph;
 
 /**
  * @access private
- * @author Manos
+ * @authors GH, MP
  */
 class Event
 {
@@ -847,11 +847,7 @@ class Event
         }
     }
 
-
-    /**********************************************************/
-    /** SETS and GETS *****************************/
-    /**********************************************************/
-    /**
+    /*
      * This method returns the name of the event.
      * @access public
      * @return string
