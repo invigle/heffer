@@ -15,16 +15,16 @@ use Invigle\FrontEndUIs,
  * @author Gavin Hanson
  * @copyright 2013
  * @version $Id$
- * @access public
+ * @access private
  */
  
 class FrontPage extends FrontEndUIs {
     
     /**
      * Construct creates all the classes we need to render a page
-     * @access public
+     * @access private
      */    
-    public function __construct(Language $theLanguage)
+    private function __construct(Language $theLanguage)
     {
         $this->_language = $theLanguage;
         parent::__construct();

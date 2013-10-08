@@ -3,9 +3,6 @@
 namespace Invigle;
 use Invigle\Graph;
 
-/**
- * @access public
- */
 class Group
 {
     private $_name;
