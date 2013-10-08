@@ -10,160 +10,242 @@ use Invigle\Graph;
  */
 class Location
 {
-	private $_locID;
-	private $_name;
-	private $_coordinates;
-	private $_postCode;
-	private $_nodeType;
+    private $_locID;
+    private $_name;
+    private $_postCode;
+    private $_latitude;
+    private $_longitude;
 
-	/* The Class Constructor*/
-	public function __construct()
-	{
-		$this->_locID = null;
-		$this->_name = null;
-		$this->_coordinates = null;
-		$this->_postCode = null;
-		$this->_nodeType = 'Location';
-	}
+    /* The Class Constructor*/
+    public function __construct()
+    {
+        $this->_locID = null;
+        $this->_name = null;
+        $this->_postCode = null;
+        $this->_latitude = null;
+        $this->_longitude = null;
+    }
 
-	/**
-	 * This method takes as input an array with all the information of a location and 
-	 * adds this location to the GD as a 'location node'.
-	 * @access public
-	 * @param lArray
-	 * @return integer
-	 */
-	public function addLocation($lArray)
-	{
-		//Create the new location in neo4j
-		$graph = new Graph();
-		$queryString = "";
-		foreach ($lArray as $key => $value)
-		{
-			$queryString .= "$key: \"$value\", ";
-		}
-		$queryString = substr($queryString, 0, -2);
-		$location['query'] = "CREATE (n:Location {" . $queryString . "}) RETURN n;";
-		$apiCall = $graph->neo4japi('cypher', 'JSONPOST', $location);
+    /**
+     * This method returns the name of a location.
+     * @access public
+     * @return integer
+     */
+    public function getLocationName($locID)
+    {
+        if (!filter_var($locID, FILTER_VALIDATE_INT)) {
+            echo("Location ID is not valid");
+            return false;
+        } else {
+            $graphModule = new Graph();
+            $apiCall = $graphModule->selectNodeById($locID);
+            $location = $apiCall['data'][0][0]['data'];
+            return $location['locID'];
+        }
+    }
 
-		//return the new location ID.
-		$bit = explode("/", $apiCall['data'][0][0]['self']);
-		$locationId = end($bit);
-		return $locationId;
-	}
+    /**
+     * This method sets the name of the location.
+     * @access public
+     * @param id (integer)
+     * @return boolean
+     */
+    public function setLocationName($locID, $location)
+    {
+        if (!filter_var($locID, FILTER_VALIDATE_INT)) {
+            echo("Location ID is not valid");
+        } else {
+            $graphModule = new Graph();
+            $this->_name = $location;
+            $update['name'] = $location;
+            $graphModule->updateNodeById($locID, $update);
+        }
+    }
 
-	/** Function to delete a location node given an ID.
-	 * @access private
-	 * @param locID
-	 * @return boolean
-	 */
-	public function deleteLocation($locID)
-	{
-		$graph = new Graph();
-		$succ = $graph->deleteNodeByID($locID);
-		return $succ;
-	}
+    /**
+     * This method returns the postcode of a location.
+     * @access public
+     * @return integer
+     */
+    public function getLocationPostcode($locID)
+    {
+        if (!filter_var($locID, FILTER_VALIDATE_INT)) {
+            echo("Location ID is not valid");
+            return false;
+        } else {
+            $graphModule = new Graph();
+            $apiCall = $graphModule->selectNodeById($locID);
+            $postcode = $apiCall['data'][0][0]['data'];
+            return $postcode['postCode'];
+        }
+    }
 
-	/**
-	 * This method edits some of the properties of a location in the GD by updating the current node in 
-	 * the GD with information provided by the lArray which is the input to the editComment method
-	 * @access public
-	 * @param locArray
-	 * @return boolean
-	 */
-	public function editLocation($locArray)
-	{
-		$graph = new Graph();
-		$succ = $graph->editNodeProperties($locArray);
-		return $succ;
-	}
+    /**
+     * This method sets the postcode of a location.
+     * @access public
+     * @param id (integer)
+     * @return boolean
+     */
+    public function setLocationPostcode($locID, $postcode)
+    {
+        if (!filter_var($locID, FILTER_VALIDATE_INT)) {
+            echo("Location ID is not valid");
+        } else {
+            $graphModule = new Graph();
+            $this->_postCode = $postcode;
+            $update['postCode'] = $postcode;
+            $graphModule->updateNodeById($locID, $update);
+        }
+    }
 
-	/**********************************************************/
-	/** SETS and GETS
-	 * /**********************************************************/
-	/**
-	 * This method returns the ID of the location.
-	 * @access public
-	 * @return integer
-	 */
-	public function getLocationId()
-	{
-		return $this->_locID;
-	}
+    /**
+     * This method returns the latitude of a location.
+     * @access public
+     * @return integer
+     */
+    public function getLocationLatitude($locID)
+    {
+        if (!filter_var($locID, FILTER_VALIDATE_INT)) {
+            echo("Location ID is not valid");
+            return false;
+        } else {
+            $graphModule = new Graph();
+            $apiCall = $graphModule->selectNodeById($locID);
+            $latitude = $apiCall['data'][0][0]['data'];
+            return $latitude['latitude'];
+        }
+    }
 
-	/**
-	 * This method sets the ID of the location which organises the event.
-	 * @access public
-	 * @param id (integer)
-	 * @return boolean
-	 */
-	public function setLocationId($id)
-	{
-		$this->_lID = $id;
-	}
+    /**
+     * This method sets the latitude of a location.
+     * @access public
+     * @param id (integer)
+     * @return boolean
+     */
+    public function setLocationLatitude($locID, $latitude)
+    {
+        if (!filter_var($locID, FILTER_VALIDATE_INT)) {
+            echo("Location ID is not valid");
+        } else {
+            $graphModule = new Graph();
+            $this->_latitude = $latitude;
+            $update['latitude'] = $latitude;
+            $graphModule->updateNodeById($locID, $update);
+        }
+    }
 
-	/**
-	 * This method returns the name of the location.
-	 * @access public
-	 * @return string
-	 */
-	public function getLocationName()
-	{
-		return $this->_name;
-	}
+    /**
+     * This method returns the longitude of a location.
+     * @access public
+     * @return integer
+     */
+    public function getLocationLongitude($locID)
+    {
+        if (!filter_var($locID, FILTER_VALIDATE_INT)) {
+            echo("Location ID is not valid");
+            return false;
+        } else {
+            $graphModule = new Graph();
+            $apiCall = $graphModule->selectNodeById($locID);
+            $longitude = $apiCall['data'][0][0]['data'];
+            return $longitude['longitude'];
+        }
+    }
 
-	/**
-	 * This method sets the name of the location.
-	 * @access public
-	 * @param name (string)
-	 * @return boolean
-	 */
-	public function setLocationName($name)
-	{
-		$this->_name = $name;
-	}
+    /**
+     * This method sets the longitude of a location.
+     * @access public
+     * @param id (integer)
+     * @return boolean
+     */
+    public function setLocationLongitude($locID, $longitude)
+    {
+        if (!filter_var($locID, FILTER_VALIDATE_INT)) {
+            echo("Location ID is not valid");
+        } else {
+            $graphModule = new Graph();
+            $this->_longitude = $longitude;
+            $update['longitude'] = $longitude;
+            $graphModule->updateNodeById($locID, $update);
+        }
+    }
 
-	/**
-	 * This method returns the coordinates of the location.
-	 * @access public
-	 * @return degrees
-	 */
-	public function getLocationCoord()
-	{
-		return $this->_coordinates;
-	}
 
-	/**
-	 * This method sets the coordinates of the location.
-	 * @access public
-	 * @param degrees 
-	 * @return boolean
-	 */
-	public function setLocationCoord($degrees)
-	{
-		$this->_coordinates = $degrees;
-	}
+    /* This method takes as input an array with all the information of a location and
+        * adds this location to the GD as a page node.
+        * @access public
+        * @param locArray
+        */
+    public function addLocation($locArray)
+    {
+        $graphModule = new Graph();
 
-	/**
-	 * This method returns the postcode of the location.
-	 * @access public
-	 * @return string
-	 */
-	public function getLocationPostcode()
-	{
-		return $this->_postCode;
-	}
+        $newLocationArray = array(
+            'locID' => '',
+            'name' => $locArray['name'],
+            'postCode' => $locArray['postCode'],
+            'latitude' => $locArray['latitude'],
+            'longitude' => $locArray['longitude'],
+        );
 
-	/**
-	 * This method sets the postcode of the location.
-	 * @access public
-	 * @param postcode (string)
-	 * @return boolean
-	 */
-	public function setLocationPostcode($postcode)
-	{
-		$this->_postCode = $postcode;
-	}
+        // Creating a location node.
+        $locationId = $graphModule->createNode('Location', $newLocationArray);
+        $this->_locID = $locationId;
+    }
+
+    /* This method deletes a location node given an ID.
+    * @access public
+    * @param locID
+    */
+    public function deleteLocation($locID)
+    {
+        $graphModule = new Graph();
+        $this->_locID = $locID;
+        if (!filter_var($this->_locID, FILTER_VALIDATE_INT)) {
+            echo("Location ID is not valid");
+        } else {
+            $graphModule->deleteNodeByID($this->_locID);
+            $this->setLocationId($locID, null);
+        }
+    }
+
+    /**
+     * This method edits some of the properties of a location in the GD by updating the current node in
+     * the GD with information provided by the locArray.
+     * @access public
+     * @param locArray
+     * @return boolean
+     */
+    public function editLocation($locArray)
+    {
+        $graphModule = new Graph();
+
+        $newLocArray = array(
+            'name' => $locArray['name'],
+            'postcode' => $locArray['postcode'],
+            'latitude' => $locArray['latitude'],
+            'longitude' => $locArray['longitude'],
+        );
+
+        $graphModule->editNodeProperties($newLocArray);
+    }
+
+    /* This method sets the ID of a location.
+    * @access public
+    * @param locID, id
+    * @return boolean
+    */
+    public function setLocationId($locID, $id)
+    {
+        if (!filter_var($locID, FILTER_VALIDATE_INT)) {
+            echo("Location ID is not valid");
+        } else {
+            $graphModule = new Graph();
+            $this->_locID = $id;
+            $update['id'] = $id;
+            $graphModule->updateNodeById($locID, $update);
+        }
+    }
 }
 
 ?>
