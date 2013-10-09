@@ -513,7 +513,7 @@ class Page
     }
 
     /**
-     * This method sets the category of the page.
+     * This method sets the ID of a category of a page.
      * @access public
      * @param pID (integer)
      * @param category (integer)
@@ -533,7 +533,7 @@ class Page
 
 
     /**
-     * This method returns the ID of the category of a page.
+     * This method returns the ID of a category of a page.
      * @access public
      * @param pID (integer)
      * @return integer
@@ -685,7 +685,6 @@ class Page
      * @param locID2 (integer)
      * @return boolean
      */
-
     public function changePageLocation($pID, $locID, $locID2)
     {
         $this->_pID = $pID;
@@ -704,7 +703,7 @@ class Page
 
 
     /**
-     * This method sets the location of a page.
+     * This method sets the ID of the location of a page.
      * @access public
      * @param pID (integer)
      * @param location (integer)
