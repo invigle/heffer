@@ -396,7 +396,7 @@ class Graph
     {
         $a['query'] = "START n=node($id) RETURN n;";
         $rtn = $this->neo4japi('cypher', 'JSONPOST', $a);
-        
+
     return $rtn;
     }
     
