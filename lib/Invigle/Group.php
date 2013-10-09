@@ -54,8 +54,162 @@ class Group
         $this->_inviteeCount = null;
     }
 
-    /* This method takes as input an array with all the information of a group and
-     * adds this group to the GD as a group node.
+    /**
+     * This method sets the name of a group.
+     * @access public
+     * @param gID (integer)
+     * @param name (string)
+     * @return boolean
+     */
+    public function setGroupName($gID, $name)
+    {
+        if (!filter_var($gID, FILTER_VALIDATE_INT)) {
+            echo("Group ID is not valid");
+        } else {
+            $graphModule = new Graph();
+            $this->_name = $name;
+            $update['name'] = $name;
+            $graphModule->updateNodeById($gID, $update);
+        }
+    }
+
+    /**
+     * This method returns the name of a group.
+     * @access public
+     * @param gID (integer)
+     * @return string
+     */
+    public function getGroupName($gID)
+    {
+        if (!filter_var($gID, FILTER_VALIDATE_INT)) {
+            echo("Group ID is not valid");
+            return false;
+        } else {
+            $graphModule = new Graph();
+            $apiCall = $graphModule->selectNodeById($gID);
+            $group = $apiCall['data'][0][0]['data'];
+            return $group['name'];
+        }
+    }
+
+    /**
+     * This method sets the short description of a group.
+     * @access public
+     * @param gID (integer)
+     * @param shortDescription (string)
+     * @return boolean
+     */
+    public function setGroupDescription($gID, $shortDescription)
+    {
+        if (!filter_var($gID, FILTER_VALIDATE_INT)) {
+            echo("Group ID is not valid");
+        } else {
+            $graphModule = new Graph();
+            $this->_shortDescription = $shortDescription;
+            $update['shortDescription'] = $shortDescription;
+            $graphModule->updateNodeById($gID, $shortDescription);
+        }
+    }
+
+
+    /**
+     * This method returns the short description of a group.
+     * @access public
+     * @param gID (integer)
+     * @return string
+     */
+    public function getGroupDescription($gID)
+    {
+        if (!filter_var($gID, FILTER_VALIDATE_INT)) {
+            echo("Group ID is not valid");
+            return false;
+        } else {
+            $graphModule = new Graph();
+            $apiCall = $graphModule->selectNodeById($pID);
+            $group = $apiCall['data'][0][0]['data'];
+            return $group['shortDescription'];
+        }
+    }
+
+    /**
+     * This method sets the slogan of a group.
+     * @access public
+     * @param gID (integer)
+     * @param slogan (string)
+     * @return boolean
+     */
+    public function setGroupSlogan($gID, $slogan)
+    {
+        if (!filter_var($gID, FILTER_VALIDATE_INT)) {
+            echo("Group ID is not valid");
+        } else {
+            $graphModule = new Graph();
+            $this->_shortDescription = $slogan;
+            $update['slogan'] = $slogan;
+            $graphModule->updateNodeById($gID, $slogan);
+        }
+    }
+
+
+    /**
+     * This method returns the slogan of a group.
+     * @access public
+     * @param pID (integer)
+     * @return string
+     */
+    public function getGroupSlogan($gID)
+    {
+        if (!filter_var($gID, FILTER_VALIDATE_INT)) {
+            echo("Group ID is not valid");
+            return false;
+        } else {
+            $graphModule = new Graph();
+            $apiCall = $graphModule->selectNodeById($gID);
+            $group = $apiCall['data'][0][0]['data'];
+            return $group['slogan'];
+        }
+    }
+
+    /**
+     * This method sets the website of a group.
+     * @access public
+     * @param gID (integer)
+     * @param website (string)
+     * @return boolean
+     */
+    public function setGroupWebsite($gID, $website)
+    {
+        if (!filter_var($gID, FILTER_VALIDATE_INT)) {
+            echo("Group ID is not valid");
+        } else {
+            $graphModule = new Graph();
+            $this->_shortDescription = $website;
+            $update['website'] = $website;
+            $graphModule->updateNodeById($gID, $website);
+        }
+    }
+
+
+    /**
+     * This method returns the website of a group.
+     * @access public
+     * @param gID (integer)
+     * @return string
+     */
+    public function getGroupWebsite($gID)
+    {
+        if (!filter_var($gID, FILTER_VALIDATE_INT)) {
+            echo("Group ID is not valid");
+            return false;
+        } else {
+            $graphModule = new Graph();
+            $apiCall = $graphModule->selectNodeById($gID);
+            $group = $apiCall['data'][0][0]['data'];
+            return $group['website'];
+        }
+    }
+
+    /* This method adds a group node to the GD.
      * @access public
      * @param gArray
      */
@@ -125,7 +279,7 @@ class Group
         }
     }
 
-    /* This method deletes a group node given an ID.
+    /* This method deletes a group node.
      * @access public
      * @param gID
      */
@@ -137,13 +291,13 @@ class Group
             echo("Group ID is not valid");
         } else {
             $graphModule->deleteNodeByID($this->_gID);
-            $this->setGroupId($gID, null);
+            $this->setGroup($gID, null);
         }
     }
 
     /**
-     * This method edits some of the properties of a group in the GD by updating the current node in
-     * the GD with information provided by the gArray.
+     * This method edits some of the properties of a group in the
+     * GD by updating the current node with information provided by the gArray.
      * @access public
      * @param gArray
      * @return boolean
@@ -175,11 +329,12 @@ class Group
     }
 
     /* This method sets the ID of a group.
-   * @access public
-   * @param gID, id
-   * @return boolean
-   */
-    public function setGroupId($gID, $id)
+    * @access public
+    * @param gID (integer)
+    * @param id (integer)
+    * @return boolean
+    */
+    public function setGroup($gID, $id)
     {
         if (!filter_var($gID, FILTER_VALIDATE_INT)) {
             echo("Group ID is not valid");
@@ -192,9 +347,10 @@ class Group
     }
 
     /**
-     * This method takes as inputs a user ID and a group ID and adds a adminOf edge to neo4j.
+     * user ---adminOf---> group
      * @access public
-     * @param uID, gID
+     * @param uID (integer)
+     * @param gID (integer)
      * @return boolean
      */
     public function addGroupAdmin($uID, $gID)
@@ -210,6 +366,22 @@ class Group
             $connectionType = 'adminOf';
             $graphModule->addConnection($this->_admin, $this->_gID, $connectionType);
             $this->setGroupAdminId($gID, $this->_admin);
+        }
+    }
+
+    public function deleteGroupAdmin($uID, $gID)
+    {
+        $graphModule = new Graph();
+        $this->_admin = $uID;
+        $this->_gID = $gID;
+        if (!filter_var($this->_admin, FILTER_VALIDATE_INT)) {
+            echo("Admin ID is not valid");
+        } elseif (!filter_var($this->_gID, FILTER_VALIDATE_INT)) {
+            echo("Group ID is not valid");
+        } else {
+            $connectionType = 'adminOf';
+            $graphModule->deleteConnection($this->_admin, $this->_gID, $connectionType);
+            $this->setGroupAdminId($gID, null);
         }
     }
 
@@ -230,25 +402,29 @@ class Group
         }
     }
 
-    public function deleteGroupAdmin($uID, $gID)
+    /**
+     * This method sets the ID of the admin of a group.
+     * @access public
+     * @param gID (integer)
+     * @param admin (integer)
+     * @return boolean
+     */
+    public function setGroupAdminId($gID, $admin)
     {
-        $graphModule = new Graph();
-        $this->_admin = $uID;
-        $this->_gID = $gID;
-        if (!filter_var($this->_admin, FILTER_VALIDATE_INT)) {
-            echo("Admin ID is not valid");
-        } elseif (!filter_var($this->_gID, FILTER_VALIDATE_INT)) {
+        if (!filter_var($gID, FILTER_VALIDATE_INT)) {
             echo("Group ID is not valid");
         } else {
-            $connectionType = 'adminOf';
-            $graphModule->deleteConnection($this->_admin, $this->_gID, $connectionType);
-            $this->setGroupAdminId($gID, null);
+            $graphModule = new Graph();
+            $this->_admin = $admin;
+            $update['admin'] = $admin;
+            $graphModule->updateNodeById($gID, $update);
         }
     }
 
     /**
-     * This method returns the ID of the admin of the group.
+     * This method returns the ID of the admin of a group.
      * @access public
+     * @param gID (integer)
      * @return integer
      */
     public function getGroupAdminId($gID)
@@ -265,28 +441,10 @@ class Group
     }
 
     /**
-     * This method sets the ID of the admin of the group.
-     * @access public
-     * @param id (integer)
+     * group ---has---> category
+     * @param catID (integer)
+     * @param gID (integer)
      * @return boolean
-     */
-    public function setGroupAdminId($gID, $admin)
-    {
-        if (!filter_var($gID, FILTER_VALIDATE_INT)) {
-            echo("Group ID is not valid");
-        } else {
-            $graphModule = new Graph();
-            $this->_admin = $admin;
-            $update['admin'] = $admin;
-            $graphModule->updateNodeById($gID, $update);
-        }
-    }
-
-    /**
-     * This method takes as inputs a group ID the ID of the category and then
-     * it adds a Has edge to neo4j.
-     * @access public
-     * @param gID, catID
      */
     public function addGroupCategory($catID, $gID)
     {

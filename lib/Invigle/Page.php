@@ -312,8 +312,7 @@ class Page
 
     /**
      * This method edits some of the properties of a page in the
-     * GD by updating the current node with information provided
-     * by the pArray.
+     * GD by updating the current node with information provided by the pArray.
      * @access public
      * @param pArray (array)
      * @return boolean
@@ -380,6 +379,13 @@ class Page
         }
     }
 
+    /**
+     * user /---adminOf--->/ page
+     * @access public
+     * @param uID (integer)
+     * @param pID (integer)
+     * @return boolean
+     */
     public function deletePageAdmin($uID, $pID)
     {
         $graphModule = new Graph();
@@ -396,7 +402,15 @@ class Page
         }
     }
 
-
+    /**
+     * user_1 /---adminOf--->/ page
+     * user_2 ---adminOf---> page
+     * @access public
+     * @param uID (integer)
+     * @param uID2 (integer)
+     * @param pID (integer)
+     * @return boolean
+     */
     public function changePageAdmin($uID, $uID2, $pID)
     {
         $this->_pID = $pID;
@@ -455,11 +469,11 @@ class Page
 
     /**
      * page ---has---> category
-     * @param catID (integer)
      * @param pID (integer)
+     * @param catID (integer)
      * @return boolean
      */
-    public function addPageCategory($catID, $pID)
+    public function addPageCategory($pID, $catID)
     {
         $graphModule = new Graph();
         $this->_pID = $pID;
@@ -478,11 +492,11 @@ class Page
     /**
      * page /---has--->/ category
      * @access public
-     * @param catID (integer)
      * @param pID (integer)
+     * @param catID (integer)
      * @return boolean
      */
-    public function deletePageCategory($catID, $pID)
+    public function deletePageCategory($pID, $catID)
     {
         $graphModule = new Graph();
         $this->_category = $catID;
@@ -662,7 +676,17 @@ class Page
         }
     }
 
-    public function changePageLocation($locID, $locID2, $pID)
+    /**
+     * page /---locatedAt--->/ location_1
+     * page ---locatedAt---> location_2
+     * @access public
+     * @param pID (integer)
+     * @param locID (integer)
+     * @param locID2 (integer)
+     * @return boolean
+     */
+
+    public function changePageLocation($pID, $locID, $locID2)
     {
         $this->_pID = $pID;
         if (!filter_var($locID, FILTER_VALIDATE_INT)) {
@@ -672,8 +696,8 @@ class Page
         } elseif (!filter_var($this->_pID, FILTER_VALIDATE_INT)) {
             echo("Page ID is not valid");
         } else {
-            $this->deletePageLocation($locID, $pID);
-            $this->addPageLocation($locID2, $pID);
+            $this->deletePageLocation($pID, $locID);
+            $this->addPageLocation($pID, $locID2);
             $this->setPageLocation($pID, $locID2);
         }
     }
@@ -740,6 +764,13 @@ class Page
         }
     }
 
+    /**
+     * user /---followerOf--->/ page
+     * @access public
+     * @param uID (integer)
+     * @param pID (integer)
+     * @return boolean
+     */
     public function deletePageFollower($uID, $pID)
     {
         $graphModule = new Graph();
@@ -760,7 +791,7 @@ class Page
      * This method returns the number of followers of a page.
      * @access public
      * @param pID (integer)
-     * @return double
+     * @return float
      */
     public function getNumberOfPageFollowers($pID)
     {
