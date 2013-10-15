@@ -421,7 +421,13 @@ class Event
         }
     }
 
-    //user /---followerOf--->/ event
+    /**
+     * user /---followerOf--->/ event
+     * @access public
+     * @param uID (integer)
+     * @param eID (integer)
+     * @return boolean
+     */
     public function deleteEventFollower($uID, $eID)
     {
         $graphModule = new Graph();
@@ -440,7 +446,8 @@ class Event
     }
 
     /**
-     * This method returns the number of followers of an event.
+     * This method returns the number of followers of an event
+     * @access public
      * @param eID (integer)
      * @return integer
      */
@@ -458,8 +465,9 @@ class Event
     }
 
     /**
-     * This method sets the number of followers of the event
+     * This method sets the number of followers of an event
      * @access public
+     * @param eID (integer)
      * @param count (integer)
      * @return boolean
      */
