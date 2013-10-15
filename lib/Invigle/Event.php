@@ -33,6 +33,7 @@ class Event
     private $_organiser;
 
     /* The Class Constructor*/
+
     public function __construct()
     {
         $this->_name = null;
@@ -61,8 +62,7 @@ class Event
     }
 
     /**
-     * This method takes as input an array with all the information of an event and
-     * adds this event to the GD as an 'event node'.
+     * This method adds an event node to the GD.
      * @access public
      * @param eArray
      * @return integer
@@ -146,7 +146,7 @@ class Event
         }
     }
 
-    /** Function to delete an event node given an ID.
+    /* This method deletes an event node.
      * @access private
      * @param eID
      */
@@ -163,8 +163,8 @@ class Event
     }
 
     /**
-     * This method edits some of the properties of an event in the GD by updating the current node in
-     * the GD with information provided by the eArray which is the input to the editEvent method
+     * This method edits some of the properties of an event in the
+     * GD by updating the current node with information provided by the eArray.
      * @access public
      * @param eArray
      * @return boolean
@@ -196,6 +196,7 @@ class Event
     /**
      * This method sets the ID of the event.
      * @access public
+     * @param eID (integer)
      * @param id (integer)
      * @return boolean
      */
@@ -212,9 +213,11 @@ class Event
     }
 
     /**
-     * This method takes as inputs a photo ID, the ID of an event and adds a relatedTo edge to neo4j.
+     * photo ---relatedTo---> event
      * @access public
-     * @param phID, eID
+     * @param phID
+     * @param eID
+     * @return boolean
      */
     public function addEventPhoto($phID, $eID)
     {
@@ -229,9 +232,11 @@ class Event
     }
 
     /**
-     * This method takes as inputs a photo ID, the ID of an event and deletes a RELATED_TO edge from neo4j.
+     * photo /---relatedTo--->/ event
      * @access public
-     * @param phID, eID
+     * @param phID
+     * @param eID
+     * @return boolean
      */
     public function deleteEventPhoto($phID, $eID)
     {
@@ -246,8 +251,28 @@ class Event
     }
 
     /**
-     * This method returns the ID of the profile picture of the event.
+     * This method sets the ID of the profile picture of an event.
      * @access public
+     * @param eID (integer)
+     * @param id (integer)
+     * @return boolean
+     */
+    public function setEventProfPicId($eID, $id)
+    {
+        if (!filter_var($eID, FILTER_VALIDATE_INT)) {
+            echo("Event ID is not valid");
+        } else {
+            $graphModule = new Graph();
+            $this->_profilePicID = $id;
+            $update['profilePicID'] = $id;
+            $graphModule->updateNodeById($eID, $update);
+        }
+    }
+
+    /**
+     * This method get the ID of the profile picture of an event.
+     * @access public
+     * @param eID (integer)
      * @return integer
      */
     public function getEventProfPicId($eID)
@@ -264,28 +289,11 @@ class Event
     }
 
     /**
-     * This method sets the ID of the profile picture of the event.
+     * event ---locatedAt---> location
      * @access public
-     * @param id (integer)
+     * @param eID (integer)
+     * @param locID (integer)
      * @return boolean
-     */
-    public function setEventProfPicId($eID, $id)
-    {
-        if (!filter_var($eID, FILTER_VALIDATE_INT)) {
-            echo("Event ID is not valid");
-        } else {
-            $graphModule = new Graph();
-            $this->_profilePicID = $id;
-            $update['profilePicID'] = $id;
-            $graphModule->updateNodeById($eID, $update);
-        }
-    }
-
-
-    /**
-     * This method takes as inputs a event ID and a location ID and adds a LOCATED_AT edge to neo4j.
-     * @access public
-     * @param eID, locID
      */
     public function addEventLocation($eID, $locID)
     {
@@ -303,9 +311,36 @@ class Event
     }
 
     /**
-     * This method takes as inputs an event ID and a location ID and deletes a LOCATED_AT edge from neo4j.
+     * event /---locatedAt--->/ location_1
+     * event ---locatedAt---> location_2
      * @access public
-     * @param eID, locID
+     * @param eID (integer)
+     * @param locID (integer)
+     * @param locID2 (integer)
+     * @return boolean
+     */
+    public function changeEventLocation($eID, $locID, $locID2)
+    {
+        $this->_eID = $eID;
+        if (!filter_var($locID, FILTER_VALIDATE_INT)) {
+            echo("Previous Location ID is not valid");
+        } elseif (!filter_var($locID2, FILTER_VALIDATE_INT)) {
+            echo("New Location ID is not valid");
+        } elseif (!filter_var($this->_eID, FILTER_VALIDATE_INT)) {
+            echo("Event ID is not valid");
+        } else {
+            $this->deleteEventLocation($locID, $eID);
+            $this->addEventLocation($eID, $locID2);
+            $this->setEventLocation($eID, $locID2);
+        }
+    }
+
+    /**
+     * event /---locatedAt--->/ location
+     * @access public
+     * @param eID (integer)
+     * @param locID (integer)
+     * @return boolean
      */
     public function deleteEventLocation($eID, $locID)
     {
@@ -322,25 +357,30 @@ class Event
         }
     }
 
-    public function changeEventLocation($locID, $locID2, $eID)
+
+    /**
+     * This method sets the location of an event.
+     * @access public
+     * @param eID (integer)
+     * @param location (string)
+     * @return boolean
+     */
+    public function setEventLocation($eID, $location)
     {
-        $this->_eID = $eID;
-        if (!filter_var($locID, FILTER_VALIDATE_INT)) {
-            echo("Previous Location ID is not valid");
-        } elseif (!filter_var($locID2, FILTER_VALIDATE_INT)) {
-            echo("New Location ID is not valid");
-        } elseif (!filter_var($this->_eID, FILTER_VALIDATE_INT)) {
+        if (!filter_var($eID, FILTER_VALIDATE_INT)) {
             echo("Event ID is not valid");
         } else {
-            $this->deleteEventLocation($locID, $eID);
-            $this->addEventLocation($locID2, $eID);
-            $this->setEventLocation($eID, $locID2);
+            $graphModule = new Graph();
+            $this->_location = $location;
+            $update['location'] = $location;
+            $graphModule->updateNodeById($eID, $update);
         }
     }
 
     /**
-     * This method returns location of the event.
+     * This method returns location of an event.
      * @access public
+     * @param eID (integer)
      * @return string
      */
     public function getEventLocation($eID)
@@ -357,28 +397,10 @@ class Event
     }
 
     /**
-     * This method sets the location of the event.
+     * user ---followerOf---> event
      * @access public
-     * @param location (string)
-     * @return boolean
-     */
-    public function setEventLocation($eID, $location)
-    {
-        if (!filter_var($eID, FILTER_VALIDATE_INT)) {
-            echo("Event ID is not valid");
-        } else {
-            $graphModule = new Graph();
-            $this->_location = $location;
-            $update['location'] = $location;
-            $graphModule->updateNodeById($eID, $update);
-        }
-    }
-
-
-    /**
-     * This method takes as inputs a user ID and a event ID and adds a FOLLOWER_OF edge to neo4j.
-     * @access public
-     * @param uID, eID
+     * @param uID (integer)
+     * @param eID (integer)
      * @return boolean
      */
     public function addEventFollower($uID, $eID)
@@ -399,6 +421,13 @@ class Event
         }
     }
 
+    /**
+     * user /---followerOf--->/ event
+     * @access public
+     * @param uID (integer)
+     * @param eID (integer)
+     * @return boolean
+     */
     public function deleteEventFollower($uID, $eID)
     {
         $graphModule = new Graph();
@@ -417,7 +446,9 @@ class Event
     }
 
     /**
-     * This method returns the number of followers of the event.
+     * This method returns the number of followers of an event
+     * @access public
+     * @param eID (integer)
      * @return integer
      */
     public function getNumberOfEventFollowers($eID)
@@ -434,8 +465,9 @@ class Event
     }
 
     /**
-     * This method sets the number of followers of the event.
+     * This method sets the number of followers of an event
      * @access public
+     * @param eID (integer)
      * @param count (integer)
      * @return boolean
      */
@@ -448,44 +480,6 @@ class Event
             $this->_followerCount = $count;
             $update['followerCount'] = $count;
             $graphModule->updateNodeById($eID, $update);
-        }
-    }
-
-    /**
-     * This method takes as inputs a user ID and a event ID and adds a ORGANISER_OF edge to neo4j.
-     * @access public
-     * @param uID, eID
-     * @return boolean
-     */
-    public function addEventOrganiser($uID, $eID)
-    {
-        $graphModule = new Graph();
-        $this->_uID = $uID;
-        $this->_eID = $eID;
-        if (!filter_var($this->_uID, FILTER_VALIDATE_INT)) {
-            echo("Organiser ID is not valid");
-        } elseif (!filter_var($this->_eID, FILTER_VALIDATE_INT)) {
-            echo("Event ID is not valid");
-        } else {
-            $connectionType = 'organiserOf';
-            $graphModule->addConnection($this->_uID, $this->_eID, $connectionType);
-            $this->setEventOrganiserId($eID, $uID);
-        }
-    }
-
-    public function deleteEventOrganiser($uID, $eID)
-    {
-        $graphModule = new Graph();
-        $this->_uID = $uID;
-        $this->_eID = $eID;
-        if (!filter_var($this->_uID, FILTER_VALIDATE_INT)) {
-            echo("Organiser ID is not valid");
-        } elseif (!filter_var($this->_eID, FILTER_VALIDATE_INT)) {
-            echo("Event ID is not valid");
-        } else {
-            $connectionType = 'organiserOf';
-            $graphModule->deleteConnection($this->_uID, $this->_eID, $connectionType);
-            $this->setEventOrganiserId($eID, null);
         }
     }
 
@@ -505,21 +499,19 @@ class Event
         }
     }
 
-    /**
-     * This method returns the ID of the organiser of the event.
-     * @access public
-     * @return integer
-     */
-    public function getEventOrganiserId($eID)
+    public function deleteEventOrganiser($uID, $eID)
     {
-        if (!filter_var($eID, FILTER_VALIDATE_INT)) {
+        $graphModule = new Graph();
+        $this->_uID = $uID;
+        $this->_eID = $eID;
+        if (!filter_var($this->_uID, FILTER_VALIDATE_INT)) {
+            echo("Organiser ID is not valid");
+        } elseif (!filter_var($this->_eID, FILTER_VALIDATE_INT)) {
             echo("Event ID is not valid");
-            return false;
         } else {
-            $graphModule = new Graph();
-            $apiCall = $graphModule->selectNodeById($eID);
-            $event = $apiCall['data'][0][0]['data'];
-            return $event['organiser'];
+            $connectionType = 'organiserOf';
+            $graphModule->deleteConnection($this->_uID, $this->_eID, $connectionType);
+            $this->setEventOrganiserId($eID, null);
         }
     }
 
@@ -538,6 +530,47 @@ class Event
             $this->_organiser = $organiser;
             $update['organiser'] = $organiser;
             $graphModule->updateNodeById($eID, $update);
+        }
+    }
+
+    /**
+     * user ---organiserOf---> event
+     * @access public
+     * @param uID
+     * @param eID
+     * @return boolean
+     */
+    public function addEventOrganiser($uID, $eID)
+    {
+        $graphModule = new Graph();
+        $this->_uID = $uID;
+        $this->_eID = $eID;
+        if (!filter_var($this->_uID, FILTER_VALIDATE_INT)) {
+            echo("Organiser ID is not valid");
+        } elseif (!filter_var($this->_eID, FILTER_VALIDATE_INT)) {
+            echo("Event ID is not valid");
+        } else {
+            $connectionType = 'organiserOf';
+            $graphModule->addConnection($this->_uID, $this->_eID, $connectionType);
+            $this->setEventOrganiserId($eID, $uID);
+        }
+    }
+
+    /**
+     * This method returns the ID of the organiser of the event.
+     * @access public
+     * @return integer
+     */
+    public function getEventOrganiserId($eID)
+    {
+        if (!filter_var($eID, FILTER_VALIDATE_INT)) {
+            echo("Event ID is not valid");
+            return false;
+        } else {
+            $graphModule = new Graph();
+            $apiCall = $graphModule->selectNodeById($eID);
+            $event = $apiCall['data'][0][0]['data'];
+            return $event['organiser'];
         }
     }
 
@@ -580,7 +613,6 @@ class Event
             $this->setNumberOfEventAttendees($eID, $currEventAttendees - 1);
         }
     }
-
 
     /**
      * This method returns the number of attendees of the event.
@@ -677,40 +709,6 @@ class Event
         }
     }
 
-    public function addEventPage($pID, $eID)
-    {
-        $graphModule = new Graph();
-        $this->_pID = $pID;
-        $this->_eID = $eID;
-        if (!filter_var($this->_pID, FILTER_VALIDATE_INT)) {
-            echo("Page ID is not valid");
-        } elseif (!filter_var($this->_eID, FILTER_VALIDATE_INT)) {
-            echo("Event ID is not valid");
-        } else {
-            $connectionType = 'organiserOf';
-            $graphModule->addConnection($this->_pID, $this->_eID, $connectionType);
-            $this->setEventPageId($eID, $pID);
-
-        }
-    }
-
-    public function deleteEventPage($pID, $eID)
-    {
-        $graphModule = new Graph();
-        $this->_pID = $pID;
-        $this->_eID = $eID;
-        if (!filter_var($this->_pID, FILTER_VALIDATE_INT)) {
-            echo("Page ID is not valid");
-        } elseif (!filter_var($this->_eID, FILTER_VALIDATE_INT)) {
-            echo("Event ID is not valid");
-        } else {
-            $connectionType = 'organiserOf';
-            $graphModule->deleteConnection($this->_pID, $this->_eID, $connectionType);
-            $this->setEventPageId($eID, null);
-        }
-    }
-
-
     public function changeEventPage($pID, $pID2, $eID)
     {
         $this->_eID = $eID;
@@ -727,21 +725,19 @@ class Event
         }
     }
 
-    /**
-     * This method returns the type of the event.
-     * @access public
-     * @return integer
-     */
-    public function getEventPageId($eID)
+    public function deleteEventPage($pID, $eID)
     {
-        if (!filter_var($eID, FILTER_VALIDATE_INT)) {
+        $graphModule = new Graph();
+        $this->_pID = $pID;
+        $this->_eID = $eID;
+        if (!filter_var($this->_pID, FILTER_VALIDATE_INT)) {
+            echo("Page ID is not valid");
+        } elseif (!filter_var($this->_eID, FILTER_VALIDATE_INT)) {
             echo("Event ID is not valid");
-            return false;
         } else {
-            $graphModule = new Graph();
-            $apiCall = $graphModule->selectNodeById($eID);
-            $event = $apiCall['data'][0][0]['data'];
-            return $event['pID'];
+            $connectionType = 'organiserOf';
+            $graphModule->deleteConnection($this->_pID, $this->_eID, $connectionType);
+            $this->setEventPageId($eID, null);
         }
     }
 
@@ -763,35 +759,38 @@ class Event
         }
     }
 
-    public function addEventGroup($gID, $eID)
+    public function addEventPage($pID, $eID)
     {
         $graphModule = new Graph();
-        $this->_gID = $gID;
+        $this->_pID = $pID;
         $this->_eID = $eID;
-        if (!filter_var($this->_gID, FILTER_VALIDATE_INT)) {
-            echo("Group ID is not valid");
+        if (!filter_var($this->_pID, FILTER_VALIDATE_INT)) {
+            echo("Page ID is not valid");
         } elseif (!filter_var($this->_eID, FILTER_VALIDATE_INT)) {
             echo("Event ID is not valid");
         } else {
             $connectionType = 'organiserOf';
-            $graphModule->addConnection($this->_gID, $this->_eID, $connectionType);
-            $this->setEventGroupId($eID, $gID);
+            $graphModule->addConnection($this->_pID, $this->_eID, $connectionType);
+            $this->setEventPageId($eID, $pID);
+
         }
     }
 
-    public function deleteEventGroup($gID, $eID)
+    /**
+     * This method returns the type of the event.
+     * @access public
+     * @return integer
+     */
+    public function getEventPageId($eID)
     {
-        $graphModule = new Graph();
-        $this->_gID = $gID;
-        $this->_eID = $eID;
-        if (!filter_var($this->_gID, FILTER_VALIDATE_INT)) {
-            echo("Group ID is not valid");
-        } elseif (!filter_var($this->_eID, FILTER_VALIDATE_INT)) {
+        if (!filter_var($eID, FILTER_VALIDATE_INT)) {
             echo("Event ID is not valid");
+            return false;
         } else {
-            $connectionType = 'organiserOf';
-            $graphModule->deleteConnection($this->_gID, $this->_eID, $connectionType);
-            $this->setEventGroupId($eID, null);
+            $graphModule = new Graph();
+            $apiCall = $graphModule->selectNodeById($eID);
+            $event = $apiCall['data'][0][0]['data'];
+            return $event['pID'];
         }
     }
 
@@ -811,21 +810,19 @@ class Event
         }
     }
 
-    /**
-     * This method returns the ID of the group which organises the event.
-     * @access public
-     * @return integer
-     */
-    public function getEventGroupId($eID)
+    public function deleteEventGroup($gID, $eID)
     {
-        if (!filter_var($eID, FILTER_VALIDATE_INT)) {
+        $graphModule = new Graph();
+        $this->_gID = $gID;
+        $this->_eID = $eID;
+        if (!filter_var($this->_gID, FILTER_VALIDATE_INT)) {
+            echo("Group ID is not valid");
+        } elseif (!filter_var($this->_eID, FILTER_VALIDATE_INT)) {
             echo("Event ID is not valid");
-            return false;
         } else {
-            $graphModule = new Graph();
-            $apiCall = $graphModule->selectNodeById($eID);
-            $event = $apiCall['data'][0][0]['data'];
-            return $event['gID'];
+            $connectionType = 'organiserOf';
+            $graphModule->deleteConnection($this->_gID, $this->_eID, $connectionType);
+            $this->setEventGroupId($eID, null);
         }
     }
 
@@ -847,9 +844,45 @@ class Event
         }
     }
 
-    /*
-     * This method returns the name of the event.
+    public function addEventGroup($gID, $eID)
+    {
+        $graphModule = new Graph();
+        $this->_gID = $gID;
+        $this->_eID = $eID;
+        if (!filter_var($this->_gID, FILTER_VALIDATE_INT)) {
+            echo("Group ID is not valid");
+        } elseif (!filter_var($this->_eID, FILTER_VALIDATE_INT)) {
+            echo("Event ID is not valid");
+        } else {
+            $connectionType = 'organiserOf';
+            $graphModule->addConnection($this->_gID, $this->_eID, $connectionType);
+            $this->setEventGroupId($eID, $gID);
+        }
+    }
+
+    /**
+     * This method sets the name of an event.
      * @access public
+     * @param eID (integer)
+     * @param name (string)
+     * @return boolean
+     */
+    public function setEventName($eID, $name)
+    {
+        if (!filter_var($eID, FILTER_VALIDATE_INT)) {
+            echo("Event ID is not valid");
+        } else {
+            $graphModule = new Graph();
+            $this->_name = $name;
+            $update['name'] = $name;
+            $graphModule->updateNodeById($eID, $update);
+        }
+    }
+
+    /**
+     * This method returns the name of an event.
+     * @access public
+     * @param eID (integer)
      * @return string
      */
     public function getEventName($eID)
@@ -866,19 +899,55 @@ class Event
     }
 
     /**
-     * This method sets the name of the event.
+     * This method sets the description of the event.
      * @access public
-     * @param name (string)
+     * @param description (string)
      * @return boolean
      */
-    public function setEventName($eID, $name)
+    public function setEventDescription($eID, $description)
     {
         if (!filter_var($eID, FILTER_VALIDATE_INT)) {
             echo("Event ID is not valid");
         } else {
             $graphModule = new Graph();
-            $this->_name = $name;
-            $update['name'] = $name;
+            $this->_description = $description;
+            $update['description'] = $description;
+            $graphModule->updateNodeById($eID, $update);
+        }
+    }
+
+    /**
+     * This method returns the description of the event.
+     * @access public
+     * @return string
+     */
+    public function getEventDescription($eID)
+    {
+        if (!filter_var($eID, FILTER_VALIDATE_INT)) {
+            echo("Event ID is not valid");
+            return false;
+        } else {
+            $graphModule = new Graph();
+            $apiCall = $graphModule->selectNodeById($eID);
+            $event = $apiCall['data'][0][0]['data'];
+            return $event['description'];
+        }
+    }
+
+    /**
+     * This method sets the date of the event.
+     * @access public
+     * @param date (date)
+     * @return boolean
+     */
+    public function setEventDate($eID, $date)
+    {
+        if (!filter_var($eID, FILTER_VALIDATE_INT)) {
+            echo("Event ID is not valid");
+        } else {
+            $graphModule = new Graph();
+            $this->_date = $date;
+            $update['date'] = $date;
             $graphModule->updateNodeById($eID, $update);
         }
     }
@@ -902,20 +971,20 @@ class Event
     }
 
     /**
-     * This method sets the date of the event.
+     * This method returns the ID of the group which organises the event.
      * @access public
-     * @param date (date)
-     * @return boolean
+     * @return integer
      */
-    public function setEventDate($eID, $date)
+    public function getEventGroupId($eID)
     {
         if (!filter_var($eID, FILTER_VALIDATE_INT)) {
             echo("Event ID is not valid");
+            return false;
         } else {
             $graphModule = new Graph();
-            $this->_date = $date;
-            $update['date'] = $date;
-            $graphModule->updateNodeById($eID, $update);
+            $apiCall = $graphModule->selectNodeById($eID);
+            $event = $apiCall['data'][0][0]['data'];
+            return $event['gID'];
         }
     }
 
@@ -956,42 +1025,6 @@ class Event
     }
 
     /**
-     * This method returns the description of the event.
-     * @access public
-     * @return string
-     */
-    public function getEventDescription($eID)
-    {
-        if (!filter_var($eID, FILTER_VALIDATE_INT)) {
-            echo("Event ID is not valid");
-            return false;
-        } else {
-            $graphModule = new Graph();
-            $apiCall = $graphModule->selectNodeById($eID);
-            $event = $apiCall['data'][0][0]['data'];
-            return $event['description'];
-        }
-    }
-
-    /**
-     * This method sets the description of the event.
-     * @access public
-     * @param description (string)
-     * @return boolean
-     */
-    public function setEventDescription($eID, $description)
-    {
-        if (!filter_var($eID, FILTER_VALIDATE_INT)) {
-            echo("Event ID is not valid");
-        } else {
-            $graphModule = new Graph();
-            $this->_description = $description;
-            $update['description'] = $description;
-            $graphModule->updateNodeById($eID, $update);
-        }
-    }
-
-    /**
      * This method returns 1 if the event if private, 0 otherwise.
      * @access public
      * @return boolean
@@ -1025,7 +1058,6 @@ class Event
             $graphModule->updateNodeById($eID, $update);
         }
     }
-
 
     /**
      * This method returns the institution that organises the event.
@@ -1062,7 +1094,6 @@ class Event
             $graphModule->updateNodeById($eID, $update);
         }
     }
-
 
     /**
      * This method returns 1 if the event charges an attendance fee, 0 otherwise.
@@ -1136,7 +1167,6 @@ class Event
         }
     }
 
-
     /**
      * This method returns the type of the event.
      * @access public
@@ -1173,7 +1203,6 @@ class Event
         }
     }
 
-
     /**
      * This method returns the timestamp in UTC indicating when the event was created.
      * @access public
@@ -1208,7 +1237,6 @@ class Event
             $graphModule->updateNodeById($eID, $update);
         }
     }
-
 
     /**
      * This method takes as input the date of the event and returns the forecasted weather for that day.
