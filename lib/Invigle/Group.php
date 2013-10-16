@@ -1095,7 +1095,7 @@ class Group
         }
     }
 
-    
+
     /* This method sets ID of a group.
     * @access public
     * @param gID (integer)
